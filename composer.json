@@ -1,0 +1,48 @@
+{
+  "name": "platinum-place/laravel-dgii",
+  "type": "library",
+  "description": "Paquete laravel para la integración con los servicios de la DGII (Dirección General de Impuestos Internos) de República Dominicana",
+  "keywords": [
+    "laravel",
+    "DGII",
+    "e-CF",
+    "facturación-electrónica",
+    "dominican-republic"
+  ],
+  "license": "MIT",
+  "require": {
+    "php": "^8.2",
+    "ext-simplexml": "*",
+    "illuminate/http": "^11.0|^12.0",
+    "illuminate/support": "^11.0|^12.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^9.0|^10.0",
+    "phpunit/phpunit": "^11.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "PlatinumPlace\\LaravelDgii\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "PlatinumPlace\\LaravelDgii\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "PlatinumPlace\\LaravelDgii\\DgiiServiceProvider"
+      ]
+    }
+  },
+  "scripts": {
+    "test": "phpunit"
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
