@@ -142,7 +142,7 @@ class DgiiService
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function getTrackIdListBySequenceNumber(string $token, string $xmlContent, ?string $env = null): array
+    public function getTrackIdList(string $token, string $xmlContent, ?string $env = null): array
     {
         $xmlObject = new DgiiXmlHelper($xmlContent);
 
@@ -364,5 +364,19 @@ class DgiiService
         return $xmlObject->isConsumeInvoice()
             ? $this->sendConsumerInvoice($token, $filePath, $env)
             : $this->sendInvoice($token, $filePath, $env);
+    }
+
+    /**
+     * @throws RequestException
+     * @throws ConnectionException
+     */
+    public function fetchInvoice(string $token, string $filePath, ?string $env = null): array
+    {
+        $xmlContent = file_get_contents($filePath);
+        $xmlObject = new DgiiXmlHelper($xmlContent);
+
+        return $xmlObject->isConsumeInvoice()
+            ? $this->getConsumerInvoiceStatus($token, $filePath, $env)
+            : $this->getInvoiceStatus($token, $filePath, $env);
     }
 }
