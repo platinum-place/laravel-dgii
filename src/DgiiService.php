@@ -302,7 +302,7 @@ class DgiiService
 
         return Http::withHeaders([
             'accept' => '*/*',
-            'Authorization' => 'Apikey '.config('dgii.api_key'),
+            'Authorization' => 'Apikey ' . config('dgii.api_key'),
         ])
             ->get($url)
             ->throw()
@@ -322,7 +322,7 @@ class DgiiService
 
         return Http::withHeaders([
             'accept' => '*/*',
-            'Authorization' => 'Apikey '.config('dgii.api_key'),
+            'Authorization' => 'Apikey ' . config('dgii.api_key'),
         ])
             ->get($url)
             ->throw()
@@ -343,7 +343,7 @@ class DgiiService
 
         return Http::withHeaders([
             'accept' => '*/*',
-            'Authorization' => 'Apikey '.config('dgii.api_key'),
+            'Authorization' => 'Apikey ' . config('dgii.api_key'),
         ])
             ->get($url, [
                 'ambiente' => $env,
@@ -376,7 +376,17 @@ class DgiiService
         $xmlObject = new DgiiXmlHelper($xmlContent);
 
         return $xmlObject->isConsumeInvoice()
-            ? $this->getConsumerInvoiceStatus($token, $filePath, $env)
-            : $this->getInvoiceStatus($token, $filePath, $env);
+            ? $this->getConsumerInvoiceStatus($token, $xmlContent, $env)
+            : $this->getInvoiceStatus($token, $xmlContent, $env);
+    }
+
+    public function getInvoiceLink(string $filePath, ?string $env = null): string
+    {
+        $xmlContent = file_get_contents($filePath);
+        $xmlObject = new DgiiXmlHelper($xmlContent);
+
+        return $xmlObject->isConsumeInvoice()
+            ? $this->getConsumerInvoiceQRLink($xmlContent, $env)
+            : $this->getInvoiceQRLink($xmlContent, $env);
     }
 }
