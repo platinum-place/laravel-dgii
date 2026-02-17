@@ -5,7 +5,6 @@ namespace PlatinumPlace\LaravelDgii;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 
 class DgiiService
 {
@@ -40,7 +39,7 @@ class DgiiService
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function fetchToken(string $xmlPath, ?string $env = null): array
+    public function fetchToken(string $filePath, ?string $env = null): array
     {
         $env ??= config('dgii.environment');
 
@@ -50,7 +49,7 @@ class DgiiService
             $env
         );
 
-        return Http::attach('xml', Storage::readStream($xmlPath), basename($xmlPath))
+        return Http::attach('xml', fopen($filePath, 'r'), basename($filePath))
             ->post($url)
             ->throw()
             ->json();
@@ -60,7 +59,7 @@ class DgiiService
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function sendInvoice(string $token, string $xmlPath, ?string $env = null): array
+    public function sendInvoice(string $token, string $filePath, ?string $env = null): array
     {
         $env ??= config('dgii.environment');
 
@@ -71,7 +70,7 @@ class DgiiService
         );
 
         return Http::withToken($token)
-            ->attach('xml', Storage::readStream($xmlPath), basename($xmlPath))
+            ->attach('xml', fopen($filePath, 'r'), basename($filePath))
             ->post($url)
             ->throw()
             ->json();
@@ -81,7 +80,7 @@ class DgiiService
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function sendCommercialApproval(string $token, string $xmlPath, ?string $env = null): array
+    public function sendCommercialApproval(string $token, string $filePath, ?string $env = null): array
     {
         $env ??= config('dgii.environment');
 
@@ -92,7 +91,7 @@ class DgiiService
         );
 
         return Http::withToken($token)
-            ->attach('xml', Storage::readStream($xmlPath), basename($xmlPath))
+            ->attach('xml', fopen($filePath, 'r'), basename($filePath))
             ->post($url)
             ->throw()
             ->json();
@@ -102,7 +101,7 @@ class DgiiService
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function sendCancellationRange(string $token, string $xmlPath, ?string $env = null): array
+    public function sendCancellationRange(string $token, string $filePath, ?string $env = null): array
     {
         $env ??= config('dgii.environment');
 
@@ -113,7 +112,7 @@ class DgiiService
         );
 
         return Http::withToken($token)
-            ->attach('xml', Storage::readStream($xmlPath), basename($xmlPath))
+            ->attach('xml', fopen($filePath, 'r'), basename($filePath))
             ->post($url)
             ->throw()
             ->json();
@@ -193,7 +192,7 @@ class DgiiService
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function sendConsumerInvoice(string $token, string $xmlPath, ?string $env = null): array
+    public function sendConsumerInvoice(string $token, string $filePath, ?string $env = null): array
     {
         $env ??= config('dgii.environment');
 
@@ -204,7 +203,7 @@ class DgiiService
         );
 
         return Http::withToken($token)
-            ->attach('xml', Storage::readStream($xmlPath), basename($xmlPath))
+            ->attach('xml', fopen($filePath, 'r'), basename($filePath))
             ->post($url)
             ->throw()
             ->json();
@@ -351,5 +350,19 @@ class DgiiService
             ])
             ->throw()
             ->json();
+    }
+
+    /**
+     * @throws RequestException
+     * @throws ConnectionException
+     */
+    public function submitInvoice(string $token, string $filePath, ?string $env = null): array
+    {
+        $xmlContent = file_get_contents($filePath);
+        $xmlObject = new DgiiXmlHelper($xmlContent);
+
+        return $xmlObject->isConsumeInvoice()
+            ? $this->sendConsumerInvoice($token, $filePath, $env)
+            : $this->sendInvoice($token, $filePath, $env);
     }
 }
