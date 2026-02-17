@@ -247,7 +247,7 @@ class DgiiService
 
         return Http::withToken($token)
             ->get($url, [
-                'RNC_cursor' => $xmlObject->getSenderIdentification(),
+                'RNC_Emisor' => $xmlObject->getSenderIdentification(),
                 'ENCF' => $xmlObject->getSequenceNumber(),
                 'Cod_Seguridad_eCF' => $xmlObject->getSecurityCode(),
             ])

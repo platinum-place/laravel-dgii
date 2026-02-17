@@ -200,7 +200,7 @@ class DgiiXmlHelper
 
     public function isConsumeInvoice(): bool
     {
-        $type = $this->getInvoiceType();
+        $type = (int)$this->getInvoiceType();
         $total = (float) $this->getInvoiceTotal();
 
         return $type === config('dgii.rules.fc_type') && $total < config('dgii.rules.fc_limit');
