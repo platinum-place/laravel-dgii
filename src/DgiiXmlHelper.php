@@ -188,4 +188,21 @@ class DgiiXmlHelper
 
         return null;
     }
+
+    public function getInvoiceType(): ?string
+    {
+        if (! empty($this->xml?->Encabezado?->IdDoc?->TipoeCF)) {
+            return (string) $this->xml?->Encabezado?->IdDoc?->TipoeCF;
+        }
+
+        return null;
+    }
+
+    public function isConsumeInvoice(): bool
+    {
+        $type = $this->getInvoiceType();
+        $total = (float) $this->getInvoiceTotal();
+
+        return $type === config('dgii.rules.fc_type') && $total < config('dgii.rules.fc_limit');
+    }
 }

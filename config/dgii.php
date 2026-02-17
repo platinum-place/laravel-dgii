@@ -42,4 +42,18 @@ return [
         'statusecf' => env('DGII_DOMAIN_STATUS', 'https://statusecf.dgii.gov.do'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Reglas de Validación
+    |--------------------------------------------------------------------------
+    |
+    | Reglas y límites impuestos por la DGII.
+    |
+    */
+
+    'rules' => [
+        'fc_type' => (int)env('DGII_FC_TYPE', 32),
+        'fc_limit' => (int)env('DGII_FC_LIMIT', 250000),
+    ],
+
 ];
