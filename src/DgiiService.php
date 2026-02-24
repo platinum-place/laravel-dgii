@@ -145,6 +145,7 @@ class DgiiService
     public function getTrackIdList(string $token, string $xmlContent, ?string $env = null): array
     {
         $xmlObject = new DgiiXmlHelper($xmlContent);
+        $env ??= config('dgii.environment');
 
         $url = sprintf(
             '%s/%s/consultatrackids/api/trackids/consulta',
