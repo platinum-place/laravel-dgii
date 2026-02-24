@@ -13,9 +13,9 @@ class DgiiXmlService
      * @param array $data Los datos para el blade
      * @return string
      */
-    public function renderEcf(string $type, array $data): string
+    public function renderEcf(array $data): string
     {
-        return View::make("dgii::ecf.ecf_{$type}", $data)->render();
+        return View::make('dgii::ecf.ecf_'.$data['IdDoc']['TipoeCF'], $data)->render();
     }
 
     /**
