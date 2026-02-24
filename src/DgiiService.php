@@ -347,7 +347,12 @@ class DgiiService
             'Authorization' => 'Apikey ' . config('dgii.api_key'),
         ])
             ->get($url, [
-                'ambiente' => $env,
+                'ambiente' => match ($env) {
+                   'testecf' => 1,
+                   'ecf' => 2,
+                   'certecf' => 3,
+                   default => 1,
+                },
             ])
             ->throw()
             ->json();
