@@ -205,4 +205,88 @@ class DgiiXmlHelper
 
         return $type === config('dgii.rules.fc_type') && $total < config('dgii.rules.fc_limit');
     }
+
+    public function getTotalTaxes(): ?float
+    {
+        if (! empty($this->xml?->Encabezado?->Totales?->TotalITBIS)) {
+            return (float) $this->xml?->Encabezado?->Totales?->TotalITBIS;
+        }
+
+        return null;
+    }
+
+    public function getTotalAmountTaxed(): ?float
+    {
+        if (! empty($this->xml?->Encabezado?->Totales?->MontoGravadoTotal)) {
+            return (float) $this->xml?->Encabezado?->Totales?->MontoGravadoTotal;
+        }
+
+        return null;
+    }
+
+    public function getTotalExempt(): ?float
+    {
+        if (! empty($this->xml?->Encabezado?->Totales?->MontoExento)) {
+            return (float) $this->xml?->Encabezado?->Totales?->MontoExento;
+        }
+
+        return null;
+    }
+
+    public function getModifiedSequenceNumber(): ?string
+    {
+        if (! empty($this->xml?->Encabezado?->IdDoc?->eNCFModificado)) {
+            return (string) $this->xml?->Encabezado?->IdDoc?->eNCFModificado;
+        }
+
+        return null;
+    }
+
+    public function getModificationCode(): ?string
+    {
+        if (! empty($this->xml?->Encabezado?->IdDoc?->CodigoModificacion)) {
+            return (string) $this->xml?->Encabezado?->IdDoc?->CodigoModificacion;
+        }
+
+        return null;
+    }
+
+    public function getObservations(): ?string
+    {
+        if (! empty($this->xml?->Encabezado?->Comprador?->InformacionAdicionalComprador)) {
+            return (string) $this->xml?->Encabezado?->Comprador?->InformacionAdicionalComprador;
+        }
+
+        return null;
+    }
+
+    public function getLines(): array
+    {
+        $lines = [];
+
+        if (! empty($this->xml?->DetallesItems?->Item)) {
+            foreach ($this->xml?->DetallesItems?->Item as $item) {
+                $lines[] = [
+                    'NumeroLinea' => (int) $item->NumeroLinea,
+                    'NombreItem' => (string) $item->NombreItem,
+                    'CantidadItem' => (float) $item->CantidadItem,
+                    'PrecioUnitarioItem' => (float) $item->PrecioUnitarioItem,
+                    'DescuentoMonto' => (float) ($item->DescuentoMonto ?? 0),
+                    'MontoItem' => (float) $item->MontoItem,
+                    'MontoImpuesto' => (float) ($item->MontoImpuesto ?? 0),
+                ];
+            }
+        }
+
+        return $lines;
+    }
+
+    public function getSequenceDueDate(): ?string
+    {
+        if (! empty($this->xml?->Encabezado?->IdDoc?->FechaVencimientoSecuencia)) {
+            return (string) $this->xml?->Encabezado?->IdDoc?->FechaVencimientoSecuencia;
+        }
+
+        return null;
+    }
 }
