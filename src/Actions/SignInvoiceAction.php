@@ -13,11 +13,7 @@ class SignInvoiceAction
     /**
      * Create a new class instance.
      */
-    public function __construct(
-        protected SignXmlService              $signXml,
-        protected StorageHelper               $storageHelper,
-        protected GenerateInvoiceQrLinkAction $generateInvoiceQrLinkAction
-    )
+    public function __construct(protected SignXmlService $signXml, protected StorageInvoiceAction $storageInvoiceAction)
     {
         //
     }
@@ -28,15 +24,7 @@ class SignInvoiceAction
 
         $signedXml = $this->signXml->handle($xml, $certPath, $certPassword);
 
-        $invoiceXml = new InvoiceXml($signedXml);
-
-        $xmlPath = $this->storageHelper->putXml($signedXml, $invoiceXml->getXmlName());
-
-        return new InvoiceData(
-            $invoiceXml,
-            $xmlPath,
-            $this->generateInvoiceQrLinkAction->handle($xmlPath, $env),
-        );
+        return $this->storageInvoiceAction->handle($signedXml, $env);
     }
 
     private function signRfce(InvoiceData $ecf, array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
@@ -47,16 +35,7 @@ class SignInvoiceAction
 
         $signedXml = $this->signXml->handle($xml, $certPath, $certPassword);
 
-        $invoiceXml = new InvoiceXml($signedXml);
-
-        $xmlPath = $this->storageHelper->putXml($signedXml, $invoiceXml->getXmlName());
-
-        return new InvoiceData(
-            new InvoiceXml($signedXml),
-            $xmlPath,
-            $this->generateInvoiceQrLinkAction->handle($xmlPath, $env),
-            $ecf,
-        );
+        return $this->storageInvoiceAction->handle($signedXml, $env, $ecf);
     }
 
     public function handle(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
