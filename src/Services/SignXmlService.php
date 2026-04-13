@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Storage;
 use PlatinumPlace\DgiiXmlSigner\SignManager;
 use PlatinumPlace\LaravelDgii\Helpers\StorageHelper;
 
-class SignXml
+class SignXmlService
 {
     /**
      * Create a new class instance.

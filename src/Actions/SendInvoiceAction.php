@@ -2,26 +2,42 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions;
 
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Clients\DgiiClient;
 use PlatinumPlace\LaravelDgii\Helpers\StorageHelper;
-use PlatinumPlace\LaravelDgii\Services\SignXmlService;
+use PlatinumPlace\LaravelDgii\ValueObjects\InvoiceXml;
 
-class SendInvoiceToDgiiAction
+class SendInvoiceAction
 {
     /**
      * Create a new class instance.
      */
     public function __construct(
-        protected AuthenticateWithDgiiAction $authenticateWithDgiiAction,
-        protected DgiiClient                 $client,
-        protected StorageHelper              $storageHelper
+        protected AuthenticateAction $authenticateAction,
+        protected DgiiClient         $client,
+        protected StorageHelper      $storageHelper
     )
     {
         //
     }
 
-    public function handle(?string $env = null, ?string $certPath = null, ?string $certPassword = null): array
+    /**
+     * @throws ConnectionException
+     * @throws RequestException
+     */
+    public function handle(string $filePath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): array
     {
-        $token = $this->authenticateWithDgiiAction->handle($env, $certPath, $certPassword);
+        $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
+
+        $xmlPath = $this->storageHelper->path($filePath);
+
+        $xml = $this->storageHelper->get($xmlPath);
+
+        $invoiceXml = new InvoiceXml($xml);
+
+        return $invoiceXml->isConsumeInvoice()
+            ? $this->client->sendConsumerInvoice($token, $xmlPath, $env)
+            : $this->client->sendInvoice($token, $xmlPath, $env);
     }
 }

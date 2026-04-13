@@ -9,7 +9,6 @@ class DgiiXmlService
     /**
      * Renderiza un e-CF (Factura Electrónica).
      *
-     * @param string $type El tipo de e-CF (ej: 31, 32, 33, 34, 41, 43, 44, 45, 46, 47)
      * @param array $data Los datos para el blade
      * @return string
      */
@@ -19,7 +18,7 @@ class DgiiXmlService
     }
 
     /**
-     * Renderiza un Anulación de e-CF (ANECF).
+     * Renderiza una Anulación de e-CF (ANECF).
      *
      * @param array $data Los datos para el blade
      * @return string
@@ -30,7 +29,7 @@ class DgiiXmlService
     }
 
     /**
-     * Renderiza un Aprobación Comercial de e-CF (ACECF).
+     * Renderiza una Aprobación Comercial de e-CF (ACECF).
      *
      * @param array $data Los datos para el blade
      * @return string

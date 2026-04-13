@@ -16,31 +16,14 @@ class DgiiXmlHelper
         $this->xml = simplexml_load_string($xml);
     }
 
-    public function getSecurityCode(): ?string
-    {
-        if (! empty($this->xml?->Encabezado?->CodigoSeguridadeCF)) {
-            return (string) $this->xml?->Encabezado?->CodigoSeguridadeCF;
-        }
-
-        if (! empty($this->xml?->Signature?->SignatureValue)) {
-            return substr((string) $this->xml?->Signature?->SignatureValue, 0, 6);
-        }
-
-        return null;
-    }
-
     public function getSequenceNumber(): ?string
     {
-        if (! empty($this->xml?->Encabezado?->IdDoc)) {
-            return (string) $this->xml?->Encabezado?->IdDoc?->eNCF;
+        if (!empty($this->xml?->DetalleAprobacionComercial?->eNCF)) {
+            return (string)$this->xml?->DetalleAprobacionComercial?->eNCF;
         }
 
-        if (! empty($this->xml?->DetalleAprobacionComercial?->eNCF)) {
-            return (string) $this->xml?->DetalleAprobacionComercial?->eNCF;
-        }
-
-        if (! empty($this->xml?->DetalleAcusedeRecibo?->eNCF)) {
-            return (string) $this->xml?->DetalleAcusedeRecibo?->eNCF;
+        if (!empty($this->xml?->DetalleAcusedeRecibo?->eNCF)) {
+            return (string)$this->xml?->DetalleAcusedeRecibo?->eNCF;
         }
 
         return null;
@@ -48,8 +31,8 @@ class DgiiXmlHelper
 
     public function getArecfStatus(): ?string
     {
-        if (! empty($this->xml?->DetalleAcusedeRecibo?->Estado)) {
-            return (string) $this->xml?->DetalleAcusedeRecibo?->Estado;
+        if (!empty($this->xml?->DetalleAcusedeRecibo?->Estado)) {
+            return (string)$this->xml?->DetalleAcusedeRecibo?->Estado;
         }
 
         return null;
@@ -57,8 +40,8 @@ class DgiiXmlHelper
 
     public function getArecfCode(): ?string
     {
-        if (! empty($this->xml?->DetalleAcusedeRecibo?->CodigoMotivoNoRecibido)) {
-            return (string) $this->xml?->DetalleAcusedeRecibo?->CodigoMotivoNoRecibido;
+        if (!empty($this->xml?->DetalleAcusedeRecibo?->CodigoMotivoNoRecibido)) {
+            return (string)$this->xml?->DetalleAcusedeRecibo?->CodigoMotivoNoRecibido;
         }
 
         return null;
@@ -66,35 +49,26 @@ class DgiiXmlHelper
 
     public function isAcecf(): bool
     {
-        return ! empty($this->xml?->DetalleAprobacionComercial);
+        return !empty($this->xml?->DetalleAprobacionComercial);
     }
 
     public function isArecf(): bool
     {
-        return ! empty($this->xml?->DetalleAcusedeRecibo);
-    }
-
-    public function getSignatureDate(): ?string
-    {
-        if (! empty($this->xml?->FechaHoraFirma)) {
-            return (string) $this->xml?->FechaHoraFirma;
-        }
-
-        return null;
+        return !empty($this->xml?->DetalleAcusedeRecibo);
     }
 
     public function getXmlName(): ?string
     {
-        if (! empty($this->xml?->Encabezado)) {
-            return $this->getSenderIdentification().$this->getSequenceNumber();
+        if (!empty($this->xml?->Encabezado)) {
+            return $this->getSenderIdentification() . $this->getSequenceNumber();
         }
 
-        if (! empty($this->xml?->DetalleAprobacionComercial)) {
-            return $this->getBuyerIdentification().$this->getSequenceNumber();
+        if (!empty($this->xml?->DetalleAprobacionComercial)) {
+            return $this->getBuyerIdentification() . $this->getSequenceNumber();
         }
 
-        if (! empty($this->xml?->DetalleAcusedeRecibo)) {
-            return $this->getBuyerIdentification().$this->getSequenceNumber();
+        if (!empty($this->xml?->DetalleAcusedeRecibo)) {
+            return $this->getBuyerIdentification() . $this->getSequenceNumber();
         }
 
         return null;
@@ -102,20 +76,20 @@ class DgiiXmlHelper
 
     public function getBuyerIdentification(): ?string
     {
-        if (! empty($this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero)) {
-            return (string) $this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero;
+        if (!empty($this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero)) {
+            return (string)$this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero;
         }
 
-        if (! empty($this->xml?->Encabezado?->Comprador?->RNCComprador)) {
-            return (string) $this->xml?->Encabezado?->Comprador?->RNCComprador;
+        if (!empty($this->xml?->Encabezado?->Comprador?->RNCComprador)) {
+            return (string)$this->xml?->Encabezado?->Comprador?->RNCComprador;
         }
 
-        if (! empty($this->xml?->DetalleAprobacionComercial?->RNCComprador)) {
-            return (string) $this->xml?->DetalleAprobacionComercial?->RNCComprador;
+        if (!empty($this->xml?->DetalleAprobacionComercial?->RNCComprador)) {
+            return (string)$this->xml?->DetalleAprobacionComercial?->RNCComprador;
         }
 
-        if (! empty($this->xml?->DetalleAcusedeRecibo?->RNCComprador)) {
-            return (string) $this->xml?->DetalleAcusedeRecibo?->RNCComprador;
+        if (!empty($this->xml?->DetalleAcusedeRecibo?->RNCComprador)) {
+            return (string)$this->xml?->DetalleAcusedeRecibo?->RNCComprador;
         }
 
         return null;
@@ -123,8 +97,8 @@ class DgiiXmlHelper
 
     public function getBuyerCorporateName(): ?string
     {
-        if (! empty($this->xml?->Encabezado?->Comprador?->RazonSocialComprador)) {
-            return (string) $this->xml?->Encabezado?->Comprador?->RazonSocialComprador;
+        if (!empty($this->xml?->Encabezado?->Comprador?->RazonSocialComprador)) {
+            return (string)$this->xml?->Encabezado?->Comprador?->RazonSocialComprador;
         }
 
         return null;
@@ -132,8 +106,8 @@ class DgiiXmlHelper
 
     public function getBuyerAddress(): ?string
     {
-        if (! empty($this->xml?->Encabezado?->Comprador?->DireccionComprador)) {
-            return (string) $this->xml?->Encabezado?->Comprador?->DireccionComprador;
+        if (!empty($this->xml?->Encabezado?->Comprador?->DireccionComprador)) {
+            return (string)$this->xml?->Encabezado?->Comprador?->DireccionComprador;
         }
 
         return null;
@@ -141,13 +115,13 @@ class DgiiXmlHelper
 
     public function isBuyerForeigner(): bool
     {
-        return ! empty($this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero);
+        return !empty($this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero);
     }
 
     public function getReleaseDate(): ?string
     {
-        if (! empty($this->xml?->Encabezado?->Emisor?->FechaEmision)) {
-            return (string) $this->xml?->Encabezado?->Emisor?->FechaEmision;
+        if (!empty($this->xml?->Encabezado?->Emisor?->FechaEmision)) {
+            return (string)$this->xml?->Encabezado?->Emisor?->FechaEmision;
         }
 
         return null;
@@ -155,8 +129,8 @@ class DgiiXmlHelper
 
     public function getInvoiceTotal(): ?string
     {
-        if (! empty($this->xml?->Encabezado?->Totales?->MontoTotal)) {
-            return (string) $this->xml?->Encabezado?->Totales?->MontoTotal;
+        if (!empty($this->xml?->Encabezado?->Totales?->MontoTotal)) {
+            return (string)$this->xml?->Encabezado?->Totales?->MontoTotal;
         }
 
         return null;
@@ -164,8 +138,8 @@ class DgiiXmlHelper
 
     public function getSenderIdentification(): ?string
     {
-        if (! empty($this->xml?->Encabezado?->Emisor->RNCEmisor)) {
-            return (string) $this->xml?->Encabezado?->Emisor->RNCEmisor;
+        if (!empty($this->xml?->Encabezado?->Emisor->RNCEmisor)) {
+            return (string)$this->xml?->Encabezado?->Emisor->RNCEmisor;
         }
 
         return null;
@@ -173,8 +147,8 @@ class DgiiXmlHelper
 
     public function getSenderCorporateName(): ?string
     {
-        if (! empty($this->xml?->Encabezado?->Emisor->RazonSocialEmisor)) {
-            return (string) $this->xml?->Encabezado?->Emisor->RazonSocialEmisor;
+        if (!empty($this->xml?->Encabezado?->Emisor->RazonSocialEmisor)) {
+            return (string)$this->xml?->Encabezado?->Emisor->RazonSocialEmisor;
         }
 
         return null;
@@ -182,8 +156,8 @@ class DgiiXmlHelper
 
     public function getSenderAddress(): ?string
     {
-        if (! empty($this->xml?->Encabezado?->Emisor->DireccionEmisor)) {
-            return (string) $this->xml?->Encabezado?->Emisor->DireccionEmisor;
+        if (!empty($this->xml?->Encabezado?->Emisor->DireccionEmisor)) {
+            return (string)$this->xml?->Encabezado?->Emisor->DireccionEmisor;
         }
 
         return null;
@@ -191,8 +165,8 @@ class DgiiXmlHelper
 
     public function getInvoiceType(): ?string
     {
-        if (! empty($this->xml?->Encabezado?->IdDoc?->TipoeCF)) {
-            return (string) $this->xml?->Encabezado?->IdDoc?->TipoeCF;
+        if (!empty($this->xml?->Encabezado?->IdDoc?->TipoeCF)) {
+            return (string)$this->xml?->Encabezado?->IdDoc?->TipoeCF;
         }
 
         return null;
@@ -201,15 +175,15 @@ class DgiiXmlHelper
     public function isConsumeInvoice(): bool
     {
         $type = (int)$this->getInvoiceType();
-        $total = (float) $this->getInvoiceTotal();
+        $total = (float)$this->getInvoiceTotal();
 
         return $type === config('dgii.rules.fc_type') && $total < config('dgii.rules.fc_limit');
     }
 
     public function getTotalTaxes(): ?float
     {
-        if (! empty($this->xml?->Encabezado?->Totales?->TotalITBIS)) {
-            return (float) $this->xml?->Encabezado?->Totales?->TotalITBIS;
+        if (!empty($this->xml?->Encabezado?->Totales?->TotalITBIS)) {
+            return (float)$this->xml?->Encabezado?->Totales?->TotalITBIS;
         }
 
         return null;
@@ -217,8 +191,8 @@ class DgiiXmlHelper
 
     public function getTotalAmountTaxed(): ?float
     {
-        if (! empty($this->xml?->Encabezado?->Totales?->MontoGravadoTotal)) {
-            return (float) $this->xml?->Encabezado?->Totales?->MontoGravadoTotal;
+        if (!empty($this->xml?->Encabezado?->Totales?->MontoGravadoTotal)) {
+            return (float)$this->xml?->Encabezado?->Totales?->MontoGravadoTotal;
         }
 
         return null;
@@ -226,8 +200,8 @@ class DgiiXmlHelper
 
     public function getTotalExempt(): ?float
     {
-        if (! empty($this->xml?->Encabezado?->Totales?->MontoExento)) {
-            return (float) $this->xml?->Encabezado?->Totales?->MontoExento;
+        if (!empty($this->xml?->Encabezado?->Totales?->MontoExento)) {
+            return (float)$this->xml?->Encabezado?->Totales?->MontoExento;
         }
 
         return null;
@@ -235,8 +209,8 @@ class DgiiXmlHelper
 
     public function getModifiedSequenceNumber(): ?string
     {
-        if (! empty($this->xml?->Encabezado?->IdDoc?->eNCFModificado)) {
-            return (string) $this->xml?->Encabezado?->IdDoc?->eNCFModificado;
+        if (!empty($this->xml?->Encabezado?->IdDoc?->eNCFModificado)) {
+            return (string)$this->xml?->Encabezado?->IdDoc?->eNCFModificado;
         }
 
         return null;
@@ -244,8 +218,8 @@ class DgiiXmlHelper
 
     public function getModificationCode(): ?string
     {
-        if (! empty($this->xml?->Encabezado?->IdDoc?->CodigoModificacion)) {
-            return (string) $this->xml?->Encabezado?->IdDoc?->CodigoModificacion;
+        if (!empty($this->xml?->Encabezado?->IdDoc?->CodigoModificacion)) {
+            return (string)$this->xml?->Encabezado?->IdDoc?->CodigoModificacion;
         }
 
         return null;
@@ -253,8 +227,8 @@ class DgiiXmlHelper
 
     public function getObservations(): ?string
     {
-        if (! empty($this->xml?->Encabezado?->Comprador?->InformacionAdicionalComprador)) {
-            return (string) $this->xml?->Encabezado?->Comprador?->InformacionAdicionalComprador;
+        if (!empty($this->xml?->Encabezado?->Comprador?->InformacionAdicionalComprador)) {
+            return (string)$this->xml?->Encabezado?->Comprador?->InformacionAdicionalComprador;
         }
 
         return null;
@@ -264,16 +238,16 @@ class DgiiXmlHelper
     {
         $lines = [];
 
-        if (! empty($this->xml?->DetallesItems?->Item)) {
+        if (!empty($this->xml?->DetallesItems?->Item)) {
             foreach ($this->xml?->DetallesItems?->Item as $item) {
                 $lines[] = [
-                    'NumeroLinea' => (int) $item->NumeroLinea,
-                    'NombreItem' => (string) $item->NombreItem,
-                    'CantidadItem' => (float) $item->CantidadItem,
-                    'PrecioUnitarioItem' => (float) $item->PrecioUnitarioItem,
-                    'DescuentoMonto' => (float) ($item->DescuentoMonto ?? 0),
-                    'MontoItem' => (float) $item->MontoItem,
-                    'MontoImpuesto' => (float) ($item->MontoImpuesto ?? 0),
+                    'NumeroLinea' => (int)$item->NumeroLinea,
+                    'NombreItem' => (string)$item->NombreItem,
+                    'CantidadItem' => (float)$item->CantidadItem,
+                    'PrecioUnitarioItem' => (float)$item->PrecioUnitarioItem,
+                    'DescuentoMonto' => (float)($item->DescuentoMonto ?? 0),
+                    'MontoItem' => (float)$item->MontoItem,
+                    'MontoImpuesto' => (float)($item->MontoImpuesto ?? 0),
                 ];
             }
         }
@@ -283,8 +257,8 @@ class DgiiXmlHelper
 
     public function getSequenceDueDate(): ?string
     {
-        if (! empty($this->xml?->Encabezado?->IdDoc?->FechaVencimientoSecuencia)) {
-            return (string) $this->xml?->Encabezado?->IdDoc?->FechaVencimientoSecuencia;
+        if (!empty($this->xml?->Encabezado?->IdDoc?->FechaVencimientoSecuencia)) {
+            return (string)$this->xml?->Encabezado?->IdDoc?->FechaVencimientoSecuencia;
         }
 
         return null;
@@ -292,8 +266,8 @@ class DgiiXmlHelper
 
     public function getCancellationTotal(): ?int
     {
-        if (! empty($this->xml?->Encabezado?->CantidadeNCFAnulados)) {
-            return (int) $this->xml?->Encabezado?->CantidadeNCFAnulados;
+        if (!empty($this->xml?->Encabezado?->CantidadeNCFAnulados)) {
+            return (int)$this->xml?->Encabezado?->CantidadeNCFAnulados;
         }
 
         return null;
@@ -301,8 +275,8 @@ class DgiiXmlHelper
 
     public function getCancellationDate(): ?string
     {
-        if (! empty($this->xml?->Encabezado?->FechaHoraAnulacioneNCF)) {
-            return (string) $this->xml?->Encabezado?->FechaHoraAnulacioneNCF;
+        if (!empty($this->xml?->Encabezado?->FechaHoraAnulacioneNCF)) {
+            return (string)$this->xml?->Encabezado?->FechaHoraAnulacioneNCF;
         }
 
         return null;
@@ -312,27 +286,40 @@ class DgiiXmlHelper
     {
         $details = [];
 
-        if (! empty($this->xml?->DetalleAnulacion?->Anulacion)) {
+        if (!empty($this->xml?->DetalleAnulacion?->Anulacion)) {
             foreach ($this->xml?->DetalleAnulacion?->Anulacion as $anulacion) {
                 $sequences = [];
-                if (! empty($anulacion->TablaRangoSecuenciasAnuladaseNCF?->Secuencias)) {
+                if (!empty($anulacion->TablaRangoSecuenciasAnuladaseNCF?->Secuencias)) {
                     foreach ($anulacion->TablaRangoSecuenciasAnuladaseNCF?->Secuencias as $seq) {
                         $sequences[] = [
-                            'SecuenciaeNCFDesde' => (string) $seq->SecuenciaeNCFDesde,
-                            'SecuenciaeNCFHasta' => (string) $seq->SecuenciaeNCFHasta,
+                            'SecuenciaeNCFDesde' => (string)$seq->SecuenciaeNCFDesde,
+                            'SecuenciaeNCFHasta' => (string)$seq->SecuenciaeNCFHasta,
                         ];
                     }
                 }
 
                 $details[] = [
-                    'NoLinea' => (int) $anulacion->NoLinea,
-                    'TipoeCF' => (string) $anulacion->TipoeCF,
-                    'CantidadeNCFAnulados' => (int) $anulacion->CantidadeNCFAnulados,
+                    'NoLinea' => (int)$anulacion->NoLinea,
+                    'TipoeCF' => (string)$anulacion->TipoeCF,
+                    'CantidadeNCFAnulados' => (int)$anulacion->CantidadeNCFAnulados,
                     'Secuencias' => $sequences,
                 ];
             }
         }
 
         return $details;
+    }
+
+    public function withoutSignature(): ?string
+    {
+        $xml = $this->xml;
+
+        $xml->registerXPathNamespace('ds', 'http://www.w3.org/2000/09/xmldsig#');
+
+        foreach ($xml->xpath('//ds:Signature') as $signature) {
+            unset($signature[0]);
+        }
+
+        return $xml->asXML();
     }
 }

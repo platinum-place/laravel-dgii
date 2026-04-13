@@ -9,7 +9,7 @@ use PlatinumPlace\LaravelDgii\Clients\DgiiClient;
 use PlatinumPlace\LaravelDgii\Helpers\StorageHelper;
 use PlatinumPlace\LaravelDgii\Services\SignXmlService;
 
-class AuthenticateWithDgiiAction
+class AuthenticateAction
 {
     /**
      * Create a new class instance.
@@ -42,7 +42,7 @@ class AuthenticateWithDgiiAction
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function handle(?string $env = null, ?string $certPath = null, ?string $certPassword = null):string
+    public function handle(?string $env = null, ?string $certPath = null, ?string $certPassword = null): string
     {
         $cacheKey = config('dgii.cache.prefix') . md5($certPath . $env);
 

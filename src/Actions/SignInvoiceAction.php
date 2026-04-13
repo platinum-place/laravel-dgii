@@ -2,42 +2,67 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions;
 
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Client\RequestException;
-use PlatinumPlace\LaravelDgii\Clients\DgiiClient;
-use PlatinumPlace\LaravelDgii\DgiiXmlHelper;
+use Illuminate\Support\Facades\View;
+use PlatinumPlace\LaravelDgii\Data\InvoiceData;
 use PlatinumPlace\LaravelDgii\Helpers\StorageHelper;
 use PlatinumPlace\LaravelDgii\Services\SignXmlService;
-use PlatinumPlace\LaravelDgii\ValueObjects\InvoiceValueObject;
+use PlatinumPlace\LaravelDgii\ValueObjects\InvoiceXml;
 
-class SendInvoiceAction
+class SignInvoiceAction
 {
     /**
      * Create a new class instance.
      */
     public function __construct(
-        protected AuthenticateAction $authenticateAction,
-        protected DgiiClient         $client,
-        protected StorageHelper      $storageHelper
+        protected SignXmlService              $signXml,
+        protected StorageHelper               $storageHelper,
+        protected GenerateInvoiceQrLinkAction $generateInvoiceQrLinkAction
     )
     {
         //
     }
 
-    /**
-     * @throws ConnectionException
-     * @throws RequestException
-     */
-    public function handle(string $filePath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): array
+    private function signEcf(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
-        $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
+        $xml = View::make('dgii::ecf.ecf_' . $data['IdDoc']['TipoeCF'], $data)->render();
 
-        $xmlPath = $this->storageHelper->path($filePath);
+        $signedXml = $this->signXml->handle($xml, $certPath, $certPassword);
 
-        $invoiceObject = new InvoiceValueObject($this->storageHelper->get($xmlPath));
+        $xmlPath = $this->storageHelper->putXml($signedXml);
 
-        return $invoiceObject->isConsumeInvoice()
-            ? $this->client->sendConsumerInvoice($token, $xmlPath, $env)
-            : $this->client->sendInvoice($token, $xmlPath, $env);
+        return new InvoiceData(
+            new InvoiceXml($signedXml),
+            $xmlPath,
+            $this->generateInvoiceQrLinkAction->handle($xmlPath, $env),
+        );
+    }
+
+    private function signRfce(InvoiceData $ecf, array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
+    {
+        $data['CodigoSeguridadeCF'] = $ecf->xml->getSecurityCode();
+
+        $xml = View::make("dgii::rfce.xml", $data)->render();
+
+        $signedXml = $this->signXml->handle($xml, $certPath, $certPassword);
+
+        $xmlPath = $this->storageHelper->putXml($signedXml);
+
+        return new InvoiceData(
+            new InvoiceXml($signedXml),
+            $xmlPath,
+            $this->generateInvoiceQrLinkAction->handle($xmlPath, $env),
+            $ecf,
+        );
+    }
+
+    public function handle(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
+    {
+        $ecf = $this->signEcf($data, $env, $certPath, $certPassword);
+
+        if ($ecf->xml->isConsumeInvoice()) {
+            return $this->signRfce($ecf, $data, $env, $certPath, $certPassword);
+        }
+
+        return $ecf;
     }
 }

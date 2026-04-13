@@ -6,8 +6,9 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use PlatinumPlace\LaravelDgii\DgiiXmlHelper;
+use PlatinumPlace\LaravelDgii\ValueObjects\InvoiceXml;
 
-class DgiiService
+class DgiiClient
 {
     /**
      * Create a new class instance.
@@ -123,7 +124,7 @@ class DgiiService
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function getInvoiceStatusByTrackId(string $token, string $trackId, ?string $env = null): array
+    public function fetchInvoiceStatusByTrackId(string $token, string $trackId, ?string $env = null): array
     {
         $env ??= config('dgii.environment');
 
@@ -143,9 +144,8 @@ class DgiiService
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function getTrackIdList(string $token, string $xmlContent, ?string $env = null): array
+    public function fetchTrackIdList(string $token, InvoiceXml $invoiceXml, ?string $env = null): array
     {
-        $xmlObject = new DgiiXmlHelper($xmlContent);
         $env ??= config('dgii.environment');
 
         $url = sprintf(
@@ -156,28 +156,27 @@ class DgiiService
 
         return Http::withToken($token)
             ->get($url, [
-                'RncEmisor' => $xmlObject->getSenderIdentification(),
-                'Encf' => $xmlObject->getSequenceNumber(),
+                'RncEmisor' => $invoiceXml->getSenderIdentification(),
+                'Encf' => $invoiceXml->getSequenceNumber(),
             ])
             ->throw()
             ->json();
     }
 
-    public function getInvoiceQRLink(string $xmlContent, ?string $env = null): string
+    public function fetchInvoiceQRLink(InvoiceXml $invoiceXml, ?string $env = null): string
     {
-        $xmlObject = new DgiiXmlHelper($xmlContent);
         $env ??= config('dgii.environment');
 
         $parameters = [
-            'RncEmisor' => $xmlObject->getSenderIdentification(),
-            'ENCF' => $xmlObject->getSequenceNumber(),
-            'MontoTotal' => $xmlObject->getInvoiceTotal(),
-            'CodigoSeguridad' => $xmlObject->getSecurityCode(),
-            'FechaEmision' => $xmlObject->getReleaseDate(),
-            'FechaFirma' => $xmlObject->getSignatureDate(),
+            'RncEmisor' => $invoiceXml->getSenderIdentification(),
+            'ENCF' => $invoiceXml->getSequenceNumber(),
+            'MontoTotal' => $invoiceXml->getInvoiceTotal(),
+            'CodigoSeguridad' => $invoiceXml->getSecurityCode(),
+            'FechaEmision' => $invoiceXml->getReleaseDate(),
+            'FechaFirma' => $invoiceXml->getSignatureDate(),
         ];
 
-        if ($buyerIdentification = $xmlObject->getBuyerIdentification()) {
+        if ($buyerIdentification = $invoiceXml->getBuyerIdentification()) {
             $parameters['RncComprador'] = $buyerIdentification;
         }
 
@@ -211,16 +210,15 @@ class DgiiService
             ->json();
     }
 
-    public function getConsumerInvoiceQRLink(string $xmlContent, ?string $env = null): string
+    public function fetchConsumerInvoiceQRLink(InvoiceXml $invoiceXml, ?string $env = null): string
     {
-        $xmlObject = new DgiiXmlHelper($xmlContent);
         $env ??= config('dgii.environment');
 
         $parameters = [
-            'RncEmisor' => $xmlObject->getSenderIdentification(),
-            'ENCF' => $xmlObject->getSequenceNumber(),
-            'MontoTotal' => $xmlObject->getInvoiceTotal(),
-            'CodigoSeguridad' => $xmlObject->getSecurityCode(),
+            'RncEmisor' => $invoiceXml->getSenderIdentification(),
+            'ENCF' => $invoiceXml->getSequenceNumber(),
+            'MontoTotal' => $invoiceXml->getInvoiceTotal(),
+            'CodigoSeguridad' => $invoiceXml->getSecurityCode(),
         ];
 
         return sprintf(
@@ -236,9 +234,8 @@ class DgiiService
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function getConsumerInvoiceStatus(string $token, string $xmlContent, ?string $env = null): array
+    public function fetchConsumerInvoiceStatus(string $token, InvoiceXml $invoiceXml, ?string $env = null): array
     {
-        $xmlObject = new DgiiXmlHelper($xmlContent);
         $env ??= config('dgii.environment');
 
         $url = sprintf(
@@ -249,9 +246,9 @@ class DgiiService
 
         return Http::withToken($token)
             ->get($url, [
-                'RNC_Emisor' => $xmlObject->getSenderIdentification(),
-                'ENCF' => $xmlObject->getSequenceNumber(),
-                'Cod_Seguridad_eCF' => $xmlObject->getSecurityCode(),
+                'RNC_Emisor' => $invoiceXml->getSenderIdentification(),
+                'ENCF' => $invoiceXml->getSequenceNumber(),
+                'Cod_Seguridad_eCF' => $invoiceXml->getSecurityCode(),
             ])
             ->throw()
             ->json();
@@ -261,21 +258,20 @@ class DgiiService
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function getInvoiceStatus(string $token, string $xmlContent, ?string $env = null): array
+    public function fetchInvoiceStatus(string $token, InvoiceXml $invoiceXml, ?string $env = null): array
     {
-        $xmlObject = new DgiiXmlHelper($xmlContent);
         $env ??= config('dgii.environment');
 
         $parameters = [
-            'RncEmisor' => $xmlObject->getSenderIdentification(),
-            'NcfElectronico' => $xmlObject->getSequenceNumber(),
+            'RncEmisor' => $invoiceXml->getSenderIdentification(),
+            'NcfElectronico' => $invoiceXml->getSequenceNumber(),
         ];
 
-        if ($buyerIdentification = $xmlObject->getBuyerIdentification()) {
+        if ($buyerIdentification = $invoiceXml->getBuyerIdentification()) {
             $parameters['RncComprador'] = $buyerIdentification;
         }
 
-        if ($securityCode = $xmlObject->getSecurityCode()) {
+        if ($securityCode = $invoiceXml->getSecurityCode()) {
             $parameters['CodigoSeguridad'] = $securityCode;
         }
 
@@ -357,43 +353,5 @@ class DgiiService
             ])
             ->throw()
             ->json();
-    }
-
-    /**
-     * @throws RequestException
-     * @throws ConnectionException
-     */
-    public function submitInvoice(string $token, string $filePath, ?string $env = null): array
-    {
-        $xmlContent = file_get_contents($filePath);
-        $xmlObject = new DgiiXmlHelper($xmlContent);
-
-        return $xmlObject->isConsumeInvoice()
-            ? $this->sendConsumerInvoice($token, $filePath, $env)
-            : $this->sendInvoice($token, $filePath, $env);
-    }
-
-    /**
-     * @throws RequestException
-     * @throws ConnectionException
-     */
-    public function fetchInvoice(string $token, string $filePath, ?string $env = null): array
-    {
-        $xmlContent = file_get_contents($filePath);
-        $xmlObject = new DgiiXmlHelper($xmlContent);
-
-        return $xmlObject->isConsumeInvoice()
-            ? $this->getConsumerInvoiceStatus($token, $xmlContent, $env)
-            : $this->getInvoiceStatus($token, $xmlContent, $env);
-    }
-
-    public function getInvoiceLink(string $filePath, ?string $env = null): string
-    {
-        $xmlContent = file_get_contents($filePath);
-        $xmlObject = new DgiiXmlHelper($xmlContent);
-
-        return $xmlObject->isConsumeInvoice()
-            ? $this->getConsumerInvoiceQRLink($xmlContent, $env)
-            : $this->getInvoiceQRLink($xmlContent, $env);
     }
 }
