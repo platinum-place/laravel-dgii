@@ -41,7 +41,7 @@ class DgiiClient
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function fetchToken(string $filePath, ?string $env = null): array
+    public function fetchToken(string $xmlPath, ?string $env = null): array
     {
         $env ??= config('dgii.environment');
 
@@ -51,7 +51,7 @@ class DgiiClient
             $env
         );
 
-        return Http::attach('xml', fopen($filePath, 'r'), basename($filePath))
+        return Http::attach('xml', fopen($xmlPath, 'r'), basename($xmlPath))
             ->post($url)
             ->throw()
             ->json();
@@ -61,7 +61,7 @@ class DgiiClient
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function sendInvoice(string $token, string $filePath, ?string $env = null): array
+    public function sendInvoice(string $token, string $xmlPath, ?string $env = null): array
     {
         $env ??= config('dgii.environment');
 
@@ -72,7 +72,7 @@ class DgiiClient
         );
 
         return Http::withToken($token)
-            ->attach('xml', fopen($filePath, 'r'), basename($filePath))
+            ->attach('xml', fopen($xmlPath, 'r'), basename($xmlPath))
             ->post($url)
             ->throw()
             ->json();
@@ -82,7 +82,7 @@ class DgiiClient
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function sendCommercialApproval(string $token, string $filePath, ?string $env = null): array
+    public function sendCommercialApproval(string $token, string $xmlPath, ?string $env = null): array
     {
         $env ??= config('dgii.environment');
 
@@ -93,7 +93,7 @@ class DgiiClient
         );
 
         return Http::withToken($token)
-            ->attach('xml', fopen($filePath, 'r'), basename($filePath))
+            ->attach('xml', fopen($xmlPath, 'r'), basename($xmlPath))
             ->post($url)
             ->throw()
             ->json();
@@ -103,7 +103,7 @@ class DgiiClient
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function sendCancellationRange(string $token, string $filePath, ?string $env = null): array
+    public function sendCancellationRange(string $token, string $xmlPath, ?string $env = null): array
     {
         $env ??= config('dgii.environment');
 
@@ -114,7 +114,7 @@ class DgiiClient
         );
 
         return Http::withToken($token)
-            ->attach('xml', fopen($filePath, 'r'), basename($filePath))
+            ->attach('xml', fopen($xmlPath, 'r'), basename($xmlPath))
             ->post($url)
             ->throw()
             ->json();
@@ -193,7 +193,7 @@ class DgiiClient
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function sendConsumerInvoice(string $token, string $filePath, ?string $env = null): array
+    public function sendConsumerInvoice(string $token, string $xmlPath, ?string $env = null): array
     {
         $env ??= config('dgii.environment');
 
@@ -204,7 +204,7 @@ class DgiiClient
         );
 
         return Http::withToken($token)
-            ->attach('xml', fopen($filePath, 'r'), basename($filePath))
+            ->attach('xml', fopen($xmlPath, 'r'), basename($xmlPath))
             ->post($url)
             ->throw()
             ->json();

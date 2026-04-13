@@ -16,10 +16,8 @@ class GenerateInvoiceQrLinkAction
         //
     }
 
-    public function handle(string $filePath, ?string $env = null): string
+    public function handle(string $xmlPath, ?string $env = null): string
     {
-        $xmlPath = $this->storageHelper->path($filePath);
-
         $xml = $this->storageHelper->get($xmlPath);
 
         $invoiceXml = new InvoiceXml($xml);

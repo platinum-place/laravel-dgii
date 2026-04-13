@@ -26,18 +26,18 @@ class SendInvoiceAction
      * @throws ConnectionException
      * @throws RequestException
      */
-    public function handle(string $filePath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): array
+    public function handle(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): array
     {
         $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
 
-        $xmlPath = $this->storageHelper->path($filePath);
-
         $xml = $this->storageHelper->get($xmlPath);
+
+        $filePath = $this->storageHelper->path($xmlPath);
 
         $invoiceXml = new InvoiceXml($xml);
 
         return $invoiceXml->isConsumeInvoice()
-            ? $this->client->sendConsumerInvoice($token, $xmlPath, $env)
-            : $this->client->sendInvoice($token, $xmlPath, $env);
+            ? $this->client->sendConsumerInvoice($token, $filePath, $env)
+            : $this->client->sendInvoice($token, $filePath, $env);
     }
 }

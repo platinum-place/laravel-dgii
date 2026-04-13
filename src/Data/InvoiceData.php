@@ -11,7 +11,7 @@ class InvoiceData
      */
     public function __construct(
         public InvoiceXml   $xml,
-        public string       $filePath,
+        public string       $xmlPath,
         public string       $qrLink,
         public ?InvoiceData $integralInvoice = null,
     )

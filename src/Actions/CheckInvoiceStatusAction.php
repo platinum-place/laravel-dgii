@@ -26,11 +26,9 @@ class CheckInvoiceStatusAction
      * @throws ConnectionException
      * @throws RequestException
      */
-    public function handle(string $filePath, ?string $trackId = null, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): array
+    public function handle(string $xmlPath, ?string $trackId = null, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): array
     {
         $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
-
-        $xmlPath = $this->storageHelper->path($filePath);
 
         $xml = $this->storageHelper->get($xmlPath);
 
