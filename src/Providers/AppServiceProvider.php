@@ -1,9 +1,8 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii;
+namespace PlatinumPlace\LaravelDgii\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use PlatinumPlace\LaravelDgii\Clients\DgiiClient;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,12 +11,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(
-            __DIR__.'/../config/dgii.php', 'dgii'
-        );
-
-        $this->app->singleton(DgiiClient::class);
-        $this->app->singleton(DgiiXmlService::class);
+        $this->mergeConfigFrom(__DIR__.'/../config/dgii.php', 'dgii');
     }
 
     /**
