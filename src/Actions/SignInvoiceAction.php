@@ -28,10 +28,12 @@ class SignInvoiceAction
 
         $signedXml = $this->signXml->handle($xml, $certPath, $certPassword);
 
-        $xmlPath = $this->storageHelper->putXml($signedXml);
+        $invoiceXml = new InvoiceXml($signedXml);
+
+        $xmlPath = $this->storageHelper->putXml($signedXml, $invoiceXml->getXmlName());
 
         return new InvoiceData(
-            new InvoiceXml($signedXml),
+            $invoiceXml,
             $xmlPath,
             $this->generateInvoiceQrLinkAction->handle($xmlPath, $env),
         );
@@ -45,7 +47,9 @@ class SignInvoiceAction
 
         $signedXml = $this->signXml->handle($xml, $certPath, $certPassword);
 
-        $xmlPath = $this->storageHelper->putXml($signedXml);
+        $invoiceXml = new InvoiceXml($signedXml);
+
+        $xmlPath = $this->storageHelper->putXml($signedXml, $invoiceXml->getXmlName());
 
         return new InvoiceData(
             new InvoiceXml($signedXml),

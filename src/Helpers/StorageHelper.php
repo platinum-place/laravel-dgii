@@ -17,19 +17,19 @@ class StorageHelper
         $this->storage = Storage::disk(config('dgii.storage_disk'));
     }
 
-    public function putXml(string $xml): string
+    public function putXml(string $xml, ?string $xmlName = null): string
     {
         $xmlPath = sprintf(
             config('dgii.storage_path') . '/%s/%s/%s/%s.xml',
             now()->format('Y'),
             now()->format('m'),
             now()->format('d'),
-            \Str::uuid(),
+            $xmlName ?? \Str::uuid(),
         );
 
         $this->storage->put($xmlPath, $xml);
 
-        return $this->path($xmlPath);
+        return $xmlPath;
     }
 
     public function get(string $xmlPath): string

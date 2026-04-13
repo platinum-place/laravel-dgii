@@ -110,4 +110,13 @@ class InvoiceXml
 
         return null;
     }
+
+    public function getXmlName(): ?string
+    {
+        if (!empty($this->xml?->Encabezado)) {
+            return $this->getSenderIdentification() . $this->getSequenceNumber();
+        }
+
+        return null;
+    }
 }
