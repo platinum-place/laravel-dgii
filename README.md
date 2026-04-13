@@ -86,12 +86,12 @@ DGII_DOMAIN_STATUS=https://statusecf.dgii.gov.do
 ### Inyección de dependencias
 
 ```php
-use PlatinumPlace\LaravelDgii\DgiiService;
+use PlatinumPlace\LaravelDgii\Clients\DgiiClient;
 
 class InvoiceController extends Controller
 {
     public function __construct(
-        protected DgiiService $dgii
+        protected DgiiClient $dgii
     ) {}
 
     public function send()
