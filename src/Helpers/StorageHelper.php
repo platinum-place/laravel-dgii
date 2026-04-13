@@ -20,7 +20,7 @@ class StorageHelper
     public function putXml(string $xml, ?string $xmlName = null): string
     {
         $xmlPath = sprintf(
-            config('dgii.storage_path') . '/%s/%s/%s/%s.xml',
+            config('dgii.storage_path') . '/%s/%s/%s/%s/%s.xml',
             now()->format('Y'),
             now()->format('m'),
             now()->format('d'),
