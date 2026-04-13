@@ -4,7 +4,7 @@ namespace PlatinumPlace\LaravelDgii\ValueObjects;
 
 use SimpleXMLElement;
 
-class InvoiceValueObject
+class InvoiceXml
 {
     protected SimpleXMLElement $xml;
 
