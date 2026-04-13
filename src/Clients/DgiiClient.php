@@ -1,10 +1,11 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii;
+namespace PlatinumPlace\LaravelDgii\Clients;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
+use PlatinumPlace\LaravelDgii\DgiiXmlHelper;
 
 class DgiiService
 {

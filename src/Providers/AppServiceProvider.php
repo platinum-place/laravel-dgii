@@ -3,8 +3,9 @@
 namespace PlatinumPlace\LaravelDgii;
 
 use Illuminate\Support\ServiceProvider;
+use PlatinumPlace\LaravelDgii\Clients\DgiiClient;
 
-class DgiiServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -15,7 +16,7 @@ class DgiiServiceProvider extends ServiceProvider
             __DIR__.'/../config/dgii.php', 'dgii'
         );
 
-        $this->app->singleton(DgiiService::class);
+        $this->app->singleton(DgiiClient::class);
         $this->app->singleton(DgiiXmlService::class);
     }
 
@@ -25,15 +26,5 @@ class DgiiServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'dgii');
-
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/../config/dgii.php' => config_path('dgii.php'),
-            ], 'dgii-config');
-
-            $this->publishes([
-                __DIR__.'/../resources/views' => resource_path('views/vendor/dgii'),
-            ], 'dgii-views');
-        }
     }
 }
