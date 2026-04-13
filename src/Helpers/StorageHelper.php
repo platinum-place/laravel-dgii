@@ -24,6 +24,7 @@ class StorageHelper
             now()->format('Y'),
             now()->format('m'),
             now()->format('d'),
+            \Str::uuid(),
             $xmlName ?? \Str::uuid(),
         );
 
