@@ -170,7 +170,7 @@ class DgiiClient
         $parameters = [
             'RncEmisor' => $invoiceXml->getSenderIdentification(),
             'ENCF' => $invoiceXml->getSequenceNumber(),
-            'MontoTotal' => $invoiceXml->getInvoiceTotal(),
+            'MontoTotal' => $invoiceXml->getTotalAmount(),
             'CodigoSeguridad' => $invoiceXml->getSecurityCode(),
             'FechaEmision' => $invoiceXml->getReleaseDate(),
             'FechaFirma' => $invoiceXml->getSignatureDate(),
@@ -217,7 +217,7 @@ class DgiiClient
         $parameters = [
             'RncEmisor' => $invoiceXml->getSenderIdentification(),
             'ENCF' => $invoiceXml->getSequenceNumber(),
-            'MontoTotal' => $invoiceXml->getInvoiceTotal(),
+            'MontoTotal' => $invoiceXml->getTotalAmount(),
             'CodigoSeguridad' => $invoiceXml->getSecurityCode(),
         ];
 
