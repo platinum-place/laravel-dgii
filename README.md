@@ -2,41 +2,14 @@
 
 Paquete de Laravel para interactuar con los servicios web de la **Dirección General de Impuestos Internos (DGII)** de República Dominicana.
 
-Proporciona una integración lista para usar con las APIs de **Comprobantes Fiscales Electrónicos (e-CF)**, incluyendo autenticación, envío de facturas, consultas de estado, aprobaciones comerciales y más.
-
-## ¿Qué hace este paquete?
-
-Este paquete encapsula la comunicación con los endpoints del API de la DGII en una clase de servicio (`DgiiService`) que puedes inyectar en cualquier parte de tu aplicación Laravel.
-
-### Funcionalidades disponibles
-
-| Método | Descripción |
-|--------|-------------|
-| `fetchAuthXml()` | Obtiene la semilla XML para autenticación |
-| `fetchToken()` | Valida la semilla firmada y obtiene el token de acceso |
-| `sendInvoice()` | Envía una factura electrónica (e-CF) |
-| `sendConsumerInvoice()` | Envía una factura de consumo (RFC) |
-| `sendCommercialApproval()` | Envía una aprobación comercial |
-| `sendCancellationRange()` | Envía una anulación de rango de secuencias |
-| `getInvoiceStatus()` | Consulta el estado de una factura |
-| `getInvoiceStatusByTrackId()` | Consulta el estado por Track ID |
-| `getConsumerInvoiceStatus()` | Consulta el estado de una factura de consumo |
-| `getTrackIdListBySequenceNumber()` | Obtiene los Track IDs por número de secuencia |
-| `getInvoiceQRLink()` | Genera el enlace QR para el timbre fiscal |
-| `getConsumerInvoiceQRLink()` | Genera el enlace QR para facturas de consumo |
-| `fetchServiceStatus()` | Consulta el estado de los servicios de la DGII |
-| `fetchMaintenanceWindows()` | Consulta las ventanas de mantenimiento programadas |
-| `fetchEnvironmentStatus()` | Verifica el estado de un ambiente específico |
-
-### Clase auxiliar
-
-El paquete incluye `DgiiXmlHelper`, una clase utilitaria para extraer datos de los documentos XML de la DGII (eNCF, RNC emisor/comprador, totales, código de seguridad, fechas, etc.).
+Proporciona una integración lista para usar con las APIs de **Comprobantes Fiscales Electrónicos (e-CF)**, incluyendo firma digital, autenticación con caché automático, envío de facturas, generación de QR, PDF fiscal y más. El paquete gestiona internamente todo el ciclo de vida del documento, desde la firma hasta el almacenamiento.
 
 ## Requisitos
 
 - PHP 8.2+
 - Laravel 11 o 12
-- Extensión `simplexml`
+- Extensiones: `ext-simplexml`, `ext-dom`, `ext-gd`
+- Certificado digital (.p12 / .pfx) emitido por la DGII
 
 ## Instalación
 
@@ -54,91 +27,281 @@ php artisan vendor:publish --tag=dgii-config
 
 Esto creará el archivo `config/dgii.php` en tu proyecto.
 
+---
+
 ## Configuración
 
 Agrega las siguientes variables a tu archivo `.env`:
 
 ```env
+# Ambiente de ejecución
 DGII_ENVIRONMENT=testecf
+
+# Ruta al certificado digital (.p12 / .pfx) para firma de XML
+DGII_CERT_PATH=/ruta/al/certificado.p12
+DGII_KEY_PASSWORD=tu-contraseña
+
+# API Key para los servicios de estatus (statusecf.dgii.gov.do)
 DGII_API_KEY=tu-api-key
+
+# Disco y directorio para almacenar los XML firmados
+DGII_STORAGE_DISK=local
+DGII_STORAGE_PATH=dgii/xmls
 ```
 
 ### Ambientes disponibles
 
 | Valor | Ambiente |
 |-------|----------|
-| `testecf` | Pruebas |
+| `testecf` | Pruebas (Sandbox) |
 | `certecf` | Certificación |
 | `ecf` | Producción |
 
-### Dominios (opcional)
-
-Los dominios de los servicios de la DGII tienen valores por defecto. Solo necesitas configurarlos si la DGII cambia las URLs:
+### Opciones avanzadas
 
 ```env
+# Dominios de los servicios (solo si la DGII cambia las URLs)
 DGII_DOMAIN_ECF=https://ecf.dgii.gov.do
 DGII_DOMAIN_FC=https://fc.dgii.gov.do
 DGII_DOMAIN_STATUS=https://statusecf.dgii.gov.do
+
+# Reglas de negocio para facturas de consumo
+DGII_FC_TYPE=32        # Tipo de e-CF para Factura de Consumo (B32)
+DGII_FC_LIMIT=250000   # Monto máximo (RD$) para factura de consumo simplificado
+
+# Caché del token de autenticación
+DGII_CACHE_PREFIX=dgii_token_
+DGII_CACHE_BUFFER=600  # Segundos de margen antes de que expire el token
 ```
+
+---
+
+## Arquitectura
+
+El paquete está organizado en tres capas principales:
+
+| Capa | Clases | Responsabilidad |
+|------|--------|-----------------|
+| **Actions** | `SignInvoiceAction`, `SendInvoiceAction`, etc. | Orquestan el flujo completo de un proceso |
+| **Clients** | `DgiiClient` | Realiza las peticiones HTTP a la API de la DGII |
+| **Value Objects** | `InvoiceXml`, `CommercialApprovalXml`, `CancellationRangeXml` | Parsean y exponen los datos de los documentos XML |
+
+### Autenticación automática con caché
+
+El paquete gestiona el token de autenticación de forma completamente automática. `AuthenticateAction` obtiene la semilla XML, la firma digitalmente y solicita el token a la DGII. El token se almacena en caché (usando el driver configurado en tu app) y se reutiliza en peticiones posteriores hasta que esté próximo a vencer:
+
+```php
+// Internamente, todas las Actions que requieren token llaman a AuthenticateAction::handle()
+// Tú no necesitas gestionar tokens manualmente.
+```
+
+### Almacenamiento de XML
+
+Los XML firmados se guardan automáticamente en el disco y la ruta configurados (`DGII_STORAGE_DISK` / `DGII_STORAGE_PATH`). La estructura de directorios es:
+
+```
+{storage_path}/{año}/{mes}/{día}/{uuid}/{nombre}.xml
+```
+
+El `StorageHelper` utiliza el sistema de discos de Laravel (`Storage::disk()`), por lo que puedes configurar cualquier driver: `local`, `s3`, `spaces`, etc.
+
+---
 
 ## Uso
 
-### Inyección de dependencias
+### Flujo completo: Firmar y enviar una factura
+
+La forma recomendada es inyectar las Actions directamente desde el contenedor de Laravel. Cada Action maneja internamente la autenticación y el almacenamiento.
 
 ```php
-use PlatinumPlace\LaravelDgii\Clients\DgiiClient;
+use PlatinumPlace\LaravelDgii\Actions\SignInvoiceAction;
+use PlatinumPlace\LaravelDgii\Actions\SendInvoiceAction;
+use PlatinumPlace\LaravelDgii\Actions\CheckInvoiceStatusAction;
+use PlatinumPlace\LaravelDgii\Data\InvoiceData;
 
 class InvoiceController extends Controller
 {
     public function __construct(
-        protected DgiiClient $dgii
+        protected SignInvoiceAction        $signInvoice,
+        protected SendInvoiceAction        $sendInvoice,
+        protected CheckInvoiceStatusAction $checkStatus,
     ) {}
 
-    public function send()
+    public function send(array $invoiceData)
     {
-        // 1. Obtener semilla de autenticación
-        $authXml = $this->dgii->fetchAuthXml();
+        // 1. Firmar el XML (genera el e-CF y, si aplica, el RFCE para consumo)
+        /** @var InvoiceData $signed */
+        $signed = $this->signInvoice->handle($invoiceData);
 
-        // 2. Firmar la semilla y obtener token
-        // (la firma se realiza con platinum-place/php-dgii-xml-signer)
-        $token = $this->dgii->fetchToken($signedXmlPath);
+        // 2. Enviar a la DGII (detecta automáticamente si es factura de consumo)
+        $response = $this->sendInvoice->handle($signed->xmlPath);
 
-        // 3. Enviar factura
-        $response = $this->dgii->sendInvoice($token['token'], $invoiceXmlPath);
+        // 3. Consultar el estado
+        $status = $this->checkStatus->handle($signed->xmlPath, $response['trackId']);
 
-        // 4. Consultar estado
-        $status = $this->dgii->getInvoiceStatusByTrackId($token['token'], $response['trackId']);
+        return [
+            'xmlPath' => $signed->xmlPath,
+            'qrLink'  => $signed->qrLink,
+            'trackId' => $response['trackId'],
+            'status'  => $status,
+        ];
     }
 }
 ```
 
-### Resolución desde el container
+### Resultado de `SignInvoiceAction`: `InvoiceData`
+
+El método `handle()` de `SignInvoiceAction` retorna un objeto `InvoiceData` con la siguiente estructura:
+
+| Propiedad | Tipo | Descripción |
+|-----------|------|-------------|
+| `$xml` | `InvoiceXml` | Value Object con los datos parseados del XML firmado |
+| `$xmlPath` | `string` | Ruta relativa del XML en el disco configurado |
+| `$qrLink` | `string` | URL completa para el timbre fiscal (ConsultaTimbre) |
+| `$integralInvoice` | `?InvoiceData` | Para facturas de consumo: contiene el e-CF raíz asociado |
+
+### Usar un ambiente diferente al configurado
+
+Todas las Actions aceptan parámetros opcionales para sobrescribir el ambiente y el certificado:
 
 ```php
-$dgii = app(DgiiService::class);
-$status = $dgii->fetchServiceStatus();
+$signed = $this->signInvoice->handle(
+    data: $invoiceData,
+    env: 'certecf',               // Sobrescribe DGII_ENVIRONMENT
+    certPath: '/ruta/cert.p12',   // Sobrescribe DGII_CERT_PATH
+    certPassword: 'password',     // Sobrescribe DGII_KEY_PASSWORD
+);
 ```
 
-### Usar un ambiente diferente
-
-Todos los métodos aceptan un parámetro `$env` opcional para sobrescribir el ambiente configurado:
+### Aprobación comercial
 
 ```php
-$authXml = $dgii->fetchAuthXml('certecf');
+use PlatinumPlace\LaravelDgii\Actions\SendCommercialApprovalAction;
+
+// $xmlPath: ruta (relativa al disco) del XML de aprobación comercial ya firmado
+$response = app(SendCommercialApprovalAction::class)->handle($xmlPath);
+```
+
+### Anulación de rango de secuencias
+
+```php
+use PlatinumPlace\LaravelDgii\Actions\SendCancellationRangeAction;
+
+// $xmlPath: ruta del XML de anulación firmado
+$response = app(SendCancellationRangeAction::class)->handle($xmlPath);
 ```
 
 ### Generar enlace QR
 
 ```php
-$qrLink = $dgii->getInvoiceQRLink($xmlContent);
+use PlatinumPlace\LaravelDgii\Actions\GenerateInvoiceQrLinkAction;
+
+$qrLink = app(GenerateInvoiceQrLinkAction::class)->handle($xmlPath);
 // https://ecf.dgii.gov.do/testecf/ConsultaTimbre?RncEmisor=...&ENCF=...
 ```
 
-## Paquetes relacionados
+### Generar PDF fiscal
+
+```php
+use PlatinumPlace\LaravelDgii\Actions\GenerateInvoicePdfAction;
+
+// $xmlContent: contenido XML como cadena de texto
+// $qrLink: URL del timbre generada con GenerateInvoiceQrLinkAction
+// $logo: (opcional) contenido binario del logo de la empresa
+$pdfContent = app(GenerateInvoicePdfAction::class)->handle($xmlContent, $qrLink, $logo);
+
+return response($pdfContent, 200, ['Content-Type' => 'application/pdf']);
+```
+
+---
+
+## Acceso directo a la API (bajo nivel)
+
+Si necesitas acceder a los endpoints individualmente sin el flujo de Actions, puedes inyectar `DgiiClient`. En este caso, **debes gestionar el token manualmente**.
+
+```php
+use PlatinumPlace\LaravelDgii\Clients\DgiiClient;
+use PlatinumPlace\LaravelDgii\Actions\AuthenticateAction;
+
+class StatusController extends Controller
+{
+    public function __construct(
+        protected DgiiClient        $client,
+        protected AuthenticateAction $auth,
+    ) {}
+
+    public function serviceStatus(): array
+    {
+        return $this->client->fetchServiceStatus();
+    }
+
+    public function environmentStatus(): array
+    {
+        return $this->client->fetchEnvironmentStatus();
+    }
+
+    public function maintenanceWindows(): array
+    {
+        return $this->client->fetchMaintenanceWindows();
+    }
+}
+```
+
+### Métodos disponibles en `DgiiClient`
+
+| Método | Descripción |
+|--------|-------------|
+| `fetchAuthXml(?string $env)` | Obtiene la semilla XML para autenticación |
+| `fetchToken(string $xmlPath, ?string $env)` | Valida la semilla firmada y obtiene el token |
+| `sendInvoice(string $token, string $xmlPath, ?string $env)` | Envía un e-CF estándar |
+| `sendConsumerInvoice(string $token, string $xmlPath, ?string $env)` | Envía una factura de consumo (RFCE) |
+| `sendCommercialApproval(string $token, string $xmlPath, ?string $env)` | Envía una aprobación comercial |
+| `sendCancellationRange(string $token, string $xmlPath, ?string $env)` | Envía una anulación de rango de secuencias |
+| `fetchInvoiceStatus(string $token, InvoiceXml $xml, ?string $env)` | Consulta el estado de un e-CF por sus datos |
+| `fetchInvoiceStatusByTrackId(string $token, string $trackId, ?string $env)` | Consulta el estado por Track ID |
+| `fetchConsumerInvoiceStatus(string $token, InvoiceXml $xml, ?string $env)` | Consulta el estado de una factura de consumo |
+| `fetchTrackIdList(string $token, InvoiceXml $xml, ?string $env)` | Obtiene los Track IDs por número de secuencia |
+| `fetchInvoiceQRLink(InvoiceXml $xml, ?string $env)` | Genera el enlace del timbre fiscal (e-CF) |
+| `fetchConsumerInvoiceQRLink(InvoiceXml $xml, ?string $env)` | Genera el enlace del timbre (factura de consumo) |
+| `fetchServiceStatus()` | Consulta el estado de los servicios de la DGII |
+| `fetchMaintenanceWindows()` | Consulta las ventanas de mantenimiento programadas |
+| `fetchEnvironmentStatus(?string $env)` | Verifica el estado de un ambiente específico |
+
+---
+
+## Value Objects
+
+### `InvoiceXml`
+
+Parsea un XML de factura firmada y expone sus datos:
+
+```php
+use PlatinumPlace\LaravelDgii\ValueObjects\InvoiceXml;
+
+$invoice = new InvoiceXml($xmlString);
+
+$invoice->getSenderIdentification(); // RNC del emisor
+$invoice->getBuyerIdentification();  // RNC/cédula del comprador (nullable)
+$invoice->getSequenceNumber();       // e-NCF (ej: E310000000001)
+$invoice->getTotalAmount();          // Monto total
+$invoice->getSecurityCode();         // Código de seguridad
+$invoice->getReleaseDate();          // Fecha de emisión
+$invoice->getSignatureDate();        // Fecha de firma
+$invoice->isConsumeInvoice();        // true si es tipo 32 (consumo)
+$invoice->getXmlName();              // Nombre sugerido para el archivo
+```
+
+---
+
+## Paquetes incluidos como dependencias
 
 | Paquete | Descripción |
 |---------|-------------|
-| [platinum-place/php-dgii-xml-signer](https://github.com/platinum-place/php-dgii-xml-signer) | Firmador XML para DGII (requerido para firmar semillas y facturas) |
+| [platinum-place/php-dgii-xml-signer](https://github.com/platinum-place/php-dgii-xml-signer) | Firma digital de XML con certificado DGII |
+| [barryvdh/laravel-dompdf](https://github.com/barryvdh/laravel-dompdf) | Generación de PDF para el timbre fiscal |
+| [simplesoftwareio/simple-qrcode](https://github.com/SimpleSoftwareIO/simple-qrcode) | Generación del código QR en el PDF |
+
+---
 
 ## Licencia
 
