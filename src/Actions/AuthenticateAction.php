@@ -17,7 +17,8 @@ class AuthenticateAction
     public function __construct(
         protected DgiiClient     $client,
         protected SignXmlService $signXml,
-        protected StorageHelper  $storageHelper
+        protected StorageHelper  $storageHelper,
+        protected ReceiveSeedAction $receiveSeedAction
     )
     {
         //
@@ -33,9 +34,7 @@ class AuthenticateAction
 
         $signedXml = $this->signXml->handle($xml, $certPath, $certPassword);
 
-        $xmlPath = $this->storageHelper->putXml($signedXml);
-
-        return $this->client->fetchToken($xmlPath, $env);
+        return $this->receiveSeedAction->handle($signedXml, $env);
     }
 
     /**
