@@ -6,6 +6,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use PlatinumPlace\LaravelDgii\DgiiXmlHelper;
+use PlatinumPlace\LaravelDgii\Helpers\StorageHelper;
 use PlatinumPlace\LaravelDgii\ValueObjects\InvoiceXml;
 
 class DgiiClient
@@ -13,7 +14,7 @@ class DgiiClient
     /**
      * Create a new class instance.
      */
-    public function __construct()
+    public function __construct(protected StorageHelper      $storageHelper)
     {
         //
     }
@@ -43,6 +44,8 @@ class DgiiClient
      */
     public function fetchToken(string $xmlPath, ?string $env = null): array
     {
+        $filePath = $this->storageHelper->path($xmlPath);
+
         $env ??= config('dgii.environment');
 
         $url = sprintf(
@@ -51,7 +54,7 @@ class DgiiClient
             $env
         );
 
-        return Http::attach('xml', fopen($xmlPath, 'r'), basename($xmlPath))
+        return Http::attach('xml', fopen($filePath, 'r'), basename($xmlPath))
             ->post($url)
             ->throw()
             ->json();
@@ -63,6 +66,8 @@ class DgiiClient
      */
     public function sendInvoice(string $token, string $xmlPath, ?string $env = null): array
     {
+        $filePath = $this->storageHelper->path($xmlPath);
+
         $env ??= config('dgii.environment');
 
         $url = sprintf(
@@ -72,7 +77,7 @@ class DgiiClient
         );
 
         return Http::withToken($token)
-            ->attach('xml', fopen($xmlPath, 'r'), basename($xmlPath))
+            ->attach('xml', fopen($filePath, 'r'), basename($xmlPath))
             ->post($url)
             ->throw()
             ->json();
@@ -84,6 +89,8 @@ class DgiiClient
      */
     public function sendCommercialApproval(string $token, string $xmlPath, ?string $env = null): array
     {
+        $filePath = $this->storageHelper->path($xmlPath);
+
         $env ??= config('dgii.environment');
 
         $url = sprintf(
@@ -93,7 +100,7 @@ class DgiiClient
         );
 
         return Http::withToken($token)
-            ->attach('xml', fopen($xmlPath, 'r'), basename($xmlPath))
+            ->attach('xml', fopen($filePath, 'r'), basename($xmlPath))
             ->post($url)
             ->throw()
             ->json();
@@ -105,6 +112,8 @@ class DgiiClient
      */
     public function sendCancellationRange(string $token, string $xmlPath, ?string $env = null): array
     {
+        $filePath = $this->storageHelper->path($xmlPath);
+
         $env ??= config('dgii.environment');
 
         $url = sprintf(
@@ -114,7 +123,7 @@ class DgiiClient
         );
 
         return Http::withToken($token)
-            ->attach('xml', fopen($xmlPath, 'r'), basename($xmlPath))
+            ->attach('xml', fopen($filePath, 'r'), basename($xmlPath))
             ->post($url)
             ->throw()
             ->json();
@@ -195,6 +204,8 @@ class DgiiClient
      */
     public function sendConsumerInvoice(string $token, string $xmlPath, ?string $env = null): array
     {
+        $filePath = $this->storageHelper->path($xmlPath);
+
         $env ??= config('dgii.environment');
 
         $url = sprintf(
@@ -204,7 +215,7 @@ class DgiiClient
         );
 
         return Http::withToken($token)
-            ->attach('xml', fopen($xmlPath, 'r'), basename($xmlPath))
+            ->attach('xml', fopen($filePath, 'r'), basename($xmlPath))
             ->post($url)
             ->throw()
             ->json();

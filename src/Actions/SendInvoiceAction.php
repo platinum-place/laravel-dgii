@@ -32,12 +32,10 @@ class SendInvoiceAction
 
         $xml = $this->storageHelper->get($xmlPath);
 
-        $filePath = $this->storageHelper->path($xmlPath);
-
         $invoiceXml = new InvoiceXml($xml);
 
         return $invoiceXml->isConsumeInvoice()
-            ? $this->client->sendConsumerInvoice($token, $filePath, $env)
-            : $this->client->sendInvoice($token, $filePath, $env);
+            ? $this->client->sendConsumerInvoice($token, $xmlPath, $env)
+            : $this->client->sendInvoice($token, $xmlPath, $env);
     }
 }
