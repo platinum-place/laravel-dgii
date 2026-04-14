@@ -16,6 +16,19 @@ class InvoiceXml
         $this->xml = simplexml_load_string($xml);
     }
 
+    public function withoutSignature(): ?string
+    {
+        $xml = $this->xml;
+
+        $xml->registerXPathNamespace('ds', 'http://www.w3.org/2000/09/xmldsig#');
+
+        foreach ($xml->xpath('//ds:Signature') as $signature) {
+            unset($signature[0]);
+        }
+
+        return $xml->asXML();
+    }
+
     public function getSequenceNumber(): ?string
     {
         if (!empty($this->xml?->Encabezado?->IdDoc)) {
