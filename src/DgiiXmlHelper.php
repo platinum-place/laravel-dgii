@@ -18,10 +18,6 @@ class DgiiXmlHelper
 
     public function getSequenceNumber(): ?string
     {
-        if (!empty($this->xml?->DetalleAprobacionComercial?->eNCF)) {
-            return (string)$this->xml?->DetalleAprobacionComercial?->eNCF;
-        }
-
         if (!empty($this->xml?->DetalleAcusedeRecibo?->eNCF)) {
             return (string)$this->xml?->DetalleAcusedeRecibo?->eNCF;
         }
@@ -59,9 +55,7 @@ class DgiiXmlHelper
 
     public function getXmlName(): ?string
     {
-        if (!empty($this->xml?->DetalleAprobacionComercial)) {
-            return $this->getBuyerIdentification() . $this->getSequenceNumber();
-        }
+
 
         if (!empty($this->xml?->DetalleAcusedeRecibo)) {
             return $this->getBuyerIdentification() . $this->getSequenceNumber();
@@ -72,10 +66,6 @@ class DgiiXmlHelper
 
     public function getBuyerIdentification(): ?string
     {
-        if (!empty($this->xml?->DetalleAprobacionComercial?->RNCComprador)) {
-            return (string)$this->xml?->DetalleAprobacionComercial?->RNCComprador;
-        }
-
         if (!empty($this->xml?->DetalleAcusedeRecibo?->RNCComprador)) {
             return (string)$this->xml?->DetalleAcusedeRecibo?->RNCComprador;
         }
