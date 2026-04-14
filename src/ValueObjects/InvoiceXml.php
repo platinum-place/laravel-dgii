@@ -56,7 +56,7 @@ class InvoiceXml
         return null;
     }
 
-    public function getInvoiceTotal(): ?string
+    public function getTotalAmount(): ?string
     {
         if (!empty($this->xml?->Encabezado?->Totales?->MontoTotal)) {
             return (string)$this->xml?->Encabezado?->Totales?->MontoTotal;
@@ -73,7 +73,7 @@ class InvoiceXml
     public function isConsumeInvoice(): bool
     {
         $type = (int)$this->getInvoiceType();
-        $total = (float)$this->getInvoiceTotal();
+        $total = (float)$this->getTotalAmount();
 
         return
             $this->isRfce() ||
@@ -115,6 +115,131 @@ class InvoiceXml
     {
         if (!empty($this->xml?->Encabezado)) {
             return $this->getSenderIdentification() . $this->getSequenceNumber();
+        }
+
+        return null;
+    }
+
+    public function getSequenceDueDate(): ?string
+    {
+        if (!empty($this->xml?->Encabezado?->IdDoc?->FechaVencimientoSecuencia)) {
+            return (string)$this->xml?->Encabezado?->IdDoc?->FechaVencimientoSecuencia;
+        }
+
+        return null;
+    }
+
+    public function getModifiedSequenceNumber(): ?string
+    {
+        if (!empty($this->xml?->Encabezado?->IdDoc?->eNCFModificado)) {
+            return (string)$this->xml?->Encabezado?->IdDoc?->eNCFModificado;
+        }
+
+        return null;
+    }
+
+    public function getModificationCode(): ?string
+    {
+        if (!empty($this->xml?->Encabezado?->IdDoc?->CodigoModificacion)) {
+            return (string)$this->xml?->Encabezado?->IdDoc?->CodigoModificacion;
+        }
+
+        return null;
+    }
+
+    public function getObservations(): ?string
+    {
+        if (!empty($this->xml?->Encabezado?->Comprador?->InformacionAdicionalComprador)) {
+            return (string)$this->xml?->Encabezado?->Comprador?->InformacionAdicionalComprador;
+        }
+
+        return null;
+    }
+
+    public function getLines(): array
+    {
+        $lines = [];
+
+        if (!empty($this->xml?->DetallesItems?->Item)) {
+            foreach ($this->xml?->DetallesItems?->Item as $item) {
+                $lines[] = [
+                    'NumeroLinea' => (int)$item->NumeroLinea,
+                    'NombreItem' => (string)$item->NombreItem,
+                    'CantidadItem' => (float)$item->CantidadItem,
+                    'PrecioUnitarioItem' => (float)$item->PrecioUnitarioItem,
+                    'DescuentoMonto' => (float)($item->DescuentoMonto ?? 0),
+                    'MontoItem' => (float)$item->MontoItem,
+                    'MontoImpuesto' => (float)($item->MontoImpuesto ?? 0),
+                ];
+            }
+        }
+
+        return $lines;
+    }
+
+    public function getBuyerCorporateName(): ?string
+    {
+        if (!empty($this->xml?->Encabezado?->Comprador?->RazonSocialComprador)) {
+            return (string)$this->xml?->Encabezado?->Comprador?->RazonSocialComprador;
+        }
+
+        return null;
+    }
+
+    public function getBuyerAddress(): ?string
+    {
+        if (!empty($this->xml?->Encabezado?->Comprador?->DireccionComprador)) {
+            return (string)$this->xml?->Encabezado?->Comprador?->DireccionComprador;
+        }
+
+        return null;
+    }
+
+    public function isBuyerForeigner(): bool
+    {
+        return !empty($this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero);
+    }
+
+    public function getSenderCorporateName(): ?string
+    {
+        if (!empty($this->xml?->Encabezado?->Emisor->RazonSocialEmisor)) {
+            return (string)$this->xml?->Encabezado?->Emisor->RazonSocialEmisor;
+        }
+
+        return null;
+    }
+
+    public function getSenderAddress(): ?string
+    {
+        if (!empty($this->xml?->Encabezado?->Emisor->DireccionEmisor)) {
+            return (string)$this->xml?->Encabezado?->Emisor->DireccionEmisor;
+        }
+
+        return null;
+    }
+
+    public function getTotalTaxes(): ?float
+    {
+        if (!empty($this->xml?->Encabezado?->Totales?->TotalITBIS)) {
+            return (float)$this->xml?->Encabezado?->Totales?->TotalITBIS;
+        }
+
+        return null;
+    }
+
+    public function getTotalAmountTaxed(): ?float
+    {
+        if (!empty($this->xml?->Encabezado?->Totales?->MontoGravadoTotal)) {
+            return (float)$this->xml?->Encabezado?->Totales?->MontoGravadoTotal;
+        }
+
+        return null;
+    }
+
+    public function getTotalExempt(): ?float
+    {
+        if (!empty($this->xml?->Encabezado?->Totales?->MontoExento)) {
+            return (float)$this->xml?->Encabezado?->Totales?->MontoExento;
         }
 
         return null;
