@@ -18,7 +18,7 @@ class SignAcknowledgmentAction
 
     public function handle(array $data, ?string $certPath = null, ?string $certPassword = null): string
     {
-        $xml = View::make("dgii::arecf.xml", $data)->render();
+        $xml = View::make('dgii::arecf.xml', $data)->render();
 
         $signedXml = $this->signXml->handle($xml, $certPath, $certPassword);
 

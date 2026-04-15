@@ -5,7 +5,6 @@ namespace PlatinumPlace\LaravelDgii\Clients;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use PlatinumPlace\LaravelDgii\DgiiXmlHelper;
 use PlatinumPlace\LaravelDgii\Helpers\StorageHelper;
 use PlatinumPlace\LaravelDgii\ValueObjects\InvoiceXml;
 
@@ -14,7 +13,7 @@ class DgiiClient
     /**
      * Create a new class instance.
      */
-    public function __construct(protected StorageHelper      $storageHelper)
+    public function __construct(protected StorageHelper $storageHelper)
     {
         //
     }
@@ -311,7 +310,7 @@ class DgiiClient
 
         return Http::withHeaders([
             'accept' => '*/*',
-            'Authorization' => 'Apikey ' . config('dgii.api_key'),
+            'Authorization' => 'Apikey '.config('dgii.api_key'),
         ])
             ->get($url)
             ->throw()
@@ -331,7 +330,7 @@ class DgiiClient
 
         return Http::withHeaders([
             'accept' => '*/*',
-            'Authorization' => 'Apikey ' . config('dgii.api_key'),
+            'Authorization' => 'Apikey '.config('dgii.api_key'),
         ])
             ->get($url)
             ->throw()
@@ -352,14 +351,14 @@ class DgiiClient
 
         return Http::withHeaders([
             'accept' => '*/*',
-            'Authorization' => 'Apikey ' . config('dgii.api_key'),
+            'Authorization' => 'Apikey '.config('dgii.api_key'),
         ])
             ->get($url, [
                 'ambiente' => match ($env) {
-                   'testecf' => 1,
-                   'ecf' => 2,
-                   'certecf' => 3,
-                   default => 1,
+                    'testecf' => 1,
+                    'ecf' => 2,
+                    'certecf' => 3,
+                    default => 1,
                 },
             ])
             ->throw()

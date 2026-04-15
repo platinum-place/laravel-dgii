@@ -50,14 +50,14 @@ return [
     | Dominios de servicios
     |--------------------------------------------------------------------------
     |
-    | Aquí se definen las URLs base para los distintos servicios de la DGII. 
+    | Aquí se definen las URLs base para los distintos servicios de la DGII.
     | El paquete se encarga de construir la ruta final basándose en el 'environment'.
     |
     */
 
     'domains' => [
-        'ecf'       => env('DGII_DOMAIN_ECF', 'https://ecf.dgii.gov.do'),
-        'fc'        => env('DGII_DOMAIN_FC', 'https://fc.dgii.gov.do'),
+        'ecf' => env('DGII_DOMAIN_ECF', 'https://ecf.dgii.gov.do'),
+        'fc' => env('DGII_DOMAIN_FC', 'https://fc.dgii.gov.do'),
         'statusecf' => env('DGII_DOMAIN_STATUS', 'https://statusecf.dgii.gov.do'),
     ],
 
@@ -75,7 +75,7 @@ return [
     */
 
     'storage_disk' => env('DGII_STORAGE_DISK', 'local'),
-    
+
     'storage_path' => env('DGII_STORAGE_PATH', 'dgii/xmls'),
 
     /*
@@ -90,7 +90,7 @@ return [
 
     'rules' => [
         // Tipo de e-CF para Factura de Consumo (estándar 32)
-        'fc_type'  => (int) env('DGII_FC_TYPE', 32),
+        'fc_type' => (int) env('DGII_FC_TYPE', 32),
 
         // Límite de monto para que una factura sea considerada de consumo simplificado
         'fc_limit' => (int) env('DGII_FC_LIMIT', 250000),

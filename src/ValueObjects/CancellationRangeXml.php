@@ -18,8 +18,8 @@ class CancellationRangeXml
 
     public function getTotal(): ?int
     {
-        if (!empty($this->xml?->Encabezado?->CantidadeNCFAnulados)) {
-            return (int)$this->xml?->Encabezado?->CantidadeNCFAnulados;
+        if (! empty($this->xml?->Encabezado?->CantidadeNCFAnulados)) {
+            return (int) $this->xml?->Encabezado?->CantidadeNCFAnulados;
         }
 
         return null;
@@ -27,8 +27,8 @@ class CancellationRangeXml
 
     public function getDate(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->FechaHoraAnulacioneNCF)) {
-            return (string)$this->xml?->Encabezado?->FechaHoraAnulacioneNCF;
+        if (! empty($this->xml?->Encabezado?->FechaHoraAnulacioneNCF)) {
+            return (string) $this->xml?->Encabezado?->FechaHoraAnulacioneNCF;
         }
 
         return null;
@@ -38,22 +38,22 @@ class CancellationRangeXml
     {
         $details = [];
 
-        if (!empty($this->xml?->DetalleAnulacion?->Anulacion)) {
+        if (! empty($this->xml?->DetalleAnulacion?->Anulacion)) {
             foreach ($this->xml?->DetalleAnulacion?->Anulacion as $anulacion) {
                 $sequences = [];
-                if (!empty($anulacion->TablaRangoSecuenciasAnuladaseNCF?->Secuencias)) {
+                if (! empty($anulacion->TablaRangoSecuenciasAnuladaseNCF?->Secuencias)) {
                     foreach ($anulacion->TablaRangoSecuenciasAnuladaseNCF?->Secuencias as $seq) {
                         $sequences[] = [
-                            'SecuenciaeNCFDesde' => (string)$seq->SecuenciaeNCFDesde,
-                            'SecuenciaeNCFHasta' => (string)$seq->SecuenciaeNCFHasta,
+                            'SecuenciaeNCFDesde' => (string) $seq->SecuenciaeNCFDesde,
+                            'SecuenciaeNCFHasta' => (string) $seq->SecuenciaeNCFHasta,
                         ];
                     }
                 }
 
                 $details[] = [
-                    'NoLinea' => (int)$anulacion->NoLinea,
-                    'TipoeCF' => (string)$anulacion->TipoeCF,
-                    'CantidadeNCFAnulados' => (int)$anulacion->CantidadeNCFAnulados,
+                    'NoLinea' => (int) $anulacion->NoLinea,
+                    'TipoeCF' => (string) $anulacion->TipoeCF,
+                    'CantidadeNCFAnulados' => (int) $anulacion->CantidadeNCFAnulados,
                     'Secuencias' => $sequences,
                 ];
             }

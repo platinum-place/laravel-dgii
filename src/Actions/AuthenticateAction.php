@@ -15,12 +15,11 @@ class AuthenticateAction
      * Create a new class instance.
      */
     public function __construct(
-        protected DgiiClient     $client,
+        protected DgiiClient $client,
         protected SignXmlService $signXml,
-        protected StorageHelper  $storageHelper,
+        protected StorageHelper $storageHelper,
         protected ReceiveSeedAction $receiveSeedAction
-    )
-    {
+    ) {
         //
     }
 
@@ -43,7 +42,7 @@ class AuthenticateAction
      */
     public function handle(?string $env = null, ?string $certPath = null, ?string $certPassword = null): string
     {
-        $cacheKey = config('dgii.cache.prefix') . md5($certPath . $env);
+        $cacheKey = config('dgii.cache.prefix').md5($certPath.$env);
 
         if ($token = Cache::get($cacheKey)) {
             return $token;

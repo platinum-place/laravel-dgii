@@ -10,10 +10,21 @@ class InvoiceXml
 
     /**
      * Create a new class instance.
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct(string $xml)
     {
-        $this->xml = simplexml_load_string($xml);
+        libxml_use_internal_errors(true);
+        $loadedXml = simplexml_load_string($xml);
+
+        if ($loadedXml === false) {
+            $errors = libxml_get_errors();
+            libxml_clear_errors();
+            throw new \InvalidArgumentException('El contenido XML no es válido: '.($errors[0]->message ?? 'Error desconocido'));
+        }
+
+        $this->xml = $loadedXml;
     }
 
     public function withoutSignature(): ?string
@@ -31,8 +42,8 @@ class InvoiceXml
 
     public function getSequenceNumber(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->IdDoc)) {
-            return (string)$this->xml?->Encabezado?->IdDoc?->eNCF;
+        if (! empty($this->xml?->Encabezado?->IdDoc)) {
+            return (string) $this->xml?->Encabezado?->IdDoc?->eNCF;
         }
 
         return null;
@@ -40,12 +51,12 @@ class InvoiceXml
 
     public function getSecurityCode(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->CodigoSeguridadeCF)) {
-            return (string)$this->xml?->Encabezado?->CodigoSeguridadeCF;
+        if (! empty($this->xml?->Encabezado?->CodigoSeguridadeCF)) {
+            return (string) $this->xml?->Encabezado?->CodigoSeguridadeCF;
         }
 
-        if (!empty($this->xml?->Signature?->SignatureValue)) {
-            return substr((string)$this->xml?->Signature?->SignatureValue, 0, 6);
+        if (! empty($this->xml?->Signature?->SignatureValue)) {
+            return substr((string) $this->xml?->Signature?->SignatureValue, 0, 6);
         }
 
         return null;
@@ -53,8 +64,8 @@ class InvoiceXml
 
     public function getSignatureDate(): ?string
     {
-        if (!empty($this->xml?->FechaHoraFirma)) {
-            return (string)$this->xml?->FechaHoraFirma;
+        if (! empty($this->xml?->FechaHoraFirma)) {
+            return (string) $this->xml?->FechaHoraFirma;
         }
 
         return null;
@@ -62,8 +73,8 @@ class InvoiceXml
 
     public function getInvoiceType(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->IdDoc?->TipoeCF)) {
-            return (string)$this->xml?->Encabezado?->IdDoc?->TipoeCF;
+        if (! empty($this->xml?->Encabezado?->IdDoc?->TipoeCF)) {
+            return (string) $this->xml?->Encabezado?->IdDoc?->TipoeCF;
         }
 
         return null;
@@ -71,8 +82,8 @@ class InvoiceXml
 
     public function getTotalAmount(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->Totales?->MontoTotal)) {
-            return (string)$this->xml?->Encabezado?->Totales?->MontoTotal;
+        if (! empty($this->xml?->Encabezado?->Totales?->MontoTotal)) {
+            return (string) $this->xml?->Encabezado?->Totales?->MontoTotal;
         }
 
         return null;
@@ -80,13 +91,13 @@ class InvoiceXml
 
     public function isRfce(): ?string
     {
-        return !empty($this->xml?->Encabezado?->CodigoSeguridadeCF);
+        return ! empty($this->xml?->Encabezado?->CodigoSeguridadeCF);
     }
 
     public function isConsumeInvoice(): bool
     {
-        $type = (int)$this->getInvoiceType();
-        $total = (float)$this->getTotalAmount();
+        $type = (int) $this->getInvoiceType();
+        $total = (float) $this->getTotalAmount();
 
         return
             $this->isRfce() ||
@@ -95,8 +106,8 @@ class InvoiceXml
 
     public function getSenderIdentification(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->Emisor->RNCEmisor)) {
-            return (string)$this->xml?->Encabezado?->Emisor->RNCEmisor;
+        if (! empty($this->xml?->Encabezado?->Emisor->RNCEmisor)) {
+            return (string) $this->xml?->Encabezado?->Emisor->RNCEmisor;
         }
 
         return null;
@@ -104,8 +115,8 @@ class InvoiceXml
 
     public function getReleaseDate(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->Emisor?->FechaEmision)) {
-            return (string)$this->xml?->Encabezado?->Emisor?->FechaEmision;
+        if (! empty($this->xml?->Encabezado?->Emisor?->FechaEmision)) {
+            return (string) $this->xml?->Encabezado?->Emisor?->FechaEmision;
         }
 
         return null;
@@ -113,12 +124,12 @@ class InvoiceXml
 
     public function getBuyerIdentification(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero)) {
-            return (string)$this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero;
+        if (! empty($this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero)) {
+            return (string) $this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero;
         }
 
-        if (!empty($this->xml?->Encabezado?->Comprador?->RNCComprador)) {
-            return (string)$this->xml?->Encabezado?->Comprador?->RNCComprador;
+        if (! empty($this->xml?->Encabezado?->Comprador?->RNCComprador)) {
+            return (string) $this->xml?->Encabezado?->Comprador?->RNCComprador;
         }
 
         return null;
@@ -126,8 +137,8 @@ class InvoiceXml
 
     public function getXmlName(): ?string
     {
-        if (!empty($this->xml?->Encabezado)) {
-            return $this->getSenderIdentification() . $this->getSequenceNumber();
+        if (! empty($this->xml?->Encabezado)) {
+            return $this->getSenderIdentification().$this->getSequenceNumber();
         }
 
         return null;
@@ -135,8 +146,8 @@ class InvoiceXml
 
     public function getSequenceDueDate(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->IdDoc?->FechaVencimientoSecuencia)) {
-            return (string)$this->xml?->Encabezado?->IdDoc?->FechaVencimientoSecuencia;
+        if (! empty($this->xml?->Encabezado?->IdDoc?->FechaVencimientoSecuencia)) {
+            return (string) $this->xml?->Encabezado?->IdDoc?->FechaVencimientoSecuencia;
         }
 
         return null;
@@ -144,8 +155,8 @@ class InvoiceXml
 
     public function getModifiedSequenceNumber(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->IdDoc?->eNCFModificado)) {
-            return (string)$this->xml?->Encabezado?->IdDoc?->eNCFModificado;
+        if (! empty($this->xml?->Encabezado?->IdDoc?->eNCFModificado)) {
+            return (string) $this->xml?->Encabezado?->IdDoc?->eNCFModificado;
         }
 
         return null;
@@ -153,8 +164,8 @@ class InvoiceXml
 
     public function getModificationCode(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->IdDoc?->CodigoModificacion)) {
-            return (string)$this->xml?->Encabezado?->IdDoc?->CodigoModificacion;
+        if (! empty($this->xml?->Encabezado?->IdDoc?->CodigoModificacion)) {
+            return (string) $this->xml?->Encabezado?->IdDoc?->CodigoModificacion;
         }
 
         return null;
@@ -162,8 +173,8 @@ class InvoiceXml
 
     public function getObservations(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->Comprador?->InformacionAdicionalComprador)) {
-            return (string)$this->xml?->Encabezado?->Comprador?->InformacionAdicionalComprador;
+        if (! empty($this->xml?->Encabezado?->Comprador?->InformacionAdicionalComprador)) {
+            return (string) $this->xml?->Encabezado?->Comprador?->InformacionAdicionalComprador;
         }
 
         return null;
@@ -173,16 +184,16 @@ class InvoiceXml
     {
         $lines = [];
 
-        if (!empty($this->xml?->DetallesItems?->Item)) {
+        if (! empty($this->xml?->DetallesItems?->Item)) {
             foreach ($this->xml?->DetallesItems?->Item as $item) {
                 $lines[] = [
-                    'NumeroLinea' => (int)$item->NumeroLinea,
-                    'NombreItem' => (string)$item->NombreItem,
-                    'CantidadItem' => (float)$item->CantidadItem,
-                    'PrecioUnitarioItem' => (float)$item->PrecioUnitarioItem,
-                    'DescuentoMonto' => (float)($item->DescuentoMonto ?? 0),
-                    'MontoItem' => (float)$item->MontoItem,
-                    'MontoImpuesto' => (float)($item->MontoImpuesto ?? 0),
+                    'NumeroLinea' => (int) $item->NumeroLinea,
+                    'NombreItem' => (string) $item->NombreItem,
+                    'CantidadItem' => (float) $item->CantidadItem,
+                    'PrecioUnitarioItem' => (float) $item->PrecioUnitarioItem,
+                    'DescuentoMonto' => (float) ($item->DescuentoMonto ?? 0),
+                    'MontoItem' => (float) $item->MontoItem,
+                    'MontoImpuesto' => (float) ($item->MontoImpuesto ?? 0),
                 ];
             }
         }
@@ -192,8 +203,8 @@ class InvoiceXml
 
     public function getBuyerCorporateName(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->Comprador?->RazonSocialComprador)) {
-            return (string)$this->xml?->Encabezado?->Comprador?->RazonSocialComprador;
+        if (! empty($this->xml?->Encabezado?->Comprador?->RazonSocialComprador)) {
+            return (string) $this->xml?->Encabezado?->Comprador?->RazonSocialComprador;
         }
 
         return null;
@@ -201,8 +212,8 @@ class InvoiceXml
 
     public function getBuyerAddress(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->Comprador?->DireccionComprador)) {
-            return (string)$this->xml?->Encabezado?->Comprador?->DireccionComprador;
+        if (! empty($this->xml?->Encabezado?->Comprador?->DireccionComprador)) {
+            return (string) $this->xml?->Encabezado?->Comprador?->DireccionComprador;
         }
 
         return null;
@@ -210,13 +221,13 @@ class InvoiceXml
 
     public function isBuyerForeigner(): bool
     {
-        return !empty($this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero);
+        return ! empty($this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero);
     }
 
     public function getSenderCorporateName(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->Emisor->RazonSocialEmisor)) {
-            return (string)$this->xml?->Encabezado?->Emisor->RazonSocialEmisor;
+        if (! empty($this->xml?->Encabezado?->Emisor->RazonSocialEmisor)) {
+            return (string) $this->xml?->Encabezado?->Emisor->RazonSocialEmisor;
         }
 
         return null;
@@ -224,8 +235,8 @@ class InvoiceXml
 
     public function getSenderAddress(): ?string
     {
-        if (!empty($this->xml?->Encabezado?->Emisor->DireccionEmisor)) {
-            return (string)$this->xml?->Encabezado?->Emisor->DireccionEmisor;
+        if (! empty($this->xml?->Encabezado?->Emisor->DireccionEmisor)) {
+            return (string) $this->xml?->Encabezado?->Emisor->DireccionEmisor;
         }
 
         return null;
@@ -233,8 +244,8 @@ class InvoiceXml
 
     public function getTotalTaxes(): ?float
     {
-        if (!empty($this->xml?->Encabezado?->Totales?->TotalITBIS)) {
-            return (float)$this->xml?->Encabezado?->Totales?->TotalITBIS;
+        if (! empty($this->xml?->Encabezado?->Totales?->TotalITBIS)) {
+            return (float) $this->xml?->Encabezado?->Totales?->TotalITBIS;
         }
 
         return null;
@@ -242,8 +253,8 @@ class InvoiceXml
 
     public function getTotalAmountTaxed(): ?float
     {
-        if (!empty($this->xml?->Encabezado?->Totales?->MontoGravadoTotal)) {
-            return (float)$this->xml?->Encabezado?->Totales?->MontoGravadoTotal;
+        if (! empty($this->xml?->Encabezado?->Totales?->MontoGravadoTotal)) {
+            return (float) $this->xml?->Encabezado?->Totales?->MontoGravadoTotal;
         }
 
         return null;
@@ -251,8 +262,8 @@ class InvoiceXml
 
     public function getTotalExempt(): ?float
     {
-        if (!empty($this->xml?->Encabezado?->Totales?->MontoExento)) {
-            return (float)$this->xml?->Encabezado?->Totales?->MontoExento;
+        if (! empty($this->xml?->Encabezado?->Totales?->MontoExento)) {
+            return (float) $this->xml?->Encabezado?->Totales?->MontoExento;
         }
 
         return null;

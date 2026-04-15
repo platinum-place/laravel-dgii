@@ -15,10 +15,9 @@ class SendInvoiceAction
      */
     public function __construct(
         protected AuthenticateAction $authenticateAction,
-        protected DgiiClient         $client,
-        protected StorageHelper      $storageHelper
-    )
-    {
+        protected DgiiClient $client,
+        protected StorageHelper $storageHelper
+    ) {
         //
     }
 

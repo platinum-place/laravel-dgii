@@ -4,9 +4,7 @@ namespace PlatinumPlace\LaravelDgii\Actions;
 
 use Illuminate\Support\Facades\View;
 use PlatinumPlace\LaravelDgii\Data\InvoiceData;
-use PlatinumPlace\LaravelDgii\Helpers\StorageHelper;
 use PlatinumPlace\LaravelDgii\Services\SignXmlService;
-use PlatinumPlace\LaravelDgii\ValueObjects\InvoiceXml;
 
 class SignInvoiceAction
 {
@@ -20,7 +18,7 @@ class SignInvoiceAction
 
     private function signEcf(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
-        $xml = View::make('dgii::ecf.ecf_' . $data['IdDoc']['TipoeCF'], $data)->render();
+        $xml = View::make('dgii::ecf.ecf_'.$data['IdDoc']['TipoeCF'], $data)->render();
 
         $signedXml = $this->signXml->handle($xml, $certPath, $certPassword);
 
@@ -31,7 +29,7 @@ class SignInvoiceAction
     {
         $data['CodigoSeguridadeCF'] = $ecf->xml->getSecurityCode();
 
-        $xml = View::make("dgii::rfce.xml", $data)->render();
+        $xml = View::make('dgii::rfce.xml', $data)->render();
 
         $signedXml = $this->signXml->handle($xml, $certPath, $certPassword);
 

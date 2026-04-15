@@ -2,7 +2,6 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions;
 
-use PlatinumPlace\LaravelDgii\Data\InvoiceData;
 use PlatinumPlace\LaravelDgii\Helpers\StorageHelper;
 use PlatinumPlace\LaravelDgii\ValueObjects\CommercialApprovalXml;
 
@@ -20,6 +19,6 @@ class StorageCommercialApprovalAction
     {
         $commercialApprovalXml = new CommercialApprovalXml($signedXml);
 
-       return $this->storageHelper->putXml($signedXml, $commercialApprovalXml->getXmlName());
+        return $this->storageHelper->putXml($signedXml, $commercialApprovalXml->getXmlName());
     }
 }

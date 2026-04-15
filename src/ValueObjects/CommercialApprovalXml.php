@@ -16,32 +16,32 @@ class CommercialApprovalXml
         $this->xml = simplexml_load_string($xml);
     }
 
-        public function getBuyerIdentification(): ?string
+    public function getBuyerIdentification(): ?string
     {
-        if (!empty($this->xml?->DetalleAprobacionComercial?->RNCComprador)) {
-            return (string)$this->xml?->DetalleAprobacionComercial?->RNCComprador;
+        if (! empty($this->xml?->DetalleAprobacionComercial?->RNCComprador)) {
+            return (string) $this->xml?->DetalleAprobacionComercial?->RNCComprador;
         }
 
         return null;
     }
 
-        public function getSequenceNumber(): ?string
+    public function getSequenceNumber(): ?string
     {
-        if (!empty($this->xml?->DetalleAprobacionComercial?->eNCF)) {
-            return (string)$this->xml?->DetalleAprobacionComercial?->eNCF;
+        if (! empty($this->xml?->DetalleAprobacionComercial?->eNCF)) {
+            return (string) $this->xml?->DetalleAprobacionComercial?->eNCF;
         }
 
-        if (!empty($this->xml?->DetalleAcusedeRecibo?->eNCF)) {
-            return (string)$this->xml?->DetalleAcusedeRecibo?->eNCF;
+        if (! empty($this->xml?->DetalleAcusedeRecibo?->eNCF)) {
+            return (string) $this->xml?->DetalleAcusedeRecibo?->eNCF;
         }
 
         return null;
     }
 
-        public function getXmlName(): ?string
+    public function getXmlName(): ?string
     {
-        if (!empty($this->xml?->DetalleAprobacionComercial)) {
-            return $this->getBuyerIdentification() . $this->getSequenceNumber();
+        if (! empty($this->xml?->DetalleAprobacionComercial)) {
+            return $this->getBuyerIdentification().$this->getSequenceNumber();
         }
 
         return null;
