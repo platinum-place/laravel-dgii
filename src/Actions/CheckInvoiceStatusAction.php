@@ -12,6 +12,10 @@ class CheckInvoiceStatusAction
 {
     /**
      * Create a new class instance.
+     *
+     * @param AuthenticateAction $authenticateAction
+     * @param DgiiClient $client
+     * @param StorageHelper $storageHelper
      */
     public function __construct(
         protected AuthenticateAction $authenticateAction,
@@ -22,8 +26,15 @@ class CheckInvoiceStatusAction
     }
 
     /**
-     * @throws ConnectionException
-     * @throws RequestException
+     * Consultar el estado de un e-CF enviado previamente a la DGII.
+     *
+     * @param string $xmlPath Ruta relativa del archivo XML en el disco configurado.
+     * @param string|null $trackId ID de seguimiento retornado por la DGII en el envío.
+     * @param string|null $env Ambiente de ejecución.
+     * @param string|null $certPath Ruta absoluta al certificado para autenticación.
+     * @param string|null $certPassword Contraseña del certificado.
+     * @return array Respuesta con el estado detallado de la factura.
+     * @throws ConnectionException|RequestException
      */
     public function handle(string $xmlPath, ?string $trackId = null, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): array
     {

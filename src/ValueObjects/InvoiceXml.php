@@ -27,6 +27,11 @@ class InvoiceXml
         $this->xml = $loadedXml;
     }
 
+    /**
+     * Retornar el XML sin la firma digital (útil para auditoría o pre-procesamiento).
+     *
+     * @return string|null
+     */
     public function withoutSignature(): ?string
     {
         $xml = $this->xml;
@@ -40,6 +45,11 @@ class InvoiceXml
         return $xml->asXML();
     }
 
+    /**
+     * Obtener el e-NCF (Número de Comprobante Fiscal Electrónico).
+     *
+     * @return string|null
+     */
     public function getSequenceNumber(): ?string
     {
         if (! empty($this->xml?->Encabezado?->IdDoc)) {
@@ -49,6 +59,11 @@ class InvoiceXml
         return null;
     }
 
+    /**
+     * Obtener el código de seguridad de 6 dígitos del e-CF.
+     *
+     * @return string|null
+     */
     public function getSecurityCode(): ?string
     {
         if (! empty($this->xml?->Encabezado?->CodigoSeguridadeCF)) {
@@ -62,6 +77,11 @@ class InvoiceXml
         return null;
     }
 
+    /**
+     * Obtener la fecha y hora de la firma digital.
+     *
+     * @return string|null
+     */
     public function getSignatureDate(): ?string
     {
         if (! empty($this->xml?->FechaHoraFirma)) {
@@ -71,6 +91,11 @@ class InvoiceXml
         return null;
     }
 
+    /**
+     * Obtener el tipo de comprobante (ej: 31, 32, 33, 41).
+     *
+     * @return string|null
+     */
     public function getInvoiceType(): ?string
     {
         if (! empty($this->xml?->Encabezado?->IdDoc?->TipoeCF)) {
@@ -80,6 +105,11 @@ class InvoiceXml
         return null;
     }
 
+    /**
+     * Obtener el monto total del comprobante.
+     *
+     * @return string|null
+     */
     public function getTotalAmount(): ?string
     {
         if (! empty($this->xml?->Encabezado?->Totales?->MontoTotal)) {
@@ -89,11 +119,21 @@ class InvoiceXml
         return null;
     }
 
-    public function isRfce(): ?string
+    /**
+     * Determinar si el XML corresponde a un RFCE (Resumen de Consumo).
+     *
+     * @return bool
+     */
+    public function isRfce(): bool
     {
         return ! empty($this->xml?->Encabezado?->CodigoSeguridadeCF);
     }
 
+    /**
+     * Determinar si la factura es de consumo (B32) basado en tipo y monto límite.
+     *
+     * @return bool
+     */
     public function isConsumeInvoice(): bool
     {
         $type = (int) $this->getInvoiceType();

@@ -9,13 +9,20 @@ class CancellationRangeXml
     protected SimpleXMLElement $xml;
 
     /**
-     * Create a new class instance.
+     * Parsear un XML de anulación de rango (ANECF).
+     *
+     * @param string $xml Contenido XML plano.
      */
     public function __construct(string $xml)
     {
         $this->xml = simplexml_load_string($xml);
     }
 
+    /**
+     * Obtener el total de secuencias anuladas.
+     *
+     * @return int|null
+     */
     public function getTotal(): ?int
     {
         if (! empty($this->xml?->Encabezado?->CantidadeNCFAnulados)) {
@@ -25,6 +32,11 @@ class CancellationRangeXml
         return null;
     }
 
+    /**
+     * Obtener la fecha y hora de la anulación.
+     *
+     * @return string|null
+     */
     public function getDate(): ?string
     {
         if (! empty($this->xml?->Encabezado?->FechaHoraAnulacioneNCF)) {
@@ -34,6 +46,11 @@ class CancellationRangeXml
         return null;
     }
 
+    /**
+     * Obtener el listado detallado de secuencias por tipo de e-CF.
+     *
+     * @return array
+     */
     public function getDetails(): array
     {
         $details = [];

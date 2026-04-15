@@ -17,6 +17,14 @@ class StorageHelper
         $this->storage = Storage::disk(config('dgii.storage_disk'));
     }
 
+    /**
+     * Guardar el contenido de un XML en el disco configurado.
+     * Genera una estructura de carpetas por año/mes/día/uuid de forma automática.
+     *
+     * @param string $xml Contenido XML a persistir.
+     * @param string|null $xmlName Nombre base sugerido para el archivo (opcional).
+     * @return string Ruta relativa del archivo guardado.
+     */
     public function putXml(string $xml, ?string $xmlName = null): string
     {
         $xmlPath = sprintf(
@@ -24,8 +32,8 @@ class StorageHelper
             now()->format('Y'),
             now()->format('m'),
             now()->format('d'),
-            \Str::uuid(),
-            $xmlName ?? \Str::uuid(),
+            Str::uuid(),
+            $xmlName ?? 'comprobante'
         );
 
         $this->storage->put($xmlPath, $xml);
@@ -33,11 +41,23 @@ class StorageHelper
         return $xmlPath;
     }
 
+    /**
+     * Obtener el contenido de un archivo desde el storage.
+     *
+     * @param string $xmlPath
+     * @return string
+     */
     public function get(string $xmlPath): string
     {
         return $this->storage->get($xmlPath);
     }
 
+    /**
+     * Obtener la ruta absoluta de un archivo (útil para adjuntar archivos en HTTP).
+     *
+     * @param string $xmlPath
+     * @return string
+     */
     public function path(string $xmlPath): string
     {
         return $this->storage->path($xmlPath);

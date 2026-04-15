@@ -5,13 +5,18 @@ All notable changes to `laravel-dgii` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.26] - 2026-04-14
+## [1.1.0] - 2026-04-14
 
 ### Added
-- Architectural overview to README.
-- Docblocks for core Actions.
-- New automated authentication flow.
-- Usage examples for Action-based workflow.
+- Testing suite with PHPUnit and Orchestra Testbench.
+- GitHub Actions CI workflow.
+- Comprehensive DocBlocks for all Actions, ValueObjects, Services, and Helpers.
+- Contributing guide and improved README documentation.
+- Validation and exception handling in InvoiceXml constructor.
+
+### Fixed
+- Authentication logic in AuthenticateAction.
+- Service Provider asset publishing.
 
 ## [1.0.25] - 2026-04-14
 
