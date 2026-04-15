@@ -19,17 +19,54 @@ composer require platinum-place/laravel-dgii
 
 El Service Provider se registra automáticamente gracias al auto-discovery de Laravel.
 
-### Publicar configuración
+### Publicar configuración y vistas
 
 ```bash
+# Publicar solo la configuración
 php artisan vendor:publish --tag=dgii-config
+
+# Publicar las vistas (para personalizar el PDF o XML)
+php artisan vendor:publish --tag=dgii-views
 ```
 
-Esto creará el archivo `config/dgii.php` en tu proyecto.
+Esto creará el archivo `config/dgii.php` y las carpetas de vistas en `resources/views/vendor/dgii`.
 
 ---
 
-## Configuración
+## 🧪 Pruebas y Calidad de Código
+
+El paquete incluye una suite de pruebas unitarias y herramientas de análisis estático para garantizar la estabilidad.
+
+### Ejecutar Pruebas (PHPUnit)
+```bash
+composer test
+```
+
+### Estilo de Código (Laravel Pint)
+```bash
+./vendor/bin/pint
+```
+
+### Análisis Estático (PHPStan)
+```bash
+./vendor/bin/phpstan analyze
+```
+
+---
+
+## 🛠️ Contribución
+
+Si deseas contribuir al desarrollo de este paquete, por favor revisa nuestra guía de contribución (PRs son bienvenidos). Asegúrate de que todos los tests pasen antes de enviar un cambio.
+
+---
+
+## 🛡️ Seguridad
+
+Si descubres alguna vulnerabilidad relacionada con la seguridad, por favor envía un correo electrónico a soporte@platinumplace.do en lugar de utilizar el rastreador de problemas.
+
+---
+
+## Licencia
 
 Agrega las siguientes variables a tu archivo `.env`:
 
