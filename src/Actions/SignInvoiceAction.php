@@ -10,23 +10,21 @@ class SignInvoiceAction
 {
     /**
      * Create a new class instance.
-     *
-     * @param SignXmlService $signXml
-     * @param StorageInvoiceAction $storageInvoiceAction
      */
-    public function __construct(protected SignXmlService $signXml, protected StorageInvoiceAction $storageInvoiceAction)
-    {
+    public function __construct(
+        protected SignXmlService $signXml,
+        protected StorageInvoiceAction $storageInvoiceAction
+    ) {
         //
     }
 
     /**
      * Firmar un e-CF (Comprobante Fiscal Electrónico).
      *
-     * @param array $data Datos estructurados de la factura.
-     * @param string|null $env Ambiente de ejecución (testecf, certecf, ecf).
-     * @param string|null $certPath Ruta absoluta al certificado .p12.
-     * @param string|null $certPassword Contraseña del certificado.
-     * @return InvoiceData
+     * @param  array  $data  Datos estructurados de la factura.
+     * @param  string|null  $env  Ambiente de ejecución (testecf, certecf, ecf).
+     * @param  string|null  $certPath  Ruta absoluta al certificado .p12.
+     * @param  string|null  $certPassword  Contraseña del certificado.
      */
     private function signEcf(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
@@ -40,12 +38,11 @@ class SignInvoiceAction
     /**
      * Firmar un RFCE (Resumen de Factura de Consumo Electrónica).
      *
-     * @param InvoiceData $ecf Instancia del e-CF base ya firmado.
-     * @param array $data Datos estructurados de la factura.
-     * @param string|null $env Ambiente de ejecución.
-     * @param string|null $certPath Ruta absoluta al certificado.
-     * @param string|null $certPassword Contraseña del certificado.
-     * @return InvoiceData
+     * @param  InvoiceData  $ecf  Instancia del e-CF base ya firmado.
+     * @param  array  $data  Datos estructurados de la factura.
+     * @param  string|null  $env  Ambiente de ejecución.
+     * @param  string|null  $certPath  Ruta absoluta al certificado.
+     * @param  string|null  $certPassword  Contraseña del certificado.
      */
     private function signRfce(InvoiceData $ecf, array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
@@ -62,11 +59,10 @@ class SignInvoiceAction
      * Orquestar el proceso de firma de una factura.
      * Detecta automáticamente si debe generar un RFCE adicional para facturas de consumo.
      *
-     * @param array $data Datos estructurados de la factura.
-     * @param string|null $env Ambiente de ejecución.
-     * @param string|null $certPath Ruta absoluta al certificado.
-     * @param string|null $certPassword Contraseña del certificado.
-     * @return InvoiceData
+     * @param  array  $data  Datos estructurados de la factura.
+     * @param  string|null  $env  Ambiente de ejecución.
+     * @param  string|null  $certPath  Ruta absoluta al certificado.
+     * @param  string|null  $certPassword  Contraseña del certificado.
      */
     public function handle(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {

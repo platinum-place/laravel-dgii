@@ -4,7 +4,7 @@ namespace PlatinumPlace\LaravelDgii\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class AppServiceProvider extends ServiceProvider
+class FacadeServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -12,8 +12,6 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../../config/dgii.php', 'dgii');
-
-        $this->app->pro
     }
 
     /**

@@ -29,8 +29,6 @@ class InvoiceXml
 
     /**
      * Retornar el XML sin la firma digital (útil para auditoría o pre-procesamiento).
-     *
-     * @return string|null
      */
     public function withoutSignature(): ?string
     {
@@ -47,8 +45,6 @@ class InvoiceXml
 
     /**
      * Obtener el e-NCF (Número de Comprobante Fiscal Electrónico).
-     *
-     * @return string|null
      */
     public function getSequenceNumber(): ?string
     {
@@ -61,8 +57,6 @@ class InvoiceXml
 
     /**
      * Obtener el código de seguridad de 6 dígitos del e-CF.
-     *
-     * @return string|null
      */
     public function getSecurityCode(): ?string
     {
@@ -79,8 +73,6 @@ class InvoiceXml
 
     /**
      * Obtener la fecha y hora de la firma digital.
-     *
-     * @return string|null
      */
     public function getSignatureDate(): ?string
     {
@@ -93,8 +85,6 @@ class InvoiceXml
 
     /**
      * Obtener el tipo de comprobante (ej: 31, 32, 33, 41).
-     *
-     * @return string|null
      */
     public function getInvoiceType(): ?string
     {
@@ -107,8 +97,6 @@ class InvoiceXml
 
     /**
      * Obtener el monto total del comprobante.
-     *
-     * @return string|null
      */
     public function getTotalAmount(): ?string
     {
@@ -121,8 +109,6 @@ class InvoiceXml
 
     /**
      * Determinar si el XML corresponde a un RFCE (Resumen de Consumo).
-     *
-     * @return bool
      */
     public function isRfce(): bool
     {
@@ -131,8 +117,6 @@ class InvoiceXml
 
     /**
      * Determinar si la factura es de consumo (B32) basado en tipo y monto límite.
-     *
-     * @return bool
      */
     public function isConsumeInvoice(): bool
     {

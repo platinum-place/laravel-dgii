@@ -11,7 +11,7 @@ class CancellationRangeXml
     /**
      * Parsear un XML de anulación de rango (ANECF).
      *
-     * @param string $xml Contenido XML plano.
+     * @param  string  $xml  Contenido XML plano.
      */
     public function __construct(string $xml)
     {
@@ -20,8 +20,6 @@ class CancellationRangeXml
 
     /**
      * Obtener el total de secuencias anuladas.
-     *
-     * @return int|null
      */
     public function getTotal(): ?int
     {
@@ -34,8 +32,6 @@ class CancellationRangeXml
 
     /**
      * Obtener la fecha y hora de la anulación.
-     *
-     * @return string|null
      */
     public function getDate(): ?string
     {
@@ -48,8 +44,6 @@ class CancellationRangeXml
 
     /**
      * Obtener el listado detallado de secuencias por tipo de e-CF.
-     *
-     * @return array
      */
     public function getDetails(): array
     {

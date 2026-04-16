@@ -20,9 +20,9 @@ class GenerateInvoicePdfAction
      * Generar el contenido binario de un PDF fiscal para un e-CF.
      * Utiliza internamente barryvdh/laravel-dompdf para renderizar la vista 'dgii::invoice-template'.
      *
-     * @param string $xmlContent Contenido XML completo del e-CF firmado.
-     * @param string $qrLink URL completa del timbre fiscal (ConsultaTimbre).
-     * @param string|null $logo Contenido binario del logo de la empresa.
+     * @param  string  $xmlContent  Contenido XML completo del e-CF firmado.
+     * @param  string  $qrLink  URL completa del timbre fiscal (ConsultaTimbre).
+     * @param  string|null  $logo  Contenido binario del logo de la empresa.
      * @return string Contenido binario del PDF.
      */
     public function handle(string $xmlContent, string $qrLink, ?string $logo = null): string

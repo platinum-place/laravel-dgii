@@ -11,7 +11,7 @@ class CommercialApprovalXml
     /**
      * Parsear un XML de aprobación comercial.
      *
-     * @param string $xml Contenido XML plano.
+     * @param  string  $xml  Contenido XML plano.
      */
     public function __construct(string $xml)
     {
@@ -20,8 +20,6 @@ class CommercialApprovalXml
 
     /**
      * Obtener el RNC del comprador involucrado en la aprobación.
-     *
-     * @return string|null
      */
     public function getBuyerIdentification(): ?string
     {
@@ -34,8 +32,6 @@ class CommercialApprovalXml
 
     /**
      * Obtener el e-NCF del comprobante que se está aprobando o rechazando.
-     *
-     * @return string|null
      */
     public function getSequenceNumber(): ?string
     {
@@ -52,8 +48,6 @@ class CommercialApprovalXml
 
     /**
      * Generar un nombre sugerido para el archivo XML basado en RNC y secuencia.
-     *
-     * @return string|null
      */
     public function getXmlName(): ?string
     {

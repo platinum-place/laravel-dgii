@@ -10,9 +10,6 @@ class SignAcknowledgmentAction
 {
     /**
      * Create a new class instance.
-     *
-     * @param SignXmlService $signXml
-     * @param StorageHelper $storageHelper
      */
     public function __construct(protected SignXmlService $signXml, protected StorageHelper $storageHelper)
     {
@@ -22,9 +19,9 @@ class SignAcknowledgmentAction
     /**
      * Generar y firmar el XML de Acuse de Recibo (ARECF) para un comprobante recibido.
      *
-     * @param array $data Datos para la plantilla ARECF.
-     * @param string|null $certPath Ruta al certificado.
-     * @param string|null $certPassword Contraseña del certificado.
+     * @param  array  $data  Datos para la plantilla ARECF.
+     * @param  string|null  $certPath  Ruta al certificado.
+     * @param  string|null  $certPassword  Contraseña del certificado.
      * @return string Ruta relativa del XML firmado y almacenado.
      */
     public function handle(array $data, ?string $certPath = null, ?string $certPassword = null): string

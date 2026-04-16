@@ -21,8 +21,8 @@ class StorageHelper
      * Guardar el contenido de un XML en el disco configurado.
      * Genera una estructura de carpetas por año/mes/día/uuid de forma automática.
      *
-     * @param string $xml Contenido XML a persistir.
-     * @param string|null $xmlName Nombre base sugerido para el archivo (opcional).
+     * @param  string  $xml  Contenido XML a persistir.
+     * @param  string|null  $xmlName  Nombre base sugerido para el archivo (opcional).
      * @return string Ruta relativa del archivo guardado.
      */
     public function putXml(string $xml, ?string $xmlName = null): string
@@ -43,9 +43,6 @@ class StorageHelper
 
     /**
      * Obtener el contenido de un archivo desde el storage.
-     *
-     * @param string $xmlPath
-     * @return string
      */
     public function get(string $xmlPath): string
     {
@@ -54,9 +51,6 @@ class StorageHelper
 
     /**
      * Obtener la ruta absoluta de un archivo (útil para adjuntar archivos en HTTP).
-     *
-     * @param string $xmlPath
-     * @return string
      */
     public function path(string $xmlPath): string
     {
