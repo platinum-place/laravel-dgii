@@ -1,16 +1,17 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Services;
+namespace PlatinumPlace\LaravelDgii\Support;
 
 use PlatinumPlace\DgiiXmlSigner\SignManager;
-use PlatinumPlace\LaravelDgii\Helpers\StorageHelper;
 
-class SignXmlService
+class XmlSigner
 {
     /**
-     * Create a new class instance.
+     * Crea una nueva instancia para el firmado de XML.
+     *
+     * @param  StorageService  $storageService  Servicio de almacenamiento.
      */
-    public function __construct(protected StorageHelper $storageHelper)
+    public function __construct(protected StorageService $storageService)
     {
         //
     }
@@ -23,10 +24,10 @@ class SignXmlService
      * @param  string|null  $certPassword  Contraseña del certificado.
      * @return string XML firmado digitalmente.
      */
-    public function handle(string $xml, ?string $certPath = null, ?string $certPassword = null): string
+    public function sign(string $xml, ?string $certPath = null, ?string $certPassword = null): string
     {
         return (new SignManager)->sign(
-            $this->storageHelper->get($certPath ?? config('dgii.certificate')),
+            $this->storageService->get($certPath ?? config('dgii.certificate')),
             $certPassword ?? config('dgii.certificate_password'),
             $xml
         );
