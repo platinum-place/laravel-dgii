@@ -34,7 +34,7 @@ class StorageService
             now()->format('m'),
             now()->format('d'),
             Str::uuid(),
-            $xmlName ?? 'comprobante'
+            $xmlName ?? Str::uuid(),
         );
 
         $this->storage->put($xmlPath, $xml);
