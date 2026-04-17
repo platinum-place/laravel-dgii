@@ -17,12 +17,13 @@ El paquete automatiza el ciclo de vida de los documentos fiscales electrónicos,
 El paquete sigue una arquitectura orientada a servicios y acciones:
 
 - **Support (`src/Support/`):** Utilidades técnicas (XmlSigner para firmas, StorageService para manejo de archivos).
-- **Services (`src/Services/`):** Punto de entrada (DgiiService para la Facade).
-- **Actions (`src/Actions/`):** Orquestadores de alto nivel. Cada acción realiza una tarea completa (ej: `SignInvoiceAction` genera, firma y almacena el XML).
-- **Clients (`src/Clients/`):** `DgiiClient` encapsula todas las peticiones HTTP a los distintos endpoints de la DGII (E-CF, Factura de Consumo, Estatus).
-- **Value Objects (`src/ValueObjects/`):** Clases que envuelven los documentos XML para facilitar la extracción de datos de forma tipada (ej: `InvoiceXml`).
-- **Data Transfer Objects (`src/Data/`):** `InvoiceData` transporta información entre acciones.
-- **Templates (`resources/views/`):** Contiene las plantillas Blade para generar los diferentes tipos de XML (e-CF 31, 32, 33, 41, etc.).
+- **Abstracts (`src/Abstracts/`):** Contiene `AbstractXml`, la clase base que unifica la validación y el acceso estructurado a todos los documentos XML.
+- **Services (`src/Services/`):** Fachadas de alto nivel para el usuario final (`DgiiInvoiceService`, `DgiiSeedService`, `DgiiCancellationRangeService`, `DgiiCommercialApprovalService`).
+- **Actions (`src/Actions/`):** Orquestadores de lógica de negocio aislada. Cada acción realiza una tarea atómica y completa (ej: `SignInvoiceAction`, `SendCancellationRangeAction`).
+- **Clients (`src/Clients/`):** Clientes especializados (`InvoiceClient`, `SeedClient`, `CancellationRangeClient`, `CommercialApprovalClient`) que encapsulan las peticiones HTTP a los endpoints de la DGII.
+- **Value Objects (`src/ValueObjects/`):** Objetos inmutables que envuelven los XML (`InvoiceXml`, `AcknowledgmentXml`) o agrupan datos con su ubicación física (`StoredInvoice`, `StoredAcknowledgment`).
+- **Data Transfer Objects (`src/Data/`):** `InvoiceData` transporta el estado completo de una transacción entre las capas del sistema.
+- **Templates (`resources/views/`):** Plantillas Blade para generar los diferentes tipos de XML requeridos por la DGII.
 
 ## 🛠️ Comandos de Desarrollo
 
@@ -47,18 +48,19 @@ composer test
 
 ## 📝 Convenciones de Desarrollo
 
-1.  **Actions:** Se prefiere el uso de Actions inyectadas por el contenedor de Laravel para mantener la lógica de negocio aislada y reutilizable.
-2.  **Manejo de XML:** Nunca manipules el XML como string crudo si existe un Value Object disponible. Usa `InvoiceXml` para consultar propiedades.
-3.  **Almacenamiento:** Siempre utiliza `StorageService` para interactuar con el disco configurado, permitiendo que el usuario cambie de `local` a `s3` sin afectar el código.
-4.  **Autenticación:** No gestiones tokens manualmente a menos que sea estrictamente necesario; `AuthenticateAction` maneja el flujo de semilla/firma/token y su respectivo caché.
+1.  **Actions:** Se prefiere el uso de Actions inyectadas por el contenedor de Laravel (`app(Action::class)->handle()`) para mantener la lógica de negocio aislada y reutilizable.
+2.  **Manejo de XML:** Nunca manipules el XML como string crudo si existe un Value Object disponible. Todos deben heredar de `AbstractXml` para garantizar validación consistente.
+3.  **DocBlocks:** Todo el código fuente debe estar documentado utilizando DocBlocks en **Inglés** para mantener estándares de industria, mientras que los archivos de documentación (.md) se mantienen en **Español**.
+4.  **Almacenamiento:** Siempre utiliza `StorageService` para interactuar con el disco configurado. Los archivos se organizan automáticamente por `Año/Mes/Día/UUID`.
+5.  **Autenticación:** El flujo de obtención de tokens (Semilla -> Firma -> Validación) se gestiona automáticamente a través de `AuthenticateAction`, incluyendo un sistema de caché con margen de seguridad (buffer).
 
-## ⚙️ Configuración Clave
+## ⚙️ Configuración Clave (`config/dgii.php`)
 
-El archivo `config/dgii.php` (publicable) centraliza:
 - `environment`: `testecf` (default), `certecf` o `ecf`.
-- `certificate_path` & `private_key_password`: Para la firma digital.
-- `api_key`: Para servicios de estatus.
-- `storage_disk` & `storage_path`: Ubicación de los XML firmados.
+- `certificate` & `certificate_password`: Credenciales para la firma digital.
+- `api_key`: Para servicios de consulta de estatus.
+- `storage_disk` & `storage_path`: Configuración de persistencia de archivos.
+- `rules`: Parámetros técnicos como límites de montos para facturas de consumo.
 
 ---
 *Este archivo sirve como contexto para Gemini CLI. Mantener actualizado ante cambios arquitectónicos.*

@@ -6,6 +6,9 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
+/**
+ * Action to generate a PDF representation of an e-CF.
+ */
 class GenerateInvoicePdfAction
 {
     /**
@@ -17,13 +20,14 @@ class GenerateInvoicePdfAction
     }
 
     /**
-     * Generar el contenido binario de un PDF fiscal para un e-CF.
-     * Utiliza internamente barryvdh/laravel-dompdf para renderizar la vista 'dgii::invoice-template'.
+     * Generate the binary PDF content for a fiscal e-CF.
      *
-     * @param  string  $xmlContent  Contenido XML completo del e-CF firmado.
-     * @param  string  $qrLink  URL completa del timbre fiscal (ConsultaTimbre).
-     * @param  string|null  $logo  Contenido binario del logo de la empresa.
-     * @return string Contenido binario del PDF.
+     * Uses barryvdh/laravel-dompdf to render the 'dgii::invoice-template' view.
+     *
+     * @param string $xmlContent Signed e-CF XML content.
+     * @param string $qrLink Full URL for the fiscal stamp (ConsultaTimbre).
+     * @param string|null $logo Optional company logo binary content.
+     * @return string Binary PDF content.
      */
     public function handle(string $xmlContent, string $qrLink, ?string $logo = null): string
     {

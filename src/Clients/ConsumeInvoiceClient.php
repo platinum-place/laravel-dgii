@@ -6,21 +6,19 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 
 /**
- * Cliente para interactuar con los servicios web de la DGII.
+ * Client to interact with DGII Consumption Invoice Services (RFCE).
  *
- * Esta clase centraliza todas las peticiones HTTP a los diferentes endpoints de la DGII
- * para el manejo de comprobantes fiscales electrónicos (e-CF), incluyendo autenticación,
- * envío de documentos y consultas de estado.
+ * This class handles the transmission of Consumer Electronic Invoices
+ * to the specific DGII endpoints for this type of document.
  */
 class ConsumeInvoiceClient
 {
     /**
-     * Crea una nueva instancia del cliente.
+     * Create a new client instance.
      *
-     * @param  StorageService  $storageService  Ayudante para interactuar con el almacenamiento de archivos.
+     * @param StorageService $storageService Helper to interact with file storage.
      */
     public function __construct(protected StorageService $storageService)
     {
@@ -28,12 +26,12 @@ class ConsumeInvoiceClient
     }
 
     /**
-     * Envía una Factura de Consumo Electrónica (RFCE) a la DGII.
+     * Send a Consumer Electronic Invoice (RFCE) to DGII.
      *
-     * @param  string  $token  Token de autenticación vigente.
-     * @param  string  $xmlPath  Ruta relativa del archivo XML firmado del RFCE.
-     * @param  string|null  $env  El ambiente (testecf, certecf, ecf).
-     * @return array Respuesta de la DGII con el trackId.
+     * @param string $token Valid authentication token.
+     * @param string $xmlPath Relative path of the signed RFCE XML file.
+     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @return array DGII response with trackId.
      *
      * @throws RequestException
      * @throws ConnectionException
@@ -53,64 +51,6 @@ class ConsumeInvoiceClient
         return Http::withToken($token)
             ->attach('xml', fopen($filePath, 'r'), basename($xmlPath))
             ->post($url)
-            ->throw()
-            ->json();
-    }
-
-    /**
-     * Genera el enlace para la consulta del timbre (QR) de una Factura de Consumo.
-     *
-     * @param  InvoiceXml  $invoiceXml  Objeto de valor del XML de la factura.
-     * @param  string|null  $env  El ambiente (testecf, certecf, ecf).
-     * @return string URL completa para el código QR.
-     */
-    public function fetchQRLink(InvoiceXml $invoiceXml, ?string $env = null): string
-    {
-        $env ??= config('dgii.environment');
-
-        $parameters = [
-            'RncEmisor' => $invoiceXml->getSenderIdentification(),
-            'ENCF' => $invoiceXml->getSequenceNumber(),
-            'MontoTotal' => $invoiceXml->getTotalAmount(),
-            'CodigoSeguridad' => $invoiceXml->getSecurityCode(),
-        ];
-
-        return sprintf(
-            '%s/%s/%s?%s',
-            config('dgii.domains.fc'),
-            $env,
-            'ConsultaTimbreFC',
-            http_build_query($parameters)
-        );
-    }
-
-    /**
-     * Consulta el estado de una Factura de Consumo (RFCE).
-     *
-     * @param  string  $token  Token de autenticación vigente.
-     * @param  InvoiceXml  $invoiceXml  Objeto de valor del XML de la factura.
-     * @param  string|null  $env  El ambiente (testecf, certecf, ecf).
-     * @return array Detalle del estado de la factura de consumo.
-     *
-     * @throws RequestException
-     * @throws ConnectionException
-     */
-    public function fetchStatus(string $token, InvoiceXml $invoiceXml, ?string $env = null): array
-    {
-        $env ??= config('dgii.environment');
-
-        $url = sprintf(
-            '%s/%s/consultarfce/api/Consultas/Consulta',
-            config('dgii.domains.fc'),
-            $env
-        );
-
-        return Http::withToken($token)
-            ->get($url, [
-                'RNC_Emisor' => $invoiceXml->getSenderIdentification(),
-                'ENCF' => $invoiceXml->getSequenceNumber(),
-                'Cod_Seguridad_eCF' => $invoiceXml->getSecurityCode(),
-            ])
             ->throw()
             ->json();
     }

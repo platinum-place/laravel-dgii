@@ -12,12 +12,20 @@ use PlatinumPlace\LaravelDgii\Traits\Invoices\HasResponse;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceReceived;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 
+/**
+ * Action to check the status of a previously sent e-CF.
+ */
 class CheckInvoiceStatusAction
 {
     use HasResponse;
 
     /**
      * Create a new class instance.
+     *
+     * @param AuthenticateAction $authenticateAction Authentication service.
+     * @param StorageService $storageService Storage service instance.
+     * @param InvoiceClient $invoiceClient Standard e-CF client.
+     * @param ConsumeInvoiceClient $consumeInvoiceClient Consumption invoice client.
      */
     public function __construct(
         protected AuthenticateAction $authenticateAction,
@@ -29,14 +37,14 @@ class CheckInvoiceStatusAction
     }
 
     /**
-     * Consultar el estado de un e-CF enviado previamente a la DGII.
+     * Query DGII for the status of a previously sent e-CF.
      *
-     * @param  string  $xmlPath  Ruta relativa del archivo XML en el disco configurado.
-     * @param  string|null  $trackId  ID de seguimiento retornado por la DGII en el envío.
-     * @param  string|null  $env  Ambiente de ejecución.
-     * @param  string|null  $certPath  Ruta absoluta al certificado para autenticación.
-     * @param  string|null  $certPassword  Contraseña del certificado.
-     * @return InvoiceReceived Respuesta con el estado detallado de la factura.
+     * @param string $xmlPath Relative path of the XML file in storage.
+     * @param string|null $trackId Tracking ID returned by DGII upon submission.
+     * @param string|null $env The environment to use.
+     * @param string|null $certPath Optional certificate path for authentication.
+     * @param string|null $certPassword Optional certificate password.
+     * @return InvoiceReceived Response containing the detailed invoice status.
      *
      * @throws ConnectionException|RequestException
      */

@@ -8,18 +8,17 @@ use Illuminate\Support\Facades\Http;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
 
 /**
- * Cliente para interactuar con los servicios web de la DGII.
+ * Client to interact with DGII Authentication (Seed) Services.
  *
- * Esta clase centraliza todas las peticiones HTTP a los diferentes endpoints de la DGII
- * para el manejo de comprobantes fiscales electrónicos (e-CF), incluyendo autenticación,
- * envío de documentos y consultas de estado.
+ * This class handles the first part of the DGII authentication lifecycle:
+ * fetching the seed XML and validating it (after signing) to obtain a token.
  */
 class SeedClient
 {
     /**
-     * Crea una nueva instancia del cliente.
+     * Create a new client instance.
      *
-     * @param  StorageService  $storageService  Ayudante para interactuar con el almacenamiento de archivos.
+     * @param StorageService $storageService Helper to interact with file storage.
      */
     public function __construct(protected StorageService $storageService)
     {
@@ -27,10 +26,10 @@ class SeedClient
     }
 
     /**
-     * Obtiene el XML de la semilla para el proceso de autenticación.
+     * Fetch the raw seed XML content for the authentication process.
      *
-     * @param  string|null  $env  El ambiente (testecf, certecf, ecf). Si es nulo, usa el configurado.
-     * @return string El contenido XML de la semilla.
+     * @param string|null $env The environment (testecf, certecf, ecf). Uses default if null.
+     * @return string The raw XML seed content.
      *
      * @throws RequestException
      * @throws ConnectionException
@@ -51,11 +50,11 @@ class SeedClient
     }
 
     /**
-     * Envía la semilla firmada para obtener un token de acceso (JWT).
+     * Send the signed seed to get an access token (JWT).
      *
-     * @param  string  $xmlPath  Ruta relativa del archivo XML de la semilla firmada.
-     * @param  string|null  $env  El ambiente (testecf, certecf, ecf).
-     * @return array Respuesta de la DGII con el token y su expiración.
+     * @param string $xmlPath Relative path of the signed seed XML file.
+     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @return array DGII response containing the token and expiration.
      *
      * @throws RequestException
      * @throws ConnectionException

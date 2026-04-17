@@ -4,15 +4,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Ambiente de la DGII
+    | DGII Environment
     |--------------------------------------------------------------------------
     |
-    | Define el entorno de ejecución para las peticiones a la DGII.
+    | Defines the execution environment for requests sent to DGII.
     |
-    | Valores soportados:
-    | - 'testecf': Ambiente de Pruebas (Sandbox).
-    | - 'certecf': Ambiente de Certificación.
-    | - 'ecf': Ambiente de Producción.
+    | Supported values:
+    | - 'testecf': Testing Environment (Sandbox).
+    | - 'certecf': Certification Environment.
+    | - 'ecf': Production Environment.
     |
     */
 
@@ -20,26 +20,25 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Credenciales de Firma Electrónica
+    | Electronic Signature Credentials
     |--------------------------------------------------------------------------
     |
-    | Estas rutas son utilizadas por el paquete 'platinum-place/php-dgii-xml-signer'
-    | para realizar la firma digital de los documentos XML (e-CF, Seed, etc.)
-    | antes de ser enviados a la DGII.
+    | These paths and passwords are used by the digital signing service
+    | to sign XML documents (e-CF, Seed, etc.) before they are sent to DGII.
     |
     */
 
-    'certificate_path' => env('DGII_CERT_PATH'),
+    'certificate' => env('DGII_CERT_PATH'),
 
-    'private_key_password' => env('DGII_KEY_PASSWORD', ''),
+    'certificate_password' => env('DGII_KEY_PASSWORD', ''),
 
     /*
     |--------------------------------------------------------------------------
-    | Api Key de servicios de Estatus
+    | Status Services API Key
     |--------------------------------------------------------------------------
     |
-    | La clave API proporcionada por la DGII necesaria para interactuar con
-    | los servicios de estatus y disponibilidad (statusecf).
+    | The API Key provided by DGII required to interact with status and
+    | availability services (statusecf).
     |
     */
 
@@ -47,11 +46,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Dominios de servicios
+    | Service Domains
     |--------------------------------------------------------------------------
     |
-    | Aquí se definen las URLs base para los distintos servicios de la DGII.
-    | El paquete se encarga de construir la ruta final basándose en el 'environment'.
+    | Base URLs for the different DGII services. The package handles
+    | the final path construction based on the 'environment' setting.
     |
     */
 
@@ -63,14 +62,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Persistencia de Documentos (Storage)
+    | Document Persistence (Storage)
     |--------------------------------------------------------------------------
     |
-    | Configura cómo y dónde el paquete debe guardar una copia de los XML
-    | firmados que se generan.
+    | Configure how and where the package should save a copy of the
+    | signed XML documents generated.
     |
-    | 'storage_disk': El nombre del disco configurado en 'config/filesystems.php' (ej.: 'local', 's3', 'spaces', 'public').
-    | 'storage_path': Directorio dentro del disco donde se organizarán los archivos.
+    | 'storage_disk': The name of the disk configured in 'config/filesystems.php'.
+    | 'storage_path': Directory inside the disk where files will be organized.
     |
     */
 
@@ -80,33 +79,33 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Reglas de Negocio de la DGII
+    | DGII Business Rules
     |--------------------------------------------------------------------------
     |
-    | Parámetros técnicos específicos para validaciones internas, como tipos
-    | de comprobante y límites de facturación de consumo.
+    | Specific technical parameters for internal validations, such as
+    | document types and consumption billing limits.
     |
     */
 
     'rules' => [
-        // Tipo de e-CF para Factura de Consumo (estándar 32)
+        // Default e-CF type for Consumption Invoice (Standard 32)
         'fc_type' => (int) env('DGII_FC_TYPE', 32),
 
-        // Límite de monto para que una factura sea considerada de consumo simplificado
+        // Amount limit for an invoice to be considered simplified consumption
         'fc_limit' => (int) env('DGII_FC_LIMIT', 250000),
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Configuración de Caché
+    | Cache Configuration
     |--------------------------------------------------------------------------
     |
-    | El paquete almacena el token de autenticación en caché para evitar
-    | solicitudes innecesarias a la DGII en cada petición.
+    | The package caches the authentication token to avoid unnecessary
+    | requests to DGII on every transaction.
     |
-    | 'prefix': Prefijo único para las llaves de caché del paquete.
-    | 'buffer': Segundos de margen para expirar el token en caché antes de que
-    | caduque realmente en la DGII (evita fallos por latencia).
+    | 'prefix': Unique prefix for the package's cache keys.
+    | 'buffer': Margin in seconds to expire the cached token before it
+    | actually expires at DGII (prevents latency failures).
     |
     */
 

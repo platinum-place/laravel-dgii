@@ -12,12 +12,20 @@ use PlatinumPlace\LaravelDgii\Traits\Invoices\HasResponse;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceReceived;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\StoredInvoice;
 
+/**
+ * Action to send a signed and stored e-CF to DGII.
+ */
 class SendInvoiceAction
 {
     use HasResponse;
 
     /**
      * Create a new class instance.
+     *
+     * @param AuthenticateAction $authenticateAction Authentication service.
+     * @param StorageService $storageService Storage service instance.
+     * @param InvoiceClient $invoiceClient Standard e-CF client.
+     * @param ConsumeInvoiceClient $consumeInvoiceClient Consumption invoice client.
      */
     public function __construct(
         protected AuthenticateAction $authenticateAction,
@@ -29,6 +37,15 @@ class SendInvoiceAction
     }
 
     /**
+     * Send the stored invoice to DGII and capture the response.
+     *
+     * @param StoredInvoice $storedInvoice The stored invoice object.
+     * @param string|null $env The environment to use.
+     * @param string|null $certPath Optional certificate path for authentication.
+     * @param string|null $certPassword Optional certificate password.
+     * @param string|null $token Optional existing authentication token.
+     * @return InvoiceReceived The wrapped DGII response.
+     *
      * @throws RequestException
      * @throws ConnectionException
      */

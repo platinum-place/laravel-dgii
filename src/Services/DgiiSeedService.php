@@ -8,10 +8,16 @@ use PlatinumPlace\LaravelDgii\Actions\Seed\ReceiveSeedAction;
 use PlatinumPlace\LaravelDgii\Clients\SeedClient;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
 
+/**
+ * Service to manage DGII Authentication Seeds.
+ */
 class DgiiSeedService
 {
     /**
-     * Create a new class instance.
+     * Create a new service instance.
+     *
+     * @param StorageService $storageService Storage service.
+     * @param SeedClient $seedClient Seed client.
      */
     public function __construct(
         protected StorageService $storageService,
@@ -21,6 +27,11 @@ class DgiiSeedService
     }
 
     /**
+     * Request a new authentication seed XML from DGII.
+     *
+     * @param string|null $env The environment to use.
+     * @return string Raw seed XML content.
+     *
      * @throws RequestException
      * @throws ConnectionException
      */
@@ -30,6 +41,12 @@ class DgiiSeedService
     }
 
     /**
+     * Validate a signed seed and request an access token.
+     *
+     * @param string $signedXml Signed seed XML content.
+     * @param string|null $env The environment to use.
+     * @return array Response data containing the token and expiration.
+     *
      * @throws RequestException
      * @throws ConnectionException
      */

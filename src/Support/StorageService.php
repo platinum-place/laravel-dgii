@@ -6,12 +6,16 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+/**
+ * Service to handle XML file storage in the configured disk.
+ */
 class StorageService
 {
+    /** @var Filesystem The filesystem disk instance. */
     protected Filesystem $storage;
 
     /**
-     * Crea una nueva instancia para el servicio de almacenamiento.
+     * Create a new storage service instance.
      */
     public function __construct()
     {
@@ -19,17 +23,17 @@ class StorageService
     }
 
     /**
-     * Guardar el contenido de un XML en el disco configurado.
-     * Genera una estructura de carpetas por año/mes/día/uuid de forma automática.
+     * Save XML content to the configured disk.
+     * Generates a folder structure by year/month/day/uuid automatically.
      *
-     * @param  string  $xml  Contenido XML a persistir.
-     * @param  string|null  $xmlName  Nombre base sugerido para el archivo (opcional).
-     * @return string Ruta relativa del archivo guardado.
+     * @param string $xml XML content to persist.
+     * @param string|null $xmlName Optional suggested base name for the file.
+     * @return string Relative path of the saved file.
      */
     public function putXml(string $xml, ?string $xmlName = null): string
     {
         $xmlPath = sprintf(
-            config('dgii.storage_path').'/%s/%s/%s/%s/%s.xml',
+            config('dgii.storage_path') . '/%s/%s/%s/%s/%s.xml',
             now()->format('Y'),
             now()->format('m'),
             now()->format('d'),
@@ -43,7 +47,10 @@ class StorageService
     }
 
     /**
-     * Obtener el contenido de un archivo desde el storage.
+     * Get the content of a file from storage.
+     *
+     * @param string $xmlPath The relative path of the XML file.
+     * @return string The raw XML content.
      */
     public function get(string $xmlPath): string
     {
@@ -51,7 +58,11 @@ class StorageService
     }
 
     /**
-     * Obtener la ruta absoluta de un archivo (útil para adjuntar archivos en HTTP).
+     * Get the absolute path of a file.
+     * Useful for attaching files in HTTP requests or local processing.
+     *
+     * @param string $xmlPath The relative path of the XML file.
+     * @return string The absolute path in the server.
      */
     public function path(string $xmlPath): string
     {

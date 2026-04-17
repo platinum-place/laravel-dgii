@@ -9,18 +9,17 @@ use PlatinumPlace\LaravelDgii\Support\StorageService;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 
 /**
- * Cliente para interactuar con los servicios web de la DGII.
+ * Client to interact with DGII e-CF (Electronic Invoice) Services.
  *
- * Esta clase centraliza todas las peticiones HTTP a los diferentes endpoints de la DGII
- * para el manejo de comprobantes fiscales electrónicos (e-CF), incluyendo autenticación,
- * envío de documentos y consultas de estado.
+ * This class handles the transmission of signed e-CF documents and
+ * provides methods to query their status and tracking information.
  */
 class InvoiceClient
 {
     /**
-     * Crea una nueva instancia del cliente.
+     * Create a new client instance.
      *
-     * @param  StorageService  $storageService  Ayudante para interactuar con el almacenamiento de archivos.
+     * @param StorageService $storageService Helper to interact with file storage.
      */
     public function __construct(protected StorageService $storageService)
     {
@@ -28,12 +27,12 @@ class InvoiceClient
     }
 
     /**
-     * Envía una factura electrónica (e-CF) a la DGII.
+     * Send an electronic invoice (e-CF) to DGII.
      *
-     * @param  string  $token  Token de autenticación vigente.
-     * @param  string  $xmlPath  Ruta relativa del archivo XML firmado del e-CF.
-     * @param  string|null  $env  El ambiente (testecf, certecf, ecf).
-     * @return array Respuesta de la DGII con el trackId o errores de validación.
+     * @param string $token Valid authentication token.
+     * @param string $xmlPath Relative path of the signed e-CF XML file.
+     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @return array DGII response with trackId or validation errors.
      *
      * @throws RequestException
      * @throws ConnectionException
@@ -58,12 +57,12 @@ class InvoiceClient
     }
 
     /**
-     * Consulta el estado de una recepción de e-CF mediante su TrackId.
+     * Fetch the status of an e-CF reception using its TrackId.
      *
-     * @param  string  $token  Token de autenticación vigente.
-     * @param  string  $trackId  El ID de seguimiento devuelto en el envío.
-     * @param  string|null  $env  El ambiente (testecf, certecf, ecf).
-     * @return array Detalle del estado del documento enviado.
+     * @param string $token Valid authentication token.
+     * @param string $trackId The tracking ID returned during submission.
+     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @return array Details of the submitted document status.
      *
      * @throws RequestException
      * @throws ConnectionException
@@ -85,12 +84,12 @@ class InvoiceClient
     }
 
     /**
-     * Consulta el historial de TrackIds asociados a un e-CF específico.
+     * Fetch the history of TrackIds associated with a specific e-CF.
      *
-     * @param  string  $token  Token de autenticación vigente.
-     * @param  InvoiceXml  $invoiceXml  Objeto de valor del XML de la factura.
-     * @param  string|null  $env  El ambiente (testecf, certecf, ecf).
-     * @return array Lista de TrackIds y sus estados.
+     * @param string $token Valid authentication token.
+     * @param InvoiceXml $invoiceXml Invoice XML value object.
+     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @return array List of TrackIds and their statuses.
      *
      * @throws RequestException
      * @throws ConnectionException
@@ -115,11 +114,11 @@ class InvoiceClient
     }
 
     /**
-     * Genera el enlace para la consulta del timbre (QR) de un e-CF.
+     * Generate the link for the QR stamp verification.
      *
-     * @param  InvoiceXml  $invoiceXml  Objeto de valor del XML de la factura.
-     * @param  string|null  $env  El ambiente (testecf, certecf, ecf).
-     * @return string URL completa para el código QR.
+     * @param InvoiceXml $invoiceXml Invoice XML value object.
+     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @return string Full URL for the QR code.
      */
     public function fetchQRLink(InvoiceXml $invoiceXml, ?string $env = null): string
     {
@@ -148,12 +147,12 @@ class InvoiceClient
     }
 
     /**
-     * Consulta el estado actual de un e-CF.
+     * Query the current status of an e-CF.
      *
-     * @param  string  $token  Token de autenticación vigente.
-     * @param  InvoiceXml  $invoiceXml  Objeto de valor del XML de la factura.
-     * @param  string|null  $env  El ambiente (testecf, certecf, ecf).
-     * @return array Detalle del estado del documento.
+     * @param string $token Valid authentication token.
+     * @param InvoiceXml $invoiceXml Invoice XML value object.
+     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @return array Details of the document status.
      *
      * @throws RequestException
      * @throws ConnectionException

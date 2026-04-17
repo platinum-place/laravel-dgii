@@ -7,10 +7,17 @@ use PlatinumPlace\LaravelDgii\Clients\InvoiceClient;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 
+/**
+ * Action to generate the full public verification URL (QR link) for an e-CF.
+ */
 class GenerateInvoiceQrLinkAction
 {
     /**
      * Create a new class instance.
+     *
+     * @param StorageService $storageService Storage service instance.
+     * @param InvoiceClient $invoiceClient Standard e-CF client.
+     * @param ConsumeInvoiceClient $consumeInvoiceClient Consumption invoice client.
      */
     public function __construct(
         protected StorageService $storageService,
@@ -21,12 +28,13 @@ class GenerateInvoiceQrLinkAction
     }
 
     /**
-     * Generar la URL completa del timbre fiscal para la consulta pública de la factura.
-     * Esta URL es la que se debe incluir en el código QR del PDF.
+     * Generate the full fiscal stamp URL for public inquiry.
      *
-     * @param  string|InvoiceXml  $invoiceXml  Ruta relativa del archivo XML firmado o objeto de valor del XML.
-     * @param  string|null  $env  Ambiente de ejecución.
-     * @return string URL de consulta (ej: https://ecf.dgii.gov.do/.../ConsultaTimbre?...)
+     * This URL should be embedded in the QR code on the PDF.
+     *
+     * @param string|InvoiceXml $invoiceXml Relative path of the signed XML file or the value object itself.
+     * @param string|null $env The environment to use.
+     * @return string Full verification URL.
      */
     public function handle(string|InvoiceXml $invoiceXml, ?string $env = null): string
     {

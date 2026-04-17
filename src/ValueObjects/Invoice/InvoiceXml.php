@@ -4,14 +4,17 @@ namespace PlatinumPlace\LaravelDgii\ValueObjects\Invoice;
 
 use PlatinumPlace\LaravelDgii\Abstracts\AbstractXml;
 
+/**
+ * Represents an Electronic Fiscal Receipt XML document (e-CF).
+ */
 class InvoiceXml extends AbstractXml
 {
     /**
-     * Retornar el XML sin la firma digital (útil para auditoría o pre-procesamiento).
+     * Return the XML without the digital signature (useful for auditing or pre-processing).
      */
     public function withoutSignature(): ?string
     {
-        $xml = $this->xmlSigner;
+        $xml = clone $this->xml;
 
         $xml->registerXPathNamespace('ds', 'http://www.w3.org/2000/09/xmldsig#');
 
@@ -23,79 +26,79 @@ class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Obtener el e-NCF (Número de Comprobante Fiscal Electrónico).
+     * Get the e-NCF (Electronic Fiscal Receipt Sequence Number).
      */
     public function getSequenceNumber(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado?->IdDoc)) {
-            return (string) $this->xmlSigner?->Encabezado?->IdDoc?->eNCF;
+        if (! empty($this->xml?->Encabezado?->IdDoc)) {
+            return (string) $this->xml?->Encabezado?->IdDoc?->eNCF;
         }
 
         return null;
     }
 
     /**
-     * Obtener el código de seguridad de 6 dígitos del e-CF.
+     * Get the 6-digit security code for the e-CF.
      */
     public function getSecurityCode(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado?->CodigoSeguridadeCF)) {
-            return (string) $this->xmlSigner?->Encabezado?->CodigoSeguridadeCF;
+        if (! empty($this->xml?->Encabezado?->CodigoSeguridadeCF)) {
+            return (string) $this->xml?->Encabezado?->CodigoSeguridadeCF;
         }
 
-        if (! empty($this->xmlSigner?->Signature?->SignatureValue)) {
-            return substr((string) $this->xmlSigner?->Signature?->SignatureValue, 0, 6);
+        if (! empty($this->xml?->Signature?->SignatureValue)) {
+            return substr((string) $this->xml?->Signature?->SignatureValue, 0, 6);
         }
 
         return null;
     }
 
     /**
-     * Obtener la fecha y hora de la firma digital.
+     * Get the digital signature date and time.
      */
     public function getSignatureDate(): ?string
     {
-        if (! empty($this->xmlSigner?->FechaHoraFirma)) {
-            return (string) $this->xmlSigner?->FechaHoraFirma;
+        if (! empty($this->xml?->FechaHoraFirma)) {
+            return (string) $this->xml?->FechaHoraFirma;
         }
 
         return null;
     }
 
     /**
-     * Obtener el tipo de comprobante (ej: 31, 32, 33, 41).
+     * Get the invoice type code (e.g., 31, 32, 33, 41).
      */
     public function getInvoiceType(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado?->IdDoc?->TipoeCF)) {
-            return (string) $this->xmlSigner?->Encabezado?->IdDoc?->TipoeCF;
+        if (! empty($this->xml?->Encabezado?->IdDoc?->TipoeCF)) {
+            return (string) $this->xml?->Encabezado?->IdDoc?->TipoeCF;
         }
 
         return null;
     }
 
     /**
-     * Obtener el monto total del comprobante.
+     * Get the total amount of the document.
      */
     public function getTotalAmount(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado?->Totales?->MontoTotal)) {
-            return (string) $this->xmlSigner?->Encabezado?->Totales?->MontoTotal;
+        if (! empty($this->xml?->Encabezado?->Totales?->MontoTotal)) {
+            return (string) $this->xml?->Encabezado?->Totales?->MontoTotal;
         }
 
         return null;
     }
 
     /**
-     * Determinar si el XML corresponde a un RFCE (Resumen de Consumo).
+     * Determine if the XML is an RFCE (Consolidated Consumption Summary).
      */
     public function isRfce(): bool
     {
-        return ! empty($this->xmlSigner?->Encabezado?->CodigoSeguridadeCF);
+        return ! empty($this->xml?->Encabezado?->CodigoSeguridadeCF);
     }
 
     /**
-     * Determinar si la factura es de consumo (B32) basado en tipo y monto límite.
+     * Determine if it's a consumption invoice (B32) based on type and threshold.
      */
     public function isConsumeInvoice(): bool
     {
@@ -104,91 +107,120 @@ class InvoiceXml extends AbstractXml
 
         return
             $this->isRfce() ||
-            $type === config('dgii.rules.fc_type') && $total < config('dgii.rules.fc_limit');
+            ($type === (int) config('dgii.rules.fc_type', 32) && $total < (float) config('dgii.rules.fc_limit', 250000));
     }
 
+    /**
+     * Get the sender's identification (RNC).
+     */
     public function getSenderIdentification(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado?->Emisor->RNCEmisor)) {
-            return (string) $this->xmlSigner?->Encabezado?->Emisor->RNCEmisor;
+        if (! empty($this->xml?->Encabezado?->Emisor->RNCEmisor)) {
+            return (string) $this->xml?->Encabezado?->Emisor->RNCEmisor;
         }
 
         return null;
     }
 
+    /**
+     * Get the document release date.
+     */
     public function getReleaseDate(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado?->Emisor?->FechaEmision)) {
-            return (string) $this->xmlSigner?->Encabezado?->Emisor?->FechaEmision;
+        if (! empty($this->xml?->Encabezado?->Emisor?->FechaEmision)) {
+            return (string) $this->xml?->Encabezado?->Emisor?->FechaEmision;
         }
 
         return null;
     }
 
+    /**
+     * Get the buyer's identification (RNC or Foreign ID).
+     */
     public function getBuyerIdentification(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado?->Comprador?->IdentificadorExtranjero)) {
-            return (string) $this->xmlSigner?->Encabezado?->Comprador?->IdentificadorExtranjero;
+        if (! empty($this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero)) {
+            return (string) $this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero;
         }
 
-        if (! empty($this->xmlSigner?->Encabezado?->Comprador?->RNCComprador)) {
-            return (string) $this->xmlSigner?->Encabezado?->Comprador?->RNCComprador;
+        if (! empty($this->xml?->Encabezado?->Comprador?->RNCComprador)) {
+            return (string) $this->xml?->Encabezado?->Comprador?->RNCComprador;
         }
 
         return null;
     }
 
+    /**
+     * Get a suggested file name for the XML.
+     */
     public function getXmlName(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado)) {
+        if (! empty($this->xml?->Encabezado)) {
             return $this->getSenderIdentification().$this->getSequenceNumber();
         }
 
         return null;
     }
 
+    /**
+     * Get the sequence expiration date.
+     */
     public function getSequenceDueDate(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado?->IdDoc?->FechaVencimientoSecuencia)) {
-            return (string) $this->xmlSigner?->Encabezado?->IdDoc?->FechaVencimientoSecuencia;
+        if (! empty($this->xml?->Encabezado?->IdDoc?->FechaVencimientoSecuencia)) {
+            return (string) $this->xml?->Encabezado?->IdDoc?->FechaVencimientoSecuencia;
         }
 
         return null;
     }
 
+    /**
+     * Get the modified e-NCF (for Credit/Debit Notes).
+     */
     public function getModifiedSequenceNumber(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado?->IdDoc?->eNCFModificado)) {
-            return (string) $this->xmlSigner?->Encabezado?->IdDoc?->eNCFModificado;
+        if (! empty($this->xml?->Encabezado?->IdDoc?->eNCFModificado)) {
+            return (string) $this->xml?->Encabezado?->IdDoc?->eNCFModificado;
         }
 
         return null;
     }
 
+    /**
+     * Get the modification code.
+     */
     public function getModificationCode(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado?->IdDoc?->CodigoModificacion)) {
-            return (string) $this->xmlSigner?->Encabezado?->IdDoc?->CodigoModificacion;
+        if (! empty($this->xml?->Encabezado?->IdDoc?->CodigoModificacion)) {
+            return (string) $this->xml?->Encabezado?->IdDoc?->CodigoModificacion;
         }
 
         return null;
     }
 
+    /**
+     * Get additional information about the buyer.
+     */
     public function getObservations(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado?->Comprador?->InformacionAdicionalComprador)) {
-            return (string) $this->xmlSigner?->Encabezado?->Comprador?->InformacionAdicionalComprador;
+        if (! empty($this->xml?->Encabezado?->Comprador?->InformacionAdicionalComprador)) {
+            return (string) $this->xml?->Encabezado?->Comprador?->InformacionAdicionalComprador;
         }
 
         return null;
     }
 
+    /**
+     * Get all invoice line items.
+     *
+     * @return array List of items with their quantities, prices, and totals.
+     */
     public function getLines(): array
     {
         $lines = [];
 
-        if (! empty($this->xmlSigner?->DetallesItems?->Item)) {
-            foreach ($this->xmlSigner?->DetallesItems?->Item as $item) {
+        if (! empty($this->xml?->DetallesItems?->Item)) {
+            foreach ($this->xml?->DetallesItems?->Item as $item) {
                 $lines[] = [
                     'NumeroLinea' => (int) $item->NumeroLinea,
                     'NombreItem' => (string) $item->NombreItem,
@@ -204,69 +236,93 @@ class InvoiceXml extends AbstractXml
         return $lines;
     }
 
+    /**
+     * Get the buyer's corporate name (Razon Social).
+     */
     public function getBuyerCorporateName(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado?->Comprador?->RazonSocialComprador)) {
-            return (string) $this->xmlSigner?->Encabezado?->Comprador?->RazonSocialComprador;
+        if (! empty($this->xml?->Encabezado?->Comprador?->RazonSocialComprador)) {
+            return (string) $this->xml?->Encabezado?->Comprador?->RazonSocialComprador;
         }
 
         return null;
     }
 
+    /**
+     * Get the buyer's address.
+     */
     public function getBuyerAddress(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado?->Comprador?->DireccionComprador)) {
-            return (string) $this->xmlSigner?->Encabezado?->Comprador?->DireccionComprador;
+        if (! empty($this->xml?->Encabezado?->Comprador?->DireccionComprador)) {
+            return (string) $this->xml?->Encabezado?->Comprador?->DireccionComprador;
         }
 
         return null;
     }
 
+    /**
+     * Check if the buyer is a foreigner.
+     */
     public function isBuyerForeigner(): bool
     {
-        return ! empty($this->xmlSigner?->Encabezado?->Comprador?->IdentificadorExtranjero);
+        return ! empty($this->xml?->Encabezado?->Comprador?->IdentificadorExtranjero);
     }
 
+    /**
+     * Get the sender's corporate name (Razon Social).
+     */
     public function getSenderCorporateName(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado?->Emisor->RazonSocialEmisor)) {
-            return (string) $this->xmlSigner?->Encabezado?->Emisor->RazonSocialEmisor;
+        if (! empty($this->xml?->Encabezado?->Emisor->RazonSocialEmisor)) {
+            return (string) $this->xml?->Encabezado?->Emisor->RazonSocialEmisor;
         }
 
         return null;
     }
 
+    /**
+     * Get the sender's address.
+     */
     public function getSenderAddress(): ?string
     {
-        if (! empty($this->xmlSigner?->Encabezado?->Emisor->DireccionEmisor)) {
-            return (string) $this->xmlSigner?->Encabezado?->Emisor->DireccionEmisor;
+        if (! empty($this->xml?->Encabezado?->Emisor->DireccionEmisor)) {
+            return (string) $this->xml?->Encabezado?->Emisor->DireccionEmisor;
         }
 
         return null;
     }
 
+    /**
+     * Get the total ITBIS (tax) amount.
+     */
     public function getTotalTaxes(): ?float
     {
-        if (! empty($this->xmlSigner?->Encabezado?->Totales?->TotalITBIS)) {
-            return (float) $this->xmlSigner?->Encabezado?->Totales?->TotalITBIS;
+        if (! empty($this->xml?->Encabezado?->Totales?->TotalITBIS)) {
+            return (float) $this->xml?->Encabezado?->Totales?->TotalITBIS;
         }
 
         return null;
     }
 
+    /**
+     * Get the total amount subject to taxes.
+     */
     public function getTotalAmountTaxed(): ?float
     {
-        if (! empty($this->xmlSigner?->Encabezado?->Totales?->MontoGravadoTotal)) {
-            return (float) $this->xmlSigner?->Encabezado?->Totales?->MontoGravadoTotal;
+        if (! empty($this->xml?->Encabezado?->Totales?->MontoGravadoTotal)) {
+            return (float) $this->xml?->Encabezado?->Totales?->MontoGravadoTotal;
         }
 
         return null;
     }
 
+    /**
+     * Get the total exempt amount.
+     */
     public function getTotalExempt(): ?float
     {
-        if (! empty($this->xmlSigner?->Encabezado?->Totales?->MontoExento)) {
-            return (float) $this->xmlSigner?->Encabezado?->Totales?->MontoExento;
+        if (! empty($this->xml?->Encabezado?->Totales?->MontoExento)) {
+            return (float) $this->xml?->Encabezado?->Totales?->MontoExento;
         }
 
         return null;

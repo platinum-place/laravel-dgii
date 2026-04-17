@@ -4,10 +4,13 @@ namespace PlatinumPlace\LaravelDgii\ValueObjects\CommercialApproval;
 
 use PlatinumPlace\LaravelDgii\Abstracts\AbstractXml;
 
+/**
+ * Represents a Commercial Approval XML document (ARECF).
+ */
 class CommercialApprovalXml extends AbstractXml
 {
     /**
-     * Obtener el RNC del comprador involucrado en la aprobación.
+     * Get the buyer's identification (RNC) involved in the approval.
      */
     public function getBuyerIdentification(): ?string
     {
@@ -19,7 +22,7 @@ class CommercialApprovalXml extends AbstractXml
     }
 
     /**
-     * Obtener el e-NCF del comprobante que se está aprobando o rechazando.
+     * Get the e-NCF of the receipt being approved or rejected.
      */
     public function getSequenceNumber(): ?string
     {
@@ -35,7 +38,7 @@ class CommercialApprovalXml extends AbstractXml
     }
 
     /**
-     * Generar un nombre sugerido para el archivo XML basado en RNC y secuencia.
+     * Generate a suggested file name for the XML based on RNC and sequence.
      */
     public function getXmlName(): ?string
     {

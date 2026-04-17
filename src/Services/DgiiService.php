@@ -6,10 +6,15 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Clients\DgiiClient;
 
+/**
+ * Service to manage general DGII service status and information.
+ */
 class DgiiService
 {
     /**
-     * Create a new class instance.
+     * Create a new service instance.
+     *
+     * @param DgiiClient $dgiiClient Base DGII client.
      */
     public function __construct(protected DgiiClient $dgiiClient)
     {
@@ -17,6 +22,10 @@ class DgiiService
     }
 
     /**
+     * Get the current status of all DGII web services.
+     *
+     * @return array List of services and their status.
+     *
      * @throws RequestException
      * @throws ConnectionException
      */
@@ -26,6 +35,10 @@ class DgiiService
     }
 
     /**
+     * Get scheduled maintenance windows from DGII.
+     *
+     * @return array List of maintenance windows.
+     *
      * @throws RequestException
      * @throws ConnectionException
      */
@@ -35,6 +48,11 @@ class DgiiService
     }
 
     /**
+     * Get the status of a specific DGII environment.
+     *
+     * @param string|null $env The environment to check.
+     * @return array Status data for the environment.
+     *
      * @throws RequestException
      * @throws ConnectionException
      */

@@ -4,10 +4,13 @@ namespace PlatinumPlace\LaravelDgii\ValueObjects\CancellationRange;
 
 use PlatinumPlace\LaravelDgii\Abstracts\AbstractXml;
 
+/**
+ * Represents a Sequence Range Cancellation XML document (ANECF).
+ */
 class CancellationRangeXml extends AbstractXml
 {
     /**
-     * Obtener el total de secuencias anuladas.
+     * Get the total number of canceled sequences.
      */
     public function getTotal(): ?int
     {
@@ -19,7 +22,7 @@ class CancellationRangeXml extends AbstractXml
     }
 
     /**
-     * Obtener la fecha y hora de la anulación.
+     * Get the date and time of the cancellation.
      */
     public function getDate(): ?string
     {
@@ -31,7 +34,9 @@ class CancellationRangeXml extends AbstractXml
     }
 
     /**
-     * Obtener el listado detallado de secuencias por tipo de e-CF.
+     * Get the detailed list of sequences by e-CF type.
+     *
+     * @return array List of cancellations grouped by line number.
      */
     public function getDetails(): array
     {

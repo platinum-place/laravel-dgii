@@ -7,10 +7,16 @@ use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\AuthenticateAction;
 use PlatinumPlace\LaravelDgii\Clients\CommercialApprovalClient;
 
+/**
+ * Action to send a signed Commercial Approval (ARECF) XML to DGII.
+ */
 class SendCommercialApprovalAction
 {
     /**
      * Create a new class instance.
+     *
+     * @param AuthenticateAction $authenticateAction Authentication service.
+     * @param CommercialApprovalClient $commercialApprovalClient Commercial approval client.
      */
     public function __construct(
         protected AuthenticateAction $authenticateAction,
@@ -20,13 +26,14 @@ class SendCommercialApprovalAction
     }
 
     /**
-     * Enviar el XML de aprobación comercial firmado a la DGII.
+     * Send the signed Commercial Approval XML to DGII.
      *
-     * @param  string  $xmlPath  Ruta relativa del XML de aprobación comercial.
-     * @param  string|null  $env  Ambiente de ejecución.
-     * @param  string|null  $certPath  Ruta absoluta al certificado para autenticación.
-     * @param  string|null  $certPassword  Contraseña del certificado.
-     * @return array Respuesta de la DGII.
+     * @param string $xmlPath Relative path of the signed XML file.
+     * @param string|null $env The environment to use.
+     * @param string|null $certPath Optional certificate path for authentication.
+     * @param string|null $certPassword Optional certificate password.
+     * @param string|null $token Optional existing authentication token.
+     * @return array DGII response.
      *
      * @throws ConnectionException|RequestException
      */

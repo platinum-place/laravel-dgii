@@ -8,18 +8,17 @@ use Illuminate\Support\Facades\Http;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
 
 /**
- * Cliente para interactuar con los servicios web de la DGII.
+ * Client to interact with DGII Commercial Approval Services (ARECF).
  *
- * Esta clase centraliza todas las peticiones HTTP a los diferentes endpoints de la DGII
- * para el manejo de comprobantes fiscales electrónicos (e-CF), incluyendo autenticación,
- * envío de documentos y consultas de estado.
+ * This class handles the transmission of commercial approval or rejection
+ * for received e-CF documents.
  */
 class CommercialApprovalClient
 {
     /**
-     * Crea una nueva instancia del cliente.
+     * Create a new client instance.
      *
-     * @param  StorageService  $storageService  Ayudante para interactuar con el almacenamiento de archivos.
+     * @param StorageService $storageService Helper to interact with file storage.
      */
     public function __construct(protected StorageService $storageService)
     {
@@ -27,12 +26,12 @@ class CommercialApprovalClient
     }
 
     /**
-     * Envía una aprobación comercial de un e-CF recibido.
+     * Send a commercial approval for a received e-CF.
      *
-     * @param  string  $token  Token de autenticación vigente.
-     * @param  string  $xmlPath  Ruta relativa del archivo XML de la aprobación.
-     * @param  string|null  $env  El ambiente (testecf, certecf, ecf).
-     * @return array Respuesta de la DGII sobre el envío.
+     * @param string $token Valid authentication token.
+     * @param string $xmlPath Relative path of the approval XML file.
+     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @return array DGII response for the submission.
      *
      * @throws RequestException
      * @throws ConnectionException

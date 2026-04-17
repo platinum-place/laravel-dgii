@@ -8,18 +8,17 @@ use Illuminate\Support\Facades\Http;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
 
 /**
- * Cliente para interactuar con los servicios web de la DGII.
+ * Client to interact with DGII Web Services.
  *
- * Esta clase centraliza todas las peticiones HTTP a los diferentes endpoints de la DGII
- * para el manejo de comprobantes fiscales electrónicos (e-CF), incluyendo autenticación,
- * envío de documentos y consultas de estado.
+ * This class centralizes general HTTP requests to DGII status endpoints,
+ * providing information about service availability and maintenance windows.
  */
 class DgiiClient
 {
     /**
-     * Crea una nueva instancia del cliente.
+     * Create a new client instance.
      *
-     * @param  StorageService  $storageService  Ayudante para interactuar con el almacenamiento de archivos.
+     * @param StorageService $storageService Helper to interact with file storage.
      */
     public function __construct(protected StorageService $storageService)
     {
@@ -27,9 +26,9 @@ class DgiiClient
     }
 
     /**
-     * Obtiene el estado general de los servicios web de la DGII.
+     * Fetch the general status of DGII web services.
      *
-     * @return array Lista de servicios y sus respectivos estados de disponibilidad.
+     * @return array List of services and their availability status.
      *
      * @throws RequestException
      * @throws ConnectionException
@@ -43,7 +42,7 @@ class DgiiClient
 
         return Http::withHeaders([
             'accept' => '*/*',
-            'Authorization' => 'Apikey '.config('dgii.api_key'),
+            'Authorization' => 'Apikey ' . config('dgii.api_key'),
         ])
             ->get($url)
             ->throw()
@@ -51,9 +50,9 @@ class DgiiClient
     }
 
     /**
-     * Obtiene las ventanas de mantenimiento programadas por la DGII.
+     * Fetch scheduled maintenance windows from DGII.
      *
-     * @return array Lista de ventanas de mantenimiento.
+     * @return array List of maintenance windows.
      *
      * @throws RequestException
      * @throws ConnectionException
@@ -67,7 +66,7 @@ class DgiiClient
 
         return Http::withHeaders([
             'accept' => '*/*',
-            'Authorization' => 'Apikey '.config('dgii.api_key'),
+            'Authorization' => 'Apikey ' . config('dgii.api_key'),
         ])
             ->get($url)
             ->throw()
@@ -75,10 +74,10 @@ class DgiiClient
     }
 
     /**
-     * Verifica el estado de un ambiente específico (Producción, Pruebas, Certificación).
+     * Verify the status of a specific environment (Production, Testing, Certification).
      *
-     * @param  string|null  $env  El ambiente a verificar. Si es nulo, usa el configurado.
-     * @return array Estado del ambiente solicitado.
+     * @param string|null $env The environment to check. Uses configured default if null.
+     * @return array Status of the requested environment.
      *
      * @throws RequestException
      * @throws ConnectionException
@@ -93,7 +92,7 @@ class DgiiClient
 
         return Http::withHeaders([
             'accept' => '*/*',
-            'Authorization' => 'Apikey '.config('dgii.api_key'),
+            'Authorization' => 'Apikey ' . config('dgii.api_key'),
         ])
             ->get($url, [
                 'ambiente' => match ($env) {

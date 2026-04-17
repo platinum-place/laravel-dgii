@@ -8,6 +8,9 @@ use PlatinumPlace\LaravelDgii\Enums\ArecfStatusEnum;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceReceived;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 
+/**
+ * Action to generate the Acknowledgment (Acuse de Recibo) XML content.
+ */
 class GenerateAcknowledgmentAction
 {
     /**
@@ -18,7 +21,14 @@ class GenerateAcknowledgmentAction
         //
     }
 
-    public function handle(InvoiceXml $invoiceXml, InvoiceReceived $invoiceReceived)
+    /**
+     * Generate the Acknowledgment XML content based on the received invoice and DGII response.
+     *
+     * @param InvoiceXml $invoiceXml The original invoice XML object.
+     * @param InvoiceReceived $invoiceReceived The response received from DGII.
+     * @return string The generated XML content.
+     */
+    public function handle(InvoiceXml $invoiceXml, InvoiceReceived $invoiceReceived): string
     {
         $arecfCodeId = null;
 

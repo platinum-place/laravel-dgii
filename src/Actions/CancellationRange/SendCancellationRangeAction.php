@@ -7,10 +7,16 @@ use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\AuthenticateAction;
 use PlatinumPlace\LaravelDgii\Clients\CancellationRangeClient;
 
+/**
+ * Action to send a signed Cancellation Range (ANECF) XML to DGII.
+ */
 class SendCancellationRangeAction
 {
     /**
      * Create a new class instance.
+     *
+     * @param AuthenticateAction $authenticateAction Authentication service.
+     * @param CancellationRangeClient $cancellationRangeClient Cancellation client.
      */
     public function __construct(
         protected AuthenticateAction $authenticateAction,
@@ -20,13 +26,13 @@ class SendCancellationRangeAction
     }
 
     /**
-     * Enviar el XML de anulación de rango de secuencias firmado a la DGII.
+     * Send the signed Cancellation Range XML to DGII.
      *
-     * @param  string  $xmlPath  Ruta relativa del XML de anulación firmado.
-     * @param  string|null  $env  Ambiente de ejecución.
-     * @param  string|null  $certPath  Ruta absoluta al certificado para autenticación.
-     * @param  string|null  $certPassword  Contraseña del certificado.
-     * @return array Respuesta de la DGII.
+     * @param string $xmlPath Relative path of the signed XML file.
+     * @param string|null $env The environment to use.
+     * @param string|null $certPath Optional certificate path.
+     * @param string|null $certPassword Optional certificate password.
+     * @return array DGII response.
      *
      * @throws ConnectionException|RequestException
      */

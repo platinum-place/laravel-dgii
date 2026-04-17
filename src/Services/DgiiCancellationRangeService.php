@@ -11,10 +11,13 @@ use PlatinumPlace\LaravelDgii\Actions\CancellationRange\StorageCancellationRange
 use PlatinumPlace\LaravelDgii\Actions\CommercialApproval\SendCommercialApprovalAction;
 use PlatinumPlace\LaravelDgii\ValueObjects\CancellationRange\CancellationRangeReceived;
 
+/**
+ * Service to manage e-CF Sequence Range Cancellations (ANECF).
+ */
 class DgiiCancellationRangeService
 {
     /**
-     * Create a new class instance.
+     * Create a new service instance.
      */
     public function __construct()
     {
@@ -22,6 +25,14 @@ class DgiiCancellationRangeService
     }
 
     /**
+     * Generate, sign, store, and send a range cancellation request to DGII.
+     *
+     * @param array $data Template data for the cancellation.
+     * @param string|null $env The environment to use.
+     * @param string|null $certPath Optional certificate path.
+     * @param string|null $certPassword Optional certificate password.
+     * @return CancellationRangeReceived The final result of the operation.
+     *
      * @throws RequestException
      * @throws ConnectionException
      * @throws Exception

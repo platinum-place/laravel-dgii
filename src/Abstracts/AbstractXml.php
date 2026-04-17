@@ -6,17 +6,24 @@ use AllowDynamicProperties;
 use InvalidArgumentException;
 use SimpleXMLElement;
 
+/**
+ * Base class for DGII XML documents.
+ * Provides automatic validation and structured access to content.
+ */
 #[AllowDynamicProperties]
 abstract class AbstractXml
 {
+    /** @var SimpleXMLElement The loaded XML root element. */
     protected SimpleXMLElement $xml;
 
+    /** @var string The raw XML content as a string. */
     public string $xmlContent;
 
     /**
-     * Create a new class instance.
+     * Create a new class instance and validate XML content.
      *
-     * @throws InvalidArgumentException
+     * @param string $xml The XML content to process.
+     * @throws InvalidArgumentException If the XML content is invalid.
      */
     public function __construct(string $xml)
     {
@@ -28,9 +35,10 @@ abstract class AbstractXml
         if ($loadedXml === false) {
             $errors = libxml_get_errors();
             libxml_clear_errors();
-            throw new InvalidArgumentException('El contenido XML no es válido: '.($errors[0]->message ?? 'Error desconocido'));
+            throw new InvalidArgumentException('The XML content is invalid: ' . ($errors[0]->message ?? 'Unknown error'));
         }
 
         $this->xmlSigner = $loadedXml;
+        $this->xml = $loadedXml;
     }
 }

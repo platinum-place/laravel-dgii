@@ -8,18 +8,17 @@ use Illuminate\Support\Facades\Http;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
 
 /**
- * Cliente para interactuar con los servicios web de la DGII.
+ * Client to interact with DGII Cancellation Range Services (ANECF).
  *
- * Esta clase centraliza todas las peticiones HTTP a los diferentes endpoints de la DGII
- * para el manejo de comprobantes fiscales electrónicos (e-CF), incluyendo autenticación,
- * envío de documentos y consultas de estado.
+ * This class handles the transmission of sequence range cancellation
+ * requests to the specific DGII endpoints.
  */
 class CancellationRangeClient
 {
     /**
-     * Crea una nueva instancia del cliente.
+     * Create a new client instance.
      *
-     * @param  StorageService  $storageService  Ayudante para interactuar con el almacenamiento de archivos.
+     * @param StorageService $storageService Helper to interact with file storage.
      */
     public function __construct(protected StorageService $storageService)
     {
@@ -27,12 +26,12 @@ class CancellationRangeClient
     }
 
     /**
-     * Envía una solicitud de anulación de un rango de secuencias e-CF.
+     * Send a request to cancel a range of e-CF sequences.
      *
-     * @param  string  $token  Token de autenticación vigente.
-     * @param  string  $xmlPath  Ruta relativa del archivo XML de la anulación.
-     * @param  string|null  $env  El ambiente (testecf, certecf, ecf).
-     * @return array Respuesta de la DGII sobre la anulación.
+     * @param string $token Valid authentication token.
+     * @param string $xmlPath Relative path of the cancellation XML file.
+     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @return array DGII response about the cancellation.
      *
      * @throws RequestException
      * @throws ConnectionException

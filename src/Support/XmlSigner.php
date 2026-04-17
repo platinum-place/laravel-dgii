@@ -4,12 +4,15 @@ namespace PlatinumPlace\LaravelDgii\Support;
 
 use PlatinumPlace\DgiiXmlSigner\SignManager;
 
+/**
+ * Service to handle XML digital signing.
+ */
 class XmlSigner
 {
     /**
-     * Crea una nueva instancia para el firmado de XML.
+     * Create a new XML signer instance.
      *
-     * @param  StorageService  $storageService  Servicio de almacenamiento.
+     * @param StorageService $storageService Storage service instance.
      */
     public function __construct(protected StorageService $storageService)
     {
@@ -17,12 +20,12 @@ class XmlSigner
     }
 
     /**
-     * Firmar digitalmente un contenido XML utilizando el certificado configurado.
+     * Digitally sign XML content using the configured certificate.
      *
-     * @param  string  $xml  Contenido XML plano a firmar.
-     * @param  string|null  $certPath  Ruta al certificado (si se desea sobrescribir el de config).
-     * @param  string|null  $certPassword  Contraseña del certificado.
-     * @return string XML firmado digitalmente.
+     * @param string $xml Raw XML content to be signed.
+     * @param string|null $certPath Path to the certificate in storage.
+     * @param string|null $certPassword The certificate password.
+     * @return string The digitally signed XML content.
      */
     public function sign(string $xml, ?string $certPath = null, ?string $certPassword = null): string
     {
