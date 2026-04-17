@@ -50,14 +50,16 @@ class CheckInvoiceStatusAction
      */
     public function handle(string $xmlPath, ?string $trackId = null, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceReceived
     {
-        $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
-
         $xml = $this->storageService->get($xmlPath);
 
         $invoiceXml = new InvoiceXml($xml);
 
-        return $this->catchResponse(fn () => $invoiceXml->isConsumeInvoice()
-            ? $this->consumeInvoiceClient->fetchStatus($token, $invoiceXml, $env)
-            : $this->invoiceClient->fetchStatusByTrackId($token, $trackId, $env));
+        return $this->catchResponse(function () use ($env, $certPath, $certPassword, $invoiceXml, $trackId) {
+            $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
+
+            return $invoiceXml->isConsumeInvoice()
+                ? $this->consumeInvoiceClient->fetchStatus($token, $invoiceXml, $env)
+                : $this->invoiceClient->fetchStatusByTrackId($token, $trackId, $env);
+        });
     }
 }

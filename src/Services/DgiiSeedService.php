@@ -6,7 +6,6 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\Seed\ReceiveSeedAction;
 use PlatinumPlace\LaravelDgii\Clients\SeedClient;
-use PlatinumPlace\LaravelDgii\Support\StorageService;
 
 /**
  * Service to manage DGII Authentication Seeds.
@@ -16,7 +15,8 @@ class DgiiSeedService
     /**
      * Create a new service instance.
      */
-    public function __construct( ) {
+    public function __construct()
+    {
         //
     }
 

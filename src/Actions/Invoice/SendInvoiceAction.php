@@ -51,14 +51,14 @@ class SendInvoiceAction
      */
     public function handle(StoredInvoice $storedInvoice, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): InvoiceReceived
     {
-        if (! $token) {
-            $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
-        }
+        return $this->catchResponse(function () use ($storedInvoice, $env, $certPath, $certPassword, $token) {
+            if (! $token) {
+                $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
+            }
 
-        return $this->catchResponse(
-            fn () => $storedInvoice->signedInvoice->invoiceXml->isConsumeInvoice()
+            return $storedInvoice->signedInvoice->invoiceXml->isConsumeInvoice()
                 ? $this->consumeInvoiceClient->send($token, $storedInvoice->invoiceXmlPath, $env)
-                : $this->invoiceClient->send($token, $storedInvoice->invoiceXmlPath, $env)
-        );
+                : $this->invoiceClient->send($token, $storedInvoice->invoiceXmlPath, $env);
+        });
     }
 }

@@ -39,9 +39,9 @@ class GenerateInvoiceQrLinkAction
     public function handle(string|InvoiceXml $invoiceXml, ?string $env = null): string
     {
         if (is_string($invoiceXml)) {
-            $invoiceXml = new InvoiceXml(
-                $this->storageService->get($invoiceXml)
-            );
+            $invoiceXml = str_starts_with(trim($invoiceXml), '<?xml')
+                ? new InvoiceXml($invoiceXml)
+                : new InvoiceXml($this->storageService->get($invoiceXml));
         }
 
         return $invoiceXml->isConsumeInvoice()
