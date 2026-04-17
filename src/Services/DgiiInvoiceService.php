@@ -15,7 +15,6 @@ use PlatinumPlace\LaravelDgii\Actions\Invoice\StorageInvoiceAction;
 use PlatinumPlace\LaravelDgii\Data\InvoiceData;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
 use PlatinumPlace\LaravelDgii\Support\XmlSigner;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceGenerated;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\SignedInvoice;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\StoredInvoice;
@@ -26,10 +25,9 @@ class DgiiInvoiceService
      * Create a new class instance.
      */
     public function __construct(
-        protected XmlSigner      $xmlSigner,
+        protected XmlSigner $xmlSigner,
         protected StorageService $storageService,
-    )
-    {
+    ) {
         //
     }
 
@@ -86,9 +84,9 @@ class DgiiInvoiceService
      */
     public function send(string|array $xmlContent, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): InvoiceData
     {
-        if(is_array($xmlContent)){
+        if (is_array($xmlContent)) {
             $storedInvoice = $this->sign($xmlContent, $env, $certPath, $certPassword);
-        }else{
+        } else {
             $signedInvoice = new SignedInvoice(
                 new InvoiceXml($xmlContent),
                 $this->getQrlInk($xmlContent, $env),

@@ -12,11 +12,10 @@ class InvoiceData
      * Create a new class instance.
      */
     public function __construct(
-        public StoredInvoice        $storedInvoice,
-        public InvoiceReceived      $invoiceReceived,
+        public StoredInvoice $storedInvoice,
+        public InvoiceReceived $invoiceReceived,
         public StoredAcknowledgment $storedAcknowledgment,
-    )
-    {
+    ) {
         //
     }
 }
