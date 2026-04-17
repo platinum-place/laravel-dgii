@@ -14,7 +14,7 @@ class StorageCancellationRangeAction
     /**
      * Create a new class instance.
      *
-     * @param StorageService $storageService Storage service instance.
+     * @param  StorageService  $storageService  Storage service instance.
      */
     public function __construct(protected StorageService $storageService)
     {
@@ -24,7 +24,7 @@ class StorageCancellationRangeAction
     /**
      * Store the signed Cancellation Range XML content.
      *
-     * @param CancellationRangeXml $cancellationRangeXml The cancellation range XML object.
+     * @param  CancellationRangeXml  $cancellationRangeXml  The cancellation range XML object.
      * @return StoredCancellationRange The stored cancellation range data.
      */
     public function handle(CancellationRangeXml $cancellationRangeXml): StoredCancellationRange

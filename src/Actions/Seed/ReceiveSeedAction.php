@@ -15,8 +15,8 @@ class ReceiveSeedAction
     /**
      * Create a new class instance.
      *
-     * @param StorageService $storageService Storage service instance.
-     * @param SeedClient $seedClient Seed client instance.
+     * @param  StorageService  $storageService  Storage service instance.
+     * @param  SeedClient  $seedClient  Seed client instance.
      */
     public function __construct(
         protected StorageService $storageService,
@@ -28,15 +28,15 @@ class ReceiveSeedAction
     /**
      * Validate the signed seed XML with DGII to obtain an access token.
      *
-     * @param string $signedXml Signed seed XML content.
-     * @param string|null $env The environment to use.
+     * @param  string  $signedXml  Signed seed XML content.
+     * @param  string|null  $env  The environment to use.
      * @return array Response data (token, expiration date).
      *
      * @throws ConnectionException|RequestException
      */
     public function handle(string $signedXml, ?string $env = null): array
     {
-        $xmlPath = $this->storageService->putXml($signedXml, now()->timestamp . '-semilla');
+        $xmlPath = $this->storageService->putXml($signedXml, now()->timestamp.'-semilla');
 
         return $this->seedClient->fetchToken($xmlPath, $env);
     }

@@ -24,9 +24,9 @@ class GenerateInvoicePdfAction
      *
      * Uses barryvdh/laravel-dompdf to render the 'dgii::invoice-template' view.
      *
-     * @param string $xmlContent Signed e-CF XML content.
-     * @param string $qrLink Full URL for the fiscal stamp (ConsultaTimbre).
-     * @param string|null $logo Optional company logo binary content.
+     * @param  string  $xmlContent  Signed e-CF XML content.
+     * @param  string  $qrLink  Full URL for the fiscal stamp (ConsultaTimbre).
+     * @param  string|null  $logo  Optional company logo binary content.
      * @return string Binary PDF content.
      */
     public function handle(string $xmlContent, string $qrLink, ?string $logo = null): string

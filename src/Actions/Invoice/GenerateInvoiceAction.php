@@ -24,7 +24,7 @@ class GenerateInvoiceAction
      */
     private function signEcf(array $data): InvoiceXml
     {
-        $xml = View::make('dgii::ecf.ecf_' . $data['IdDoc']['TipoeCF'], $data)->render();
+        $xml = View::make('dgii::ecf.ecf_'.$data['IdDoc']['TipoeCF'], $data)->render();
 
         return new InvoiceXml($xml);
     }
@@ -44,7 +44,7 @@ class GenerateInvoiceAction
     /**
      * Handle the generation of one or more XML objects for an invoice.
      *
-     * @param array $data Invoice data.
+     * @param  array  $data  Invoice data.
      * @return InvoiceGenerated Object containing the main and optionally integral XMLs.
      */
     public function handle(array $data): InvoiceGenerated

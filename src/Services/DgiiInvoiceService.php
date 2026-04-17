@@ -30,8 +30,8 @@ class DgiiInvoiceService
     /**
      * Create a new service instance.
      *
-     * @param XmlSigner $xmlSigner XML signing service.
-     * @param StorageService $storageService Storage service.
+     * @param  XmlSigner  $xmlSigner  XML signing service.
+     * @param  StorageService  $storageService  Storage service.
      */
     public function __construct(
         protected XmlSigner $xmlSigner,
@@ -43,9 +43,10 @@ class DgiiInvoiceService
     /**
      * Generate the verification QR link for an e-CF.
      *
-     * @param string $xmlContent Signed XML content.
-     * @param string|null $env The environment to use.
+     * @param  string  $xmlContent  Signed XML content.
+     * @param  string|null  $env  The environment to use.
      * @return string Full QR verification URL.
+     *
      * @throws Exception
      */
     public function getQrlInk(string $xmlContent, ?string $env = null): string
@@ -56,9 +57,10 @@ class DgiiInvoiceService
     /**
      * Store a signed XML invoice in the file system.
      *
-     * @param string $xmlContent Signed XML content.
-     * @param string|null $env The environment to use.
+     * @param  string  $xmlContent  Signed XML content.
+     * @param  string|null  $env  The environment to use.
      * @return StoredInvoice Stored invoice data.
+     *
      * @throws Exception
      */
     public function storage(string $xmlContent, ?string $env = null): StoredInvoice
@@ -74,11 +76,12 @@ class DgiiInvoiceService
     /**
      * Generate, sign, and store an invoice from raw data.
      *
-     * @param array $data Template data for the invoice.
-     * @param string|null $env The environment to use.
-     * @param string|null $certPath Optional certificate path.
-     * @param string|null $certPassword Optional certificate password.
+     * @param  array  $data  Template data for the invoice.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path.
+     * @param  string|null  $certPassword  Optional certificate password.
      * @return StoredInvoice Stored and signed invoice data.
+     *
      * @throws Exception
      */
     public function sign(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): StoredInvoice
@@ -113,11 +116,11 @@ class DgiiInvoiceService
     /**
      * Send an invoice to DGII. Supports both raw data (array) or already signed XML (string).
      *
-     * @param string|array $xmlContent Raw data for generation or signed XML content.
-     * @param string|null $env The environment to use.
-     * @param string|null $certPath Optional certificate path.
-     * @param string|null $certPassword Optional certificate password.
-     * @param string|null $token Optional existing authentication token.
+     * @param  string|array  $xmlContent  Raw data for generation or signed XML content.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path.
+     * @param  string|null  $certPassword  Optional certificate password.
+     * @param  string|null  $token  Optional existing authentication token.
      * @return InvoiceData Complete transaction data including response and acknowledgment.
      *
      * @throws RequestException
@@ -143,11 +146,11 @@ class DgiiInvoiceService
     /**
      * Check the status of a previously sent invoice.
      *
-     * @param string $xmlPath Relative path of the XML in storage.
-     * @param string|null $trackId Tracking ID from a previous submission.
-     * @param string|null $env The environment to use.
-     * @param string|null $certPath Optional certificate path.
-     * @param string|null $certPassword Optional certificate password.
+     * @param  string  $xmlPath  Relative path of the XML in storage.
+     * @param  string|null  $trackId  Tracking ID from a previous submission.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path.
+     * @param  string|null  $certPassword  Optional certificate password.
      * @return InvoiceReceived Current status of the invoice.
      *
      * @throws RequestException

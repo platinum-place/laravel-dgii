@@ -22,7 +22,8 @@ abstract class AbstractXml
     /**
      * Create a new class instance and validate XML content.
      *
-     * @param string $xml The XML content to process.
+     * @param  string  $xml  The XML content to process.
+     *
      * @throws InvalidArgumentException If the XML content is invalid.
      */
     public function __construct(string $xml)
@@ -35,7 +36,7 @@ abstract class AbstractXml
         if ($loadedXml === false) {
             $errors = libxml_get_errors();
             libxml_clear_errors();
-            throw new InvalidArgumentException('The XML content is invalid: ' . ($errors[0]->message ?? 'Unknown error'));
+            throw new InvalidArgumentException('The XML content is invalid: '.($errors[0]->message ?? 'Unknown error'));
         }
 
         $this->xmlSigner = $loadedXml;

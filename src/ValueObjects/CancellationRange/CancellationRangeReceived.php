@@ -10,8 +10,8 @@ readonly class CancellationRangeReceived
     /**
      * Create a new class instance.
      *
-     * @param StoredCancellationRange $storedCancellationRange The local stored cancellation range object.
-     * @param array $response The HTTP response data from DGII.
+     * @param  StoredCancellationRange  $storedCancellationRange  The local stored cancellation range object.
+     * @param  array  $response  The HTTP response data from DGII.
      */
     public function __construct(
         public StoredCancellationRange $storedCancellationRange,

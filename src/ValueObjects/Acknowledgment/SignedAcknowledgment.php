@@ -10,8 +10,8 @@ class SignedAcknowledgment
     /**
      * Create a new class instance.
      *
-     * @param string $content Raw signed XML content.
-     * @param string $path Path where the signed XML is temporarily stored.
+     * @param  string  $content  Raw signed XML content.
+     * @param  string  $path  Path where the signed XML is temporarily stored.
      */
     public function __construct(
         public string $content,

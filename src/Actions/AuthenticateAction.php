@@ -21,10 +21,10 @@ class AuthenticateAction
     /**
      * Create a new authentication action instance.
      *
-     * @param SeedClient $seedClient Seed client instance.
-     * @param XmlSigner $xmlSigner XML signing service.
-     * @param StorageService $storageService Storage service.
-     * @param ReceiveSeedAction $receiveSeedAction Action to receive and validate seeds.
+     * @param  SeedClient  $seedClient  Seed client instance.
+     * @param  XmlSigner  $xmlSigner  XML signing service.
+     * @param  StorageService  $storageService  Storage service.
+     * @param  ReceiveSeedAction  $receiveSeedAction  Action to receive and validate seeds.
      */
     public function __construct(
         protected SeedClient $seedClient,
@@ -38,9 +38,9 @@ class AuthenticateAction
     /**
      * Perform the process of obtaining a new token (Seed -> Sign -> Validate).
      *
-     * @param string|null $env The environment to use.
-     * @param string|null $certPath Optional certificate path.
-     * @param string|null $certPassword Optional certificate password.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path.
+     * @param  string|null  $certPassword  Optional certificate password.
      * @return array Token data including expiration.
      *
      * @throws ConnectionException|RequestException
@@ -59,16 +59,16 @@ class AuthenticateAction
      *
      * The token is cached to optimize performance.
      *
-     * @param string|null $env The environment to use.
-     * @param string|null $certPath Optional certificate path.
-     * @param string|null $certPassword Optional certificate password.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path.
+     * @param  string|null  $certPassword  Optional certificate password.
      * @return string Valid authentication token (Bearer).
      *
      * @throws ConnectionException|RequestException
      */
     public function handle(?string $env = null, ?string $certPath = null, ?string $certPassword = null): string
     {
-        $cacheKey = config('dgii.cache.prefix') . md5($certPath . $env);
+        $cacheKey = config('dgii.cache.prefix').md5($certPath.$env);
 
         if ($token = Cache::get($cacheKey)) {
             return $token;

@@ -15,8 +15,8 @@ class SignInvoiceAction
     /**
      * Create a new class instance.
      *
-     * @param XmlSigner $xmlSigner XML signing service.
-     * @param GenerateInvoiceQrLinkAction $generateInvoiceQrLinkAction QR link generation service.
+     * @param  XmlSigner  $xmlSigner  XML signing service.
+     * @param  GenerateInvoiceQrLinkAction  $generateInvoiceQrLinkAction  QR link generation service.
      */
     public function __construct(
         protected XmlSigner $xmlSigner,
@@ -28,10 +28,10 @@ class SignInvoiceAction
     /**
      * Sign the generated invoice XML(s) and generate the QR verification link.
      *
-     * @param InvoiceGenerated $invoiceGenerated Generated XML object.
-     * @param string|null $env The environment to use.
-     * @param string|null $certPath Optional certificate path.
-     * @param string|null $certPassword Optional certificate password.
+     * @param  InvoiceGenerated  $invoiceGenerated  Generated XML object.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path.
+     * @param  string|null  $certPassword  Optional certificate password.
      * @return SignedInvoice The signed invoice object.
      */
     public function handle(InvoiceGenerated $invoiceGenerated, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): SignedInvoice

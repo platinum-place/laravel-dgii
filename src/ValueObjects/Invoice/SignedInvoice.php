@@ -10,9 +10,9 @@ class SignedInvoice
     /**
      * Create a new class instance.
      *
-     * @param InvoiceXml $invoiceXml The signed invoice XML object.
-     * @param string|null $qrLink Generated QR link for verification.
-     * @param InvoiceXml|null $integralInvoiceXml Optional integral invoice XML for certain types.
+     * @param  InvoiceXml  $invoiceXml  The signed invoice XML object.
+     * @param  string|null  $qrLink  Generated QR link for verification.
+     * @param  InvoiceXml|null  $integralInvoiceXml  Optional integral invoice XML for certain types.
      */
     public function __construct(
         public InvoiceXml $invoiceXml,

@@ -22,10 +22,10 @@ class CheckInvoiceStatusAction
     /**
      * Create a new class instance.
      *
-     * @param AuthenticateAction $authenticateAction Authentication service.
-     * @param StorageService $storageService Storage service instance.
-     * @param InvoiceClient $invoiceClient Standard e-CF client.
-     * @param ConsumeInvoiceClient $consumeInvoiceClient Consumption invoice client.
+     * @param  AuthenticateAction  $authenticateAction  Authentication service.
+     * @param  StorageService  $storageService  Storage service instance.
+     * @param  InvoiceClient  $invoiceClient  Standard e-CF client.
+     * @param  ConsumeInvoiceClient  $consumeInvoiceClient  Consumption invoice client.
      */
     public function __construct(
         protected AuthenticateAction $authenticateAction,
@@ -39,11 +39,11 @@ class CheckInvoiceStatusAction
     /**
      * Query DGII for the status of a previously sent e-CF.
      *
-     * @param string $xmlPath Relative path of the XML file in storage.
-     * @param string|null $trackId Tracking ID returned by DGII upon submission.
-     * @param string|null $env The environment to use.
-     * @param string|null $certPath Optional certificate path for authentication.
-     * @param string|null $certPassword Optional certificate password.
+     * @param  string  $xmlPath  Relative path of the XML file in storage.
+     * @param  string|null  $trackId  Tracking ID returned by DGII upon submission.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path for authentication.
+     * @param  string|null  $certPassword  Optional certificate password.
      * @return InvoiceReceived Response containing the detailed invoice status.
      *
      * @throws ConnectionException|RequestException

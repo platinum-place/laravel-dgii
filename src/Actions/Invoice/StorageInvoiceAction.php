@@ -14,7 +14,7 @@ class StorageInvoiceAction
     /**
      * Create a new class instance.
      *
-     * @param StorageService $storageService Storage service instance.
+     * @param  StorageService  $storageService  Storage service instance.
      */
     public function __construct(protected StorageService $storageService)
     {
@@ -24,7 +24,7 @@ class StorageInvoiceAction
     /**
      * Store the signed Invoice XML(s) and return the stored data object.
      *
-     * @param SignedInvoice $signedInvoice The signed invoice object.
+     * @param  SignedInvoice  $signedInvoice  The signed invoice object.
      * @return StoredInvoice Stored invoice with file paths.
      */
     public function handle(SignedInvoice $signedInvoice): StoredInvoice

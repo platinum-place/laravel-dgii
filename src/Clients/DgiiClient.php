@@ -18,7 +18,7 @@ class DgiiClient
     /**
      * Create a new client instance.
      *
-     * @param StorageService $storageService Helper to interact with file storage.
+     * @param  StorageService  $storageService  Helper to interact with file storage.
      */
     public function __construct(protected StorageService $storageService)
     {
@@ -42,7 +42,7 @@ class DgiiClient
 
         return Http::withHeaders([
             'accept' => '*/*',
-            'Authorization' => 'Apikey ' . config('dgii.api_key'),
+            'Authorization' => 'Apikey '.config('dgii.api_key'),
         ])
             ->get($url)
             ->throw()
@@ -66,7 +66,7 @@ class DgiiClient
 
         return Http::withHeaders([
             'accept' => '*/*',
-            'Authorization' => 'Apikey ' . config('dgii.api_key'),
+            'Authorization' => 'Apikey '.config('dgii.api_key'),
         ])
             ->get($url)
             ->throw()
@@ -76,7 +76,7 @@ class DgiiClient
     /**
      * Verify the status of a specific environment (Production, Testing, Certification).
      *
-     * @param string|null $env The environment to check. Uses configured default if null.
+     * @param  string|null  $env  The environment to check. Uses configured default if null.
      * @return array Status of the requested environment.
      *
      * @throws RequestException
@@ -92,7 +92,7 @@ class DgiiClient
 
         return Http::withHeaders([
             'accept' => '*/*',
-            'Authorization' => 'Apikey ' . config('dgii.api_key'),
+            'Authorization' => 'Apikey '.config('dgii.api_key'),
         ])
             ->get($url, [
                 'ambiente' => match ($env) {

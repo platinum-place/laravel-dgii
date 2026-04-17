@@ -27,10 +27,10 @@ class DgiiCancellationRangeService
     /**
      * Generate, sign, store, and send a range cancellation request to DGII.
      *
-     * @param array $data Template data for the cancellation.
-     * @param string|null $env The environment to use.
-     * @param string|null $certPath Optional certificate path.
-     * @param string|null $certPassword Optional certificate password.
+     * @param  array  $data  Template data for the cancellation.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path.
+     * @param  string|null  $certPassword  Optional certificate password.
      * @return CancellationRangeReceived The final result of the operation.
      *
      * @throws RequestException

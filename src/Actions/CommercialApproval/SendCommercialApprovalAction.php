@@ -15,8 +15,8 @@ class SendCommercialApprovalAction
     /**
      * Create a new class instance.
      *
-     * @param AuthenticateAction $authenticateAction Authentication service.
-     * @param CommercialApprovalClient $commercialApprovalClient Commercial approval client.
+     * @param  AuthenticateAction  $authenticateAction  Authentication service.
+     * @param  CommercialApprovalClient  $commercialApprovalClient  Commercial approval client.
      */
     public function __construct(
         protected AuthenticateAction $authenticateAction,
@@ -28,11 +28,11 @@ class SendCommercialApprovalAction
     /**
      * Send the signed Commercial Approval XML to DGII.
      *
-     * @param string $xmlPath Relative path of the signed XML file.
-     * @param string|null $env The environment to use.
-     * @param string|null $certPath Optional certificate path for authentication.
-     * @param string|null $certPassword Optional certificate password.
-     * @param string|null $token Optional existing authentication token.
+     * @param  string  $xmlPath  Relative path of the signed XML file.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path for authentication.
+     * @param  string|null  $certPassword  Optional certificate password.
+     * @param  string|null  $token  Optional existing authentication token.
      * @return array DGII response.
      *
      * @throws ConnectionException|RequestException

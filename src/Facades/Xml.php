@@ -3,8 +3,13 @@
 namespace PlatinumPlace\LaravelDgii\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use PlatinumPlace\LaravelDgii\Support\XmlSigner as XmlSignerSupport;
+use PlatinumPlace\LaravelDgii\Support\XmlSigner;
 
+/**
+ * @method static string sign(string $xml, ?string $certPath = null, ?string $certPassword = null)
+ *
+ * @see XmlSigner
+ */
 class Xml extends Facade
 {
     /**
@@ -17,6 +22,6 @@ class Xml extends Facade
 
     protected static function getFacadeAccessor()
     {
-        return XmlSignerSupport::class;
+        return XmlSigner::class;
     }
 }

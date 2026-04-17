@@ -18,7 +18,7 @@ class CommercialApprovalClient
     /**
      * Create a new client instance.
      *
-     * @param StorageService $storageService Helper to interact with file storage.
+     * @param  StorageService  $storageService  Helper to interact with file storage.
      */
     public function __construct(protected StorageService $storageService)
     {
@@ -28,9 +28,9 @@ class CommercialApprovalClient
     /**
      * Send a commercial approval for a received e-CF.
      *
-     * @param string $token Valid authentication token.
-     * @param string $xmlPath Relative path of the approval XML file.
-     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @param  string  $token  Valid authentication token.
+     * @param  string  $xmlPath  Relative path of the approval XML file.
+     * @param  string|null  $env  The environment (testecf, certecf, ecf).
      * @return array DGII response for the submission.
      *
      * @throws RequestException

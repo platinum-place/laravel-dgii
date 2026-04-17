@@ -5,6 +5,11 @@ namespace PlatinumPlace\LaravelDgii\Facades;
 use Illuminate\Support\Facades\Facade;
 use PlatinumPlace\LaravelDgii\Services\DgiiCancellationRangeService;
 
+/**
+ * @method static \PlatinumPlace\LaravelDgii\ValueObjects\CancellationRange\CancellationRangeReceived send(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null)
+ *
+ * @see DgiiCancellationRangeService
+ */
 class DgiiCancellationRange extends Facade
 {
     /**

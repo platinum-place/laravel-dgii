@@ -13,7 +13,7 @@ class SignAcknowledgmentAction
     /**
      * Create a new class instance.
      *
-     * @param XmlSigner $xmlSigner XML signing service.
+     * @param  XmlSigner  $xmlSigner  XML signing service.
      */
     public function __construct(protected XmlSigner $xmlSigner)
     {
@@ -23,9 +23,9 @@ class SignAcknowledgmentAction
     /**
      * Sign the Acknowledgment XML content.
      *
-     * @param string $acknowledgmentXmlContent Raw XML content to sign.
-     * @param string|null $certPath Optional certificate path.
-     * @param string|null $certPassword Optional certificate password.
+     * @param  string  $acknowledgmentXmlContent  Raw XML content to sign.
+     * @param  string|null  $certPath  Optional certificate path.
+     * @param  string|null  $certPassword  Optional certificate password.
      * @return AcknowledgmentXml The signed Acknowledgment value object.
      */
     public function handle(string $acknowledgmentXmlContent, ?string $certPath = null, ?string $certPassword = null): AcknowledgmentXml

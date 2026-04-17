@@ -15,8 +15,8 @@ class SendCancellationRangeAction
     /**
      * Create a new class instance.
      *
-     * @param AuthenticateAction $authenticateAction Authentication service.
-     * @param CancellationRangeClient $cancellationRangeClient Cancellation client.
+     * @param  AuthenticateAction  $authenticateAction  Authentication service.
+     * @param  CancellationRangeClient  $cancellationRangeClient  Cancellation client.
      */
     public function __construct(
         protected AuthenticateAction $authenticateAction,
@@ -28,10 +28,10 @@ class SendCancellationRangeAction
     /**
      * Send the signed Cancellation Range XML to DGII.
      *
-     * @param string $xmlPath Relative path of the signed XML file.
-     * @param string|null $env The environment to use.
-     * @param string|null $certPath Optional certificate path.
-     * @param string|null $certPassword Optional certificate password.
+     * @param  string  $xmlPath  Relative path of the signed XML file.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path.
+     * @param  string|null  $certPassword  Optional certificate password.
      * @return array DGII response.
      *
      * @throws ConnectionException|RequestException

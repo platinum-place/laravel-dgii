@@ -18,7 +18,7 @@ class ConsumeInvoiceClient
     /**
      * Create a new client instance.
      *
-     * @param StorageService $storageService Helper to interact with file storage.
+     * @param  StorageService  $storageService  Helper to interact with file storage.
      */
     public function __construct(protected StorageService $storageService)
     {
@@ -28,9 +28,9 @@ class ConsumeInvoiceClient
     /**
      * Send a Consumer Electronic Invoice (RFCE) to DGII.
      *
-     * @param string $token Valid authentication token.
-     * @param string $xmlPath Relative path of the signed RFCE XML file.
-     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @param  string  $token  Valid authentication token.
+     * @param  string  $xmlPath  Relative path of the signed RFCE XML file.
+     * @param  string|null  $env  The environment (testecf, certecf, ecf).
      * @return array DGII response with trackId.
      *
      * @throws RequestException

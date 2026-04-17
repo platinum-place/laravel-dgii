@@ -10,8 +10,8 @@ readonly class StoredAcknowledgment
     /**
      * Create a new class instance.
      *
-     * @param AcknowledgmentXml $acknowledgmentXml The acknowledgment XML object.
-     * @param string $acknowledgmentXmlPath Path where the XML is stored.
+     * @param  AcknowledgmentXml  $acknowledgmentXml  The acknowledgment XML object.
+     * @param  string  $acknowledgmentXmlPath  Path where the XML is stored.
      */
     public function __construct(
         public AcknowledgmentXml $acknowledgmentXml,

@@ -20,7 +20,7 @@ class GenerateCancellationRangeAction
     /**
      * Generate the ANECF XML content from data and template.
      *
-     * @param array $data Template data for cancellation.
+     * @param  array  $data  Template data for cancellation.
      * @return string The rendered XML content.
      */
     public function handle(array $data): string

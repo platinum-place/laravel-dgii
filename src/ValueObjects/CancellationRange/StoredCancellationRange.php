@@ -10,8 +10,8 @@ readonly class StoredCancellationRange
     /**
      * Create a new class instance.
      *
-     * @param CancellationRangeXml $cancellationRangeXml The cancellation range XML object.
-     * @param string $cancellationRangeXmlPath Path where the XML is stored.
+     * @param  CancellationRangeXml  $cancellationRangeXml  The cancellation range XML object.
+     * @param  string  $cancellationRangeXmlPath  Path where the XML is stored.
      */
     public function __construct(
         public CancellationRangeXml $cancellationRangeXml,

@@ -24,8 +24,8 @@ class GenerateAcknowledgmentAction
     /**
      * Generate the Acknowledgment XML content based on the received invoice and DGII response.
      *
-     * @param InvoiceXml $invoiceXml The original invoice XML object.
-     * @param InvoiceReceived $invoiceReceived The response received from DGII.
+     * @param  InvoiceXml  $invoiceXml  The original invoice XML object.
+     * @param  InvoiceReceived  $invoiceReceived  The response received from DGII.
      * @return string The generated XML content.
      */
     public function handle(InvoiceXml $invoiceXml, InvoiceReceived $invoiceReceived): string

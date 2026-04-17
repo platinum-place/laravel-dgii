@@ -14,7 +14,7 @@ class DgiiService
     /**
      * Create a new service instance.
      *
-     * @param DgiiClient $dgiiClient Base DGII client.
+     * @param  DgiiClient  $dgiiClient  Base DGII client.
      */
     public function __construct(protected DgiiClient $dgiiClient)
     {
@@ -50,7 +50,7 @@ class DgiiService
     /**
      * Get the status of a specific DGII environment.
      *
-     * @param string|null $env The environment to check.
+     * @param  string|null  $env  The environment to check.
      * @return array Status data for the environment.
      *
      * @throws RequestException

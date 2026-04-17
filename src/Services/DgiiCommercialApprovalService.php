@@ -20,8 +20,8 @@ class DgiiCommercialApprovalService
     /**
      * Create a new service instance.
      *
-     * @param XmlSigner $xmlSigner XML signing service.
-     * @param StorageService $storageService Storage service.
+     * @param  XmlSigner  $xmlSigner  XML signing service.
+     * @param  StorageService  $storageService  Storage service.
      */
     public function __construct(
         protected XmlSigner $xmlSigner,
@@ -33,11 +33,11 @@ class DgiiCommercialApprovalService
     /**
      * Handle the commercial approval process for a received e-CF.
      *
-     * @param string $xmlContent Signed XML content of the approval.
-     * @param string|null $env The environment to use.
-     * @param string|null $certPath Optional certificate path.
-     * @param string|null $certPassword Optional certificate password.
-     * @param string|null $token Optional existing authentication token.
+     * @param  string  $xmlContent  Signed XML content of the approval.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path.
+     * @param  string|null  $certPassword  Optional certificate password.
+     * @param  string|null  $token  Optional existing authentication token.
      * @return CommercialApprovalReceived The final result of the operation.
      *
      * @throws RequestException

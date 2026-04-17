@@ -26,14 +26,14 @@ class StorageService
      * Save XML content to the configured disk.
      * Generates a folder structure by year/month/day/uuid automatically.
      *
-     * @param string $xml XML content to persist.
-     * @param string|null $xmlName Optional suggested base name for the file.
+     * @param  string  $xml  XML content to persist.
+     * @param  string|null  $xmlName  Optional suggested base name for the file.
      * @return string Relative path of the saved file.
      */
     public function putXml(string $xml, ?string $xmlName = null): string
     {
         $xmlPath = sprintf(
-            config('dgii.storage_path') . '/%s/%s/%s/%s/%s.xml',
+            config('dgii.storage_path').'/%s/%s/%s/%s/%s.xml',
             now()->format('Y'),
             now()->format('m'),
             now()->format('d'),
@@ -49,7 +49,7 @@ class StorageService
     /**
      * Get the content of a file from storage.
      *
-     * @param string $xmlPath The relative path of the XML file.
+     * @param  string  $xmlPath  The relative path of the XML file.
      * @return string The raw XML content.
      */
     public function get(string $xmlPath): string
@@ -61,7 +61,7 @@ class StorageService
      * Get the absolute path of a file.
      * Useful for attaching files in HTTP requests or local processing.
      *
-     * @param string $xmlPath The relative path of the XML file.
+     * @param  string  $xmlPath  The relative path of the XML file.
      * @return string The absolute path in the server.
      */
     public function path(string $xmlPath): string

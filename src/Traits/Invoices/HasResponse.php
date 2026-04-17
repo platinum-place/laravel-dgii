@@ -15,7 +15,7 @@ trait HasResponse
      * Execute a callback and wrap its response into an InvoiceReceived object.
      * Handles RequestException to capture error responses from the API.
      *
-     * @param \Closure $callback The HTTP request logic to execute.
+     * @param  \Closure  $callback  The HTTP request logic to execute.
      * @return InvoiceReceived The wrapped response object with calculated status.
      */
     public function catchResponse(\Closure $callback): InvoiceReceived

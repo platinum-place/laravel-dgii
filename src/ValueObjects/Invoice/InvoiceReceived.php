@@ -12,8 +12,8 @@ readonly class InvoiceReceived
     /**
      * Create a new class instance.
      *
-     * @param array $response The HTTP response data from DGII.
-     * @param ArecfStatusEnum $arecfStatusEnum The calculated commercial approval status.
+     * @param  array  $response  The HTTP response data from DGII.
+     * @param  ArecfStatusEnum  $arecfStatusEnum  The calculated commercial approval status.
      */
     public function __construct(
         public array $response,

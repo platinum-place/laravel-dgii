@@ -18,7 +18,7 @@ class SeedClient
     /**
      * Create a new client instance.
      *
-     * @param StorageService $storageService Helper to interact with file storage.
+     * @param  StorageService  $storageService  Helper to interact with file storage.
      */
     public function __construct(protected StorageService $storageService)
     {
@@ -28,7 +28,7 @@ class SeedClient
     /**
      * Fetch the raw seed XML content for the authentication process.
      *
-     * @param string|null $env The environment (testecf, certecf, ecf). Uses default if null.
+     * @param  string|null  $env  The environment (testecf, certecf, ecf). Uses default if null.
      * @return string The raw XML seed content.
      *
      * @throws RequestException
@@ -52,8 +52,8 @@ class SeedClient
     /**
      * Send the signed seed to get an access token (JWT).
      *
-     * @param string $xmlPath Relative path of the signed seed XML file.
-     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @param  string  $xmlPath  Relative path of the signed seed XML file.
+     * @param  string|null  $env  The environment (testecf, certecf, ecf).
      * @return array DGII response containing the token and expiration.
      *
      * @throws RequestException

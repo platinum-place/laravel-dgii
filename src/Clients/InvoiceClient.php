@@ -19,7 +19,7 @@ class InvoiceClient
     /**
      * Create a new client instance.
      *
-     * @param StorageService $storageService Helper to interact with file storage.
+     * @param  StorageService  $storageService  Helper to interact with file storage.
      */
     public function __construct(protected StorageService $storageService)
     {
@@ -29,9 +29,9 @@ class InvoiceClient
     /**
      * Send an electronic invoice (e-CF) to DGII.
      *
-     * @param string $token Valid authentication token.
-     * @param string $xmlPath Relative path of the signed e-CF XML file.
-     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @param  string  $token  Valid authentication token.
+     * @param  string  $xmlPath  Relative path of the signed e-CF XML file.
+     * @param  string|null  $env  The environment (testecf, certecf, ecf).
      * @return array DGII response with trackId or validation errors.
      *
      * @throws RequestException
@@ -59,9 +59,9 @@ class InvoiceClient
     /**
      * Fetch the status of an e-CF reception using its TrackId.
      *
-     * @param string $token Valid authentication token.
-     * @param string $trackId The tracking ID returned during submission.
-     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @param  string  $token  Valid authentication token.
+     * @param  string  $trackId  The tracking ID returned during submission.
+     * @param  string|null  $env  The environment (testecf, certecf, ecf).
      * @return array Details of the submitted document status.
      *
      * @throws RequestException
@@ -86,9 +86,9 @@ class InvoiceClient
     /**
      * Fetch the history of TrackIds associated with a specific e-CF.
      *
-     * @param string $token Valid authentication token.
-     * @param InvoiceXml $invoiceXml Invoice XML value object.
-     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @param  string  $token  Valid authentication token.
+     * @param  InvoiceXml  $invoiceXml  Invoice XML value object.
+     * @param  string|null  $env  The environment (testecf, certecf, ecf).
      * @return array List of TrackIds and their statuses.
      *
      * @throws RequestException
@@ -116,8 +116,8 @@ class InvoiceClient
     /**
      * Generate the link for the QR stamp verification.
      *
-     * @param InvoiceXml $invoiceXml Invoice XML value object.
-     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @param  InvoiceXml  $invoiceXml  Invoice XML value object.
+     * @param  string|null  $env  The environment (testecf, certecf, ecf).
      * @return string Full URL for the QR code.
      */
     public function fetchQRLink(InvoiceXml $invoiceXml, ?string $env = null): string
@@ -149,9 +149,9 @@ class InvoiceClient
     /**
      * Query the current status of an e-CF.
      *
-     * @param string $token Valid authentication token.
-     * @param InvoiceXml $invoiceXml Invoice XML value object.
-     * @param string|null $env The environment (testecf, certecf, ecf).
+     * @param  string  $token  Valid authentication token.
+     * @param  InvoiceXml  $invoiceXml  Invoice XML value object.
+     * @param  string|null  $env  The environment (testecf, certecf, ecf).
      * @return array Details of the document status.
      *
      * @throws RequestException
