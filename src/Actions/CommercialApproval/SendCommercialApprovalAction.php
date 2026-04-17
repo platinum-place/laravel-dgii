@@ -30,9 +30,11 @@ class SendCommercialApprovalAction
      *
      * @throws ConnectionException|RequestException
      */
-    public function handle(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): array
+    public function handle(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): array
     {
-        $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
+        if(!$token){
+            $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
+        }
 
         return $this->commercialApprovalClient->send($token, $xmlPath, $env);
     }

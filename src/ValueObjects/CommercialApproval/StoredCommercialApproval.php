@@ -1,15 +1,17 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\ValueObjects\Acknowledgment;
+namespace PlatinumPlace\LaravelDgii\ValueObjects\CommercialApproval;
 
-readonly class StoredAcknowledgment
+use PlatinumPlace\LaravelDgii\ValueObjects\Acknowledgment\AcknowledgmentXml;
+
+readonly class StoredCommercialApproval
 {
     /**
      * Create a new class instance.
      */
     public function __construct(
-        public AcknowledgmentXml $acknowledgmentXml,
-        public string $acknowledgmentXmlPath,
+        public CommercialApprovalXml $commercialApprovalXml,
+        public string $commercialApprovalXmlPath,
     ) {
         //
     }

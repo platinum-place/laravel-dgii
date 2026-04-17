@@ -7,6 +7,8 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\GenerateAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\StorageAcknowledgmentAction;
+use PlatinumPlace\LaravelDgii\Actions\CommercialApproval\SendCommercialApprovalAction;
+use PlatinumPlace\LaravelDgii\Actions\CommercialApproval\StorageCommercialApprovalAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceQrLinkAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\SendInvoiceAction;
@@ -15,66 +17,23 @@ use PlatinumPlace\LaravelDgii\Actions\Invoice\StorageInvoiceAction;
 use PlatinumPlace\LaravelDgii\Data\InvoiceData;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
 use PlatinumPlace\LaravelDgii\Support\XmlSigner;
+use PlatinumPlace\LaravelDgii\ValueObjects\CommercialApproval\CommercialApprovalReceived;
+use PlatinumPlace\LaravelDgii\ValueObjects\CommercialApproval\StoredCommercialApproval;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\SignedInvoice;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\StoredInvoice;
 
-class DgiiInvoiceService
+class DgiiCommercialApprovalService
 {
     /**
      * Create a new class instance.
      */
     public function __construct(
-        protected XmlSigner $xmlSigner,
+        protected XmlSigner      $xmlSigner,
         protected StorageService $storageService,
-    ) {
+    )
+    {
         //
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function getQrlInk(string $xmlContent, ?string $env = null): string
-    {
-        return app(GenerateInvoiceQrLinkAction::class)->handle($xmlContent, $env);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function storage(string $xmlContent, ?string $env = null): StoredInvoice
-    {
-        $signedInvoice = new SignedInvoice(
-            new InvoiceXml($xmlContent),
-            $this->getQrlInk($xmlContent, $env),
-        );
-
-        return app(StorageInvoiceAction::class)->handle($signedInvoice);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function sign(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): StoredInvoice
-    {
-        $invoiceGenerated = app(GenerateInvoiceAction::class)->handle($data);
-
-        $signedInvoice = app(SignInvoiceAction::class)->handle($invoiceGenerated, $env, $certPath, $certPassword);
-
-        return app(StorageInvoiceAction::class)->handle($signedInvoice);
-    }
-
-    private function returnInvoiceData(StoredInvoice $storedInvoice, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): InvoiceData
-    {
-        $invoiceReceived = app(SendInvoiceAction::class)->handle($storedInvoice, $env, $certPath, $certPassword, $token);
-
-        $acknowledgmentGenerated = app(GenerateAcknowledgmentAction::class)->handle($storedInvoice->signedInvoice->invoiceXml, $invoiceReceived);
-
-        $signedAcknowledgment = $this->xmlSigner->sign($acknowledgmentGenerated, $certPath, $certPassword);
-
-        $storedAcknowledgment = app(StorageAcknowledgmentAction::class)->handle($signedAcknowledgment);
-
-        return new InvoiceData($storedInvoice, $invoiceReceived, $storedAcknowledgment);
     }
 
     /**
@@ -82,19 +41,12 @@ class DgiiInvoiceService
      * @throws ConnectionException
      * @throws Exception
      */
-    public function send(string|array $xmlContent, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): InvoiceData
+    public function send(string $xmlContent, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): CommercialApprovalReceived
     {
-        if (is_array($xmlContent)) {
-            $storedInvoice = $this->sign($xmlContent, $env, $certPath, $certPassword);
-        } else {
-            $signedInvoice = new SignedInvoice(
-                new InvoiceXml($xmlContent),
-                $this->getQrlInk($xmlContent, $env),
-            );
+        $storedCommercialApproval = app(StorageCommercialApprovalAction::class)->handle($xmlContent);
 
-            $storedInvoice = app(StorageInvoiceAction::class)->handle($signedInvoice);
-        }
+        $response = app(SendCommercialApprovalAction::class)->handle($storedCommercialApproval->commercialApprovalXmlPath, $env, $certPath, $certPassword, $token);
 
-        return $this->returnInvoiceData($storedInvoice, $env, $certPath, $certPassword, $token);
+        return new CommercialApprovalReceived($storedCommercialApproval, $response);
     }
 }
