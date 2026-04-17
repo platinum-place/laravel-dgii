@@ -3,9 +3,9 @@
 namespace PlatinumPlace\LaravelDgii\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use PlatinumPlace\LaravelDgii\Services\DgiiService;
+use PlatinumPlace\LaravelDgii\Services\DgiiSeedService;
 
-class Dgii extends Facade
+class DgiiSeed extends Facade
 {
     /**
      * Create a new class instance.
@@ -17,6 +17,6 @@ class Dgii extends Facade
 
     protected static function getFacadeAccessor()
     {
-        return DgiiService::class;
+        return DgiiSeedService::class;
     }
 }

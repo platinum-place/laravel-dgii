@@ -3,9 +3,9 @@
 namespace PlatinumPlace\LaravelDgii\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use PlatinumPlace\LaravelDgii\Services\DgiiService;
+use PlatinumPlace\LaravelDgii\Support\XmlSigner as XmlSignerSupport;
 
-class Dgii extends Facade
+class Xml extends Facade
 {
     /**
      * Create a new class instance.
@@ -17,6 +17,6 @@ class Dgii extends Facade
 
     protected static function getFacadeAccessor()
     {
-        return DgiiService::class;
+        return XmlSignerSupport::class;
     }
 }
