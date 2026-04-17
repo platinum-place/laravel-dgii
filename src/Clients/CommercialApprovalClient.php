@@ -5,7 +5,7 @@ namespace PlatinumPlace\LaravelDgii\Clients;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use PlatinumPlace\LaravelDgii\Helpers\StorageHelper;
+use PlatinumPlace\LaravelDgii\Support\StorageService;
 
 /**
  * Cliente para interactuar con los servicios web de la DGII.
@@ -19,9 +19,9 @@ class CommercialApprovalClient
     /**
      * Crea una nueva instancia del cliente.
      *
-     * @param  StorageHelper  $storageHelper  Ayudante para interactuar con el almacenamiento de archivos.
+     * @param  StorageService  $storageService  Ayudante para interactuar con el almacenamiento de archivos.
      */
-    public function __construct(protected StorageHelper $storageHelper)
+    public function __construct(protected StorageService $storageService)
     {
         //
     }
@@ -39,7 +39,7 @@ class CommercialApprovalClient
      */
     public function send(string $token, string $xmlPath, ?string $env = null): array
     {
-        $filePath = $this->storageHelper->path($xmlPath);
+        $filePath = $this->storageService->path($xmlPath);
 
         $env ??= config('dgii.environment');
 

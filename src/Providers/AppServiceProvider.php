@@ -3,17 +3,46 @@
 namespace PlatinumPlace\LaravelDgii\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use PlatinumPlace\LaravelDgii\Clients\CancellationRangeClient;
+use PlatinumPlace\LaravelDgii\Clients\CommercialApprovalClient;
+use PlatinumPlace\LaravelDgii\Clients\ConsumeInvoiceClient;
+use PlatinumPlace\LaravelDgii\Clients\DgiiClient;
+use PlatinumPlace\LaravelDgii\Clients\InvoiceClient;
+use PlatinumPlace\LaravelDgii\Clients\SeedClient;
+use PlatinumPlace\LaravelDgii\Support\StorageService;
+use PlatinumPlace\LaravelDgii\Support\XmlSigner;
 
 class AppServiceProvider extends ServiceProvider
 {
+    /**
+     * All of the container singletons that should be registered.
+     *
+     * @var array
+     */
+    public $singletons = [
+        /**
+         * Clients
+         */
+        DgiiClient::class,
+        SeedClient::class,
+        InvoiceClient::class,
+        ConsumeInvoiceClient::class,
+        CommercialApprovalClient::class,
+        CancellationRangeClient::class,
+
+        /**
+         * Support
+         */
+        StorageService::class,
+        XmlSigner::class,
+    ];
+
     /**
      * Register any application services.
      */
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../../config/dgii.php', 'dgii');
-
-        $this->app->pro
     }
 
     /**
