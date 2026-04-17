@@ -7,6 +7,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\GenerateAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\StorageAcknowledgmentAction;
+use PlatinumPlace\LaravelDgii\Actions\Invoice\CheckInvoiceStatusAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceQrLinkAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\SendInvoiceAction;
@@ -15,6 +16,7 @@ use PlatinumPlace\LaravelDgii\Actions\Invoice\StorageInvoiceAction;
 use PlatinumPlace\LaravelDgii\Data\InvoiceData;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
 use PlatinumPlace\LaravelDgii\Support\XmlSigner;
+use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceReceived;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\SignedInvoice;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\StoredInvoice;
@@ -96,5 +98,14 @@ class DgiiInvoiceService
         }
 
         return $this->returnInvoiceData($storedInvoice, $env, $certPath, $certPassword, $token);
+    }
+
+    /**
+     * @throws RequestException
+     * @throws ConnectionException
+     */
+    public function checkStatus(string $xmlPath, ?string $trackId = null, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceReceived
+    {
+        return app(CheckInvoiceStatusAction::class)->handle($xmlPath, $trackId, $env, $certPath, $certPassword);
     }
 }
