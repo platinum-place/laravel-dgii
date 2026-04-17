@@ -32,9 +32,14 @@ composer require platinum-place/laravel-dgii
 php artisan vendor:publish --tag=dgii-config
 ```
 
-### Ejecución de Pruebas
-El proyecto utiliza PHPUnit y Laravel Testbench.
+### Ejecución de Pruebas y Estilo
+El proyecto utiliza PHPUnit para pruebas y Laravel Pint para mantener el estilo de código. **Es obligatorio ejecutar Pint antes de subir cambios.**
+
 ```bash
+# Ejecutar Pint para corregir estilo
+./vendor/bin/pint
+
+# Ejecutar pruebas
 composer test
 # O directamente
 ./vendor/bin/phpunit
