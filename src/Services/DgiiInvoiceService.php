@@ -3,6 +3,8 @@
 namespace PlatinumPlace\LaravelDgii\Services;
 
 use Exception;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\GenerateAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\StorageAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceAction;
@@ -10,9 +12,11 @@ use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceQrLinkAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\SendInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\SignInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\StorageInvoiceAction;
+use PlatinumPlace\LaravelDgii\Data\InvoiceData;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
 use PlatinumPlace\LaravelDgii\Support\XmlSigner;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceGenerated;
+use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\SignedInvoice;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\StoredInvoice;
 
@@ -22,9 +26,10 @@ class DgiiInvoiceService
      * Create a new class instance.
      */
     public function __construct(
-        protected XmlSigner $xmlSigner,
+        protected XmlSigner      $xmlSigner,
         protected StorageService $storageService,
-    ) {
+    )
+    {
         //
     }
 
@@ -39,12 +44,11 @@ class DgiiInvoiceService
     /**
      * @throws Exception
      */
-    public function storage(InvoiceGenerated $invoiceGenerated, ?string $env = null): StoredInvoice
+    public function storage(string $xmlContent, ?string $env = null): StoredInvoice
     {
         $signedInvoice = new SignedInvoice(
-            $invoiceGenerated->invoiceXml,
-            $this->getQrlInk($invoiceGenerated->invoiceXml->xmlContent, $env),
-            $invoiceGenerated->integralInvoiceXml,
+            new InvoiceXml($xmlContent),
+            $this->getQrlInk($xmlContent, $env),
         );
 
         return app(StorageInvoiceAction::class)->handle($signedInvoice);
@@ -62,16 +66,37 @@ class DgiiInvoiceService
         return app(StorageInvoiceAction::class)->handle($signedInvoice);
     }
 
-    public function send(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null)
+    private function returnInvoiceData(StoredInvoice $storedInvoice, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): InvoiceData
     {
-        $storedInvoice = $this->sign($data, $env, $certPath, $certPassword);
-
-        $invoiceReceived = app(SendInvoiceAction::class)->handle($storedInvoice, $env, $certPath, $certPassword);
+        $invoiceReceived = app(SendInvoiceAction::class)->handle($storedInvoice, $env, $certPath, $certPassword, $token);
 
         $acknowledgmentGenerated = app(GenerateAcknowledgmentAction::class)->handle($storedInvoice->signedInvoice->invoiceXml, $invoiceReceived);
 
         $signedAcknowledgment = $this->xmlSigner->sign($acknowledgmentGenerated, $certPath, $certPassword);
 
         $storedAcknowledgment = app(StorageAcknowledgmentAction::class)->handle($signedAcknowledgment);
+
+        return new InvoiceData($storedInvoice, $invoiceReceived, $storedAcknowledgment);
+    }
+
+    /**
+     * @throws RequestException
+     * @throws ConnectionException
+     * @throws Exception
+     */
+    public function send(string|array $xmlContent, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): InvoiceData
+    {
+        if(is_array($xmlContent)){
+            $storedInvoice = $this->sign($xmlContent, $env, $certPath, $certPassword);
+        }else{
+            $signedInvoice = new SignedInvoice(
+                new InvoiceXml($xmlContent),
+                $this->getQrlInk($xmlContent, $env),
+            );
+
+            $storedInvoice = app(StorageInvoiceAction::class)->handle($signedInvoice);
+        }
+
+        return $this->returnInvoiceData($storedInvoice, $env, $certPath, $certPassword, $token);
     }
 }
