@@ -16,7 +16,6 @@ class DgiiSeedService
     public function __construct(
         protected StorageService $storageService,
         protected SeedClient $seedClient,
-        protected ReceiveSeedAction $receiveSeedAction,
     ) {
         //
     }
@@ -25,7 +24,7 @@ class DgiiSeedService
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function request(?string $env = null): string
+    public function requestXml(?string $env = null): string
     {
         return $this->seedClient->fetch($env);
     }
@@ -34,8 +33,8 @@ class DgiiSeedService
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function receive(string $signedXml, ?string $env = null): array
+    public function requestToken(string $signedXml, ?string $env = null): array
     {
-        return $this->receiveSeedAction->handle($signedXml, $env);
+        return app(ReceiveSeedAction::class)->handle($signedXml, $env);
     }
 }
