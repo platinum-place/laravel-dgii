@@ -106,7 +106,7 @@ class DgiiInvoiceService
 
         $acknowledgmentXmlContent = app(GenerateAcknowledgmentAction::class)->handle($storedInvoice->signedInvoice->invoiceXml, $invoiceReceived);
 
-        $signedAcknowledgmentXml = app(SignAcknowledgmentAction::class)->handle($acknowledgmentXmlContent);
+        $signedAcknowledgmentXml = app(SignAcknowledgmentAction::class)->handle($acknowledgmentXmlContent, $certPath, $certPassword);
 
         $storedAcknowledgment = app(StorageAcknowledgmentAction::class)->handle($signedAcknowledgmentXml);
 
