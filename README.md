@@ -140,7 +140,7 @@ Los XML firmados se guardan automáticamente en el disco y la ruta configurados 
 {storage_path}/{año}/{mes}/{día}/{uuid}/{nombre}.xml
 ```
 
-El `StorageHelper` utiliza el sistema de discos de Laravel (`Storage::disk()`), por lo que puedes configurar cualquier driver: `local`, `s3`, `spaces`, etc.
+El `StorageService` de soporte utiliza el sistema de discos de Laravel (`Storage::disk()`), por lo que puedes configurar cualquier driver: `local`, `s3`, `spaces`, etc.
 
 ---
 
@@ -151,10 +151,7 @@ El `StorageHelper` utiliza el sistema de discos de Laravel (`Storage::disk()`), 
 La forma recomendada es inyectar las Actions directamente desde el contenedor de Laravel. Cada Action maneja internamente la autenticación y el almacenamiento.
 
 ```php
-use PlatinumPlace\LaravelDgii\Actions\SignInvoiceAction;
-use PlatinumPlace\LaravelDgii\Actions\SendInvoiceAction;
-use PlatinumPlace\LaravelDgii\Actions\CheckInvoiceStatusAction;
-use PlatinumPlace\LaravelDgii\Data\InvoiceData;
+use PlatinumPlace\LaravelDgii\Actions\Invoice\CheckInvoiceStatusAction;use PlatinumPlace\LaravelDgii\Actions\Invoice\SendInvoiceAction;use PlatinumPlace\LaravelDgii\Actions\Invoice\SignInvoiceAction;use PlatinumPlace\LaravelDgii\Data\InvoiceData;
 
 class InvoiceController extends Controller
 {
@@ -213,7 +210,7 @@ $signed = $this->signInvoice->handle(
 ### Aprobación comercial
 
 ```php
-use PlatinumPlace\LaravelDgii\Actions\SendCommercialApprovalAction;
+use PlatinumPlace\LaravelDgii\Actions\CommercialApproval\SendCommercialApprovalAction;
 
 // $xmlPath: ruta (relativa al disco) del XML de aprobación comercial ya firmado
 $response = app(SendCommercialApprovalAction::class)->handle($xmlPath);
@@ -222,7 +219,7 @@ $response = app(SendCommercialApprovalAction::class)->handle($xmlPath);
 ### Anulación de rango de secuencias
 
 ```php
-use PlatinumPlace\LaravelDgii\Actions\SendCancellationRangeAction;
+use PlatinumPlace\LaravelDgii\Actions\CancellationRange\SendCancellationRangeAction;
 
 // $xmlPath: ruta del XML de anulación firmado
 $response = app(SendCancellationRangeAction::class)->handle($xmlPath);
@@ -231,7 +228,7 @@ $response = app(SendCancellationRangeAction::class)->handle($xmlPath);
 ### Generar enlace QR
 
 ```php
-use PlatinumPlace\LaravelDgii\Actions\GenerateInvoiceQrLinkAction;
+use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceQrLinkAction;
 
 $qrLink = app(GenerateInvoiceQrLinkAction::class)->handle($xmlPath);
 // https://ecf.dgii.gov.do/testecf/ConsultaTimbre?RncEmisor=...&ENCF=...
@@ -240,7 +237,7 @@ $qrLink = app(GenerateInvoiceQrLinkAction::class)->handle($xmlPath);
 ### Generar PDF fiscal
 
 ```php
-use PlatinumPlace\LaravelDgii\Actions\GenerateInvoicePdfAction;
+use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoicePdfAction;
 
 // $xmlContent: contenido XML como cadena de texto
 // $qrLink: URL del timbre generada con GenerateInvoiceQrLinkAction
@@ -313,7 +310,7 @@ class StatusController extends Controller
 Parsea un XML de factura firmada y expone sus datos:
 
 ```php
-use PlatinumPlace\LaravelDgii\ValueObjects\InvoiceXml;
+use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 
 $invoice = new InvoiceXml($xmlString);
 

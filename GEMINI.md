@@ -16,6 +16,8 @@ El paquete automatiza el ciclo de vida de los documentos fiscales electrónicos,
 
 El paquete sigue una arquitectura orientada a servicios y acciones:
 
+- **Support (`src/Support/`):** Utilidades técnicas (XmlSigner para firmas, StorageService para manejo de archivos).
+- **Services (`src/Services/`):** Punto de entrada (DgiiService para la Facade).
 - **Actions (`src/Actions/`):** Orquestadores de alto nivel. Cada acción realiza una tarea completa (ej: `SignInvoiceAction` genera, firma y almacena el XML).
 - **Clients (`src/Clients/`):** `DgiiClient` encapsula todas las peticiones HTTP a los distintos endpoints de la DGII (E-CF, Factura de Consumo, Estatus).
 - **Value Objects (`src/ValueObjects/`):** Clases que envuelven los documentos XML para facilitar la extracción de datos de forma tipada (ej: `InvoiceXml`).
@@ -42,7 +44,7 @@ composer test
 
 1.  **Actions:** Se prefiere el uso de Actions inyectadas por el contenedor de Laravel para mantener la lógica de negocio aislada y reutilizable.
 2.  **Manejo de XML:** Nunca manipules el XML como string crudo si existe un Value Object disponible. Usa `InvoiceXml` para consultar propiedades.
-3.  **Almacenamiento:** Siempre utiliza `StorageHelper` para interactuar con el disco configurado, permitiendo que el usuario cambie de `local` a `s3` sin afectar el código.
+3.  **Almacenamiento:** Siempre utiliza `StorageService` para interactuar con el disco configurado, permitiendo que el usuario cambie de `local` a `s3` sin afectar el código.
 4.  **Autenticación:** No gestiones tokens manualmente a menos que sea estrictamente necesario; `AuthenticateAction` maneja el flujo de semilla/firma/token y su respectivo caché.
 
 ## ⚙️ Configuración Clave

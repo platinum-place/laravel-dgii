@@ -5,24 +5,44 @@ namespace PlatinumPlace\LaravelDgii\Actions;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Cache;
+use PlatinumPlace\LaravelDgii\Actions\Seed\ReceiveSeedAction;
 use PlatinumPlace\LaravelDgii\Clients\SeedClient;
-use PlatinumPlace\LaravelDgii\Helpers\StorageHelper;
-use PlatinumPlace\LaravelDgii\Services\SignXmlService;
+use PlatinumPlace\LaravelDgii\Support\StorageService;
+use PlatinumPlace\LaravelDgii\Support\XmlSigner;
 
 class AuthenticateAction
 {
     /**
-     * Create a new class instance.
+     * Crea una nueva instancia para la acción de autenticación.
      *
-     * @param  DgiiClient  $client
+     * @param  SeedClient  $seedClient  Cliente de semillas.
+     * @param  XmlSigner  $xmlSigner  Servicio de firmado de XML.
+     * @param  StorageService  $storageService  Servicio de almacenamiento.
+     * @param  ReceiveSeedAction  $receiveSeedAction  Acción para recibir semillas.
      */
     public function __construct(
         protected SeedClient $seedClient,
-        protected SignXmlService $signXml,
-        protected StorageHelper $storageHelper,
+        protected XmlSigner $xmlSigner,
+        protected StorageService $storageService,
         protected ReceiveSeedAction $receiveSeedAction
     ) {
         //
+    }
+
+    /**
+     * Realizar el proceso de obtención de un nuevo token (Semilla -> Firma -> Validar).
+     *
+     * @return array Datos del token incluyendo su expiración.
+     *
+     * @throws ConnectionException|RequestException
+     */
+    private function refreshToken(?string $env = null, ?string $certPath = null, ?string $certPassword = null): array
+    {
+        $xml = $this->seedClient->fetch($env);
+
+        $signedXml = $this->xmlSigner->sign($xml, $certPath, $certPassword);
+
+        return $this->receiveSeedAction->handle($signedXml, $env);
     }
 
     /**
@@ -51,21 +71,5 @@ class AuthenticateAction
         Cache::put($cacheKey, $response['token'], $ttl);
 
         return $response['token'];
-    }
-
-    /**
-     * Realizar el proceso de obtención de un nuevo token (Semilla -> Firma -> Validar).
-     *
-     * @return array Datos del token incluyendo su expiración.
-     *
-     * @throws ConnectionException|RequestException
-     */
-    private function refreshToken(?string $env = null, ?string $certPath = null, ?string $certPassword = null): array
-    {
-        $xml = $this->seedClient->fetch($env);
-
-        $signedXml = $this->signXml->handle($xml, $certPath, $certPassword);
-
-        return $this->receiveSeedAction->handle($signedXml, $env);
     }
 }
