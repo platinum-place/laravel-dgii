@@ -16,10 +16,8 @@ class StorageAcknowledgmentAction
         //
     }
 
-    public function handle(string $signedAcknowledgment): StoredAcknowledgment
+    public function handle(AcknowledgmentXml $acknowledgmentXml): StoredAcknowledgment
     {
-        $acknowledgmentXml = new AcknowledgmentXml($signedAcknowledgment);
-
         $acknowledgmentXmlPath = $this->storageService->putXml($acknowledgmentXml->xmlContent, $acknowledgmentXml->getXmlName());
 
         return new StoredAcknowledgment($acknowledgmentXml, $acknowledgmentXmlPath);

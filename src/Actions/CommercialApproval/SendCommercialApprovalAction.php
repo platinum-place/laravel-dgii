@@ -32,7 +32,7 @@ class SendCommercialApprovalAction
      */
     public function handle(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): array
     {
-        if(!$token){
+        if (! $token) {
             $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
         }
 

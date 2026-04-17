@@ -3,9 +3,9 @@
 namespace PlatinumPlace\LaravelDgii\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use PlatinumPlace\LaravelDgii\Services\DgiiCommercialApprovalService;
+use PlatinumPlace\LaravelDgii\Services\DgiiCancellationRangeService;
 
-class DgiiCommercialApproval extends Facade
+class DgiiCancellationRange extends Facade
 {
     /**
      * Create a new class instance.
@@ -17,6 +17,6 @@ class DgiiCommercialApproval extends Facade
 
     protected static function getFacadeAccessor()
     {
-        return DgiiCommercialApprovalService::class;
+        return DgiiCancellationRangeService::class;
     }
 }

@@ -2,22 +2,10 @@
 
 namespace PlatinumPlace\LaravelDgii\ValueObjects\CancellationRange;
 
-use SimpleXMLElement;
+use PlatinumPlace\LaravelDgii\Abstracts\AbstractXml;
 
-class CancellationRangeXml
+class CancellationRangeXml extends AbstractXml
 {
-    protected SimpleXMLElement $xml;
-
-    /**
-     * Parsear un XML de anulación de rango (ANECF).
-     *
-     * @param  string  $xml  Contenido XML plano.
-     */
-    public function __construct(string $xml)
-    {
-        $this->xml = simplexml_load_string($xml);
-    }
-
     /**
      * Obtener el total de secuencias anuladas.
      */

@@ -2,22 +2,10 @@
 
 namespace PlatinumPlace\LaravelDgii\ValueObjects\CommercialApproval;
 
-use SimpleXMLElement;
+use PlatinumPlace\LaravelDgii\Abstracts\AbstractXml;
 
-class CommercialApprovalXml
+class CommercialApprovalXml extends AbstractXml
 {
-    protected SimpleXMLElement $xml;
-
-    /**
-     * Parsear un XML de aprobación comercial.
-     *
-     * @param  string  $xml  Contenido XML plano.
-     */
-    public function __construct(string $xml)
-    {
-        $this->xml = simplexml_load_string($xml);
-    }
-
     /**
      * Obtener el RNC del comprador involucrado en la aprobación.
      */

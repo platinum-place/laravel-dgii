@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\GenerateAcknowledgmentAction;
+use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\SignAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\StorageAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\CheckInvoiceStatusAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceAction;
@@ -59,22 +60,27 @@ class DgiiInvoiceService
      */
     public function sign(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): StoredInvoice
     {
-        $invoiceGenerated = app(GenerateInvoiceAction::class)->handle($data);
+        $invoiceXmlContent = app(GenerateInvoiceAction::class)->handle($data);
 
-        $signedInvoice = app(SignInvoiceAction::class)->handle($invoiceGenerated, $env, $certPath, $certPassword);
+        $signedInvoice = app(SignInvoiceAction::class)->handle($invoiceXmlContent, $env, $certPath, $certPassword);
 
         return app(StorageInvoiceAction::class)->handle($signedInvoice);
     }
 
+    /**
+     * @throws RequestException
+     * @throws ConnectionException
+     * @throws Exception
+     */
     private function returnInvoiceData(StoredInvoice $storedInvoice, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): InvoiceData
     {
         $invoiceReceived = app(SendInvoiceAction::class)->handle($storedInvoice, $env, $certPath, $certPassword, $token);
 
-        $acknowledgmentGenerated = app(GenerateAcknowledgmentAction::class)->handle($storedInvoice->signedInvoice->invoiceXml, $invoiceReceived);
+        $acknowledgmentXmlContent = app(GenerateAcknowledgmentAction::class)->handle($storedInvoice->signedInvoice->invoiceXml, $invoiceReceived);
 
-        $signedAcknowledgment = $this->xmlSigner->sign($acknowledgmentGenerated, $certPath, $certPassword);
+        $signedAcknowledgmentXml = app(SignAcknowledgmentAction::class)->handle($acknowledgmentXmlContent);
 
-        $storedAcknowledgment = app(StorageAcknowledgmentAction::class)->handle($signedAcknowledgment);
+        $storedAcknowledgment = app(StorageAcknowledgmentAction::class)->handle($signedAcknowledgmentXml);
 
         return new InvoiceData($storedInvoice, $invoiceReceived, $storedAcknowledgment);
     }

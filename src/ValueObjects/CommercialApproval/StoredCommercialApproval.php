@@ -2,8 +2,6 @@
 
 namespace PlatinumPlace\LaravelDgii\ValueObjects\CommercialApproval;
 
-use PlatinumPlace\LaravelDgii\ValueObjects\Acknowledgment\AcknowledgmentXml;
-
 readonly class StoredCommercialApproval
 {
     /**
