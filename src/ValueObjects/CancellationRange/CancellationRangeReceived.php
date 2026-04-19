@@ -19,4 +19,12 @@ readonly class CancellationRangeReceived
     ) {
         //
     }
+
+    /**
+     * Get the processing status from the DGII response.
+     */
+    public function getStatus(): ?string
+    {
+        return $this->response['nombre'] ?? null;
+    }
 }

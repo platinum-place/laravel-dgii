@@ -2,8 +2,6 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\Invoice;
 
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\AuthenticateAction;
 use PlatinumPlace\LaravelDgii\Clients\ConsumeInvoiceClient;
 use PlatinumPlace\LaravelDgii\Clients\InvoiceClient;
@@ -45,9 +43,6 @@ class SendInvoiceAction
      * @param  string|null  $certPassword  Optional certificate password.
      * @param  string|null  $token  Optional existing authentication token.
      * @return InvoiceReceived The wrapped DGII response.
-     *
-     * @throws RequestException
-     * @throws ConnectionException
      */
     public function handle(StoredInvoice $storedInvoice, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): InvoiceReceived
     {

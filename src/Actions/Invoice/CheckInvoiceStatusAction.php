@@ -2,8 +2,6 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\Invoice;
 
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\AuthenticateAction;
 use PlatinumPlace\LaravelDgii\Clients\ConsumeInvoiceClient;
 use PlatinumPlace\LaravelDgii\Clients\InvoiceClient;
@@ -45,8 +43,6 @@ class CheckInvoiceStatusAction
      * @param  string|null  $certPath  Optional certificate path for authentication.
      * @param  string|null  $certPassword  Optional certificate password.
      * @return InvoiceReceived Response containing the detailed invoice status.
-     *
-     * @throws ConnectionException|RequestException
      */
     public function handle(string $xmlPath, ?string $trackId = null, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceReceived
     {

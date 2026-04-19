@@ -75,4 +75,9 @@ readonly class InvoiceReceived
     {
         return $this->response['estado'] ?? null;
     }
+
+    public function notReceived(): bool
+    {
+        return $this->arecfStatusEnum === ArecfStatusEnum::NOT_RECEIVED;
+    }
 }
