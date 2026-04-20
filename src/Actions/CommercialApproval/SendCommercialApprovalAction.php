@@ -6,12 +6,15 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\AuthenticateAction;
 use PlatinumPlace\LaravelDgii\Clients\CommercialApprovalClient;
+use PlatinumPlace\LaravelDgii\Traits\HasResponse;
 
 /**
  * Action to send a signed Commercial Approval (ARECF) XML to DGII.
  */
 class SendCommercialApprovalAction
 {
+    use HasResponse;
+
     /**
      * Create a new class instance.
      *
@@ -39,10 +42,12 @@ class SendCommercialApprovalAction
      */
     public function handle(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): array
     {
-        if (! $token) {
-            $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
-        }
+        return $this->catchResponse(function () use ($xmlPath, $env, $certPath, $certPassword, $token) {
+            if (! $token) {
+                $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
+            }
 
-        return $this->commercialApprovalClient->send($token, $xmlPath, $env);
+            return $this->commercialApprovalClient->send($token, $xmlPath, $env);
+        });
     }
 }

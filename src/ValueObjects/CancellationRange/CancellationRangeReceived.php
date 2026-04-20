@@ -27,4 +27,9 @@ readonly class CancellationRangeReceived
     {
         return $this->response['nombre'] ?? null;
     }
+
+    public function notReceived(): ?string
+    {
+        return empty($this->getStatus());
+    }
 }
