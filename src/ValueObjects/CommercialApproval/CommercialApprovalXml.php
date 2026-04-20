@@ -10,7 +10,9 @@ use PlatinumPlace\LaravelDgii\Abstracts\AbstractXml;
 class CommercialApprovalXml extends AbstractXml
 {
     /**
-     * Get the buyer's identification (RNC) involved in the approval.
+     * Get the buyer's identification (RNC) involved in the approval from document content.
+     *
+     * @return string|null The buyer's identification number or null if not found.
      */
     public function getBuyerIdentification(): ?string
     {
@@ -23,6 +25,10 @@ class CommercialApprovalXml extends AbstractXml
 
     /**
      * Get the e-NCF of the receipt being approved or rejected.
+     *
+     * Supports both AprobacionComercial and AcusedeRecibo structures.
+     *
+     * @return string|null The e-CF sequence number or null if not found.
      */
     public function getSequenceNumber(): ?string
     {
@@ -39,6 +45,8 @@ class CommercialApprovalXml extends AbstractXml
 
     /**
      * Generate a suggested file name for the XML based on RNC and sequence.
+     *
+     * @return string|null The generated XML filename or null if required data is missing.
      */
     public function getXmlName(): ?string
     {

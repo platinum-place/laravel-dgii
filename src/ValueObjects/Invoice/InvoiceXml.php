@@ -3,6 +3,7 @@
 namespace PlatinumPlace\LaravelDgii\ValueObjects\Invoice;
 
 use PlatinumPlace\LaravelDgii\Abstracts\AbstractXml;
+use PlatinumPlace\LaravelDgii\Support\StorageService;
 
 /**
  * Represents an Electronic Fiscal Receipt XML document (e-CF).
@@ -10,7 +11,22 @@ use PlatinumPlace\LaravelDgii\Abstracts\AbstractXml;
 class InvoiceXml extends AbstractXml
 {
     /**
-     * Return the XML without the digital signature (useful for auditing or pre-processing).
+     * Create an InvoiceXml instance from a stored XML file path.
+     *
+     * @param  string  $xmlPath  The relative path of the XML file.
+     * @return self
+     */
+    public static function fromXmlPath(string $xmlPath): self
+    {
+        return new self(app(StorageService::class)->get($xmlPath));
+    }
+
+    /**
+     * Return the XML content without the digital signature block.
+     *
+     * Useful for auditing, canonicalization, or pre-processing tasks.
+     *
+     * @return string|null The XML string without the <ds:Signature> tag.
      */
     public function withoutSignature(): ?string
     {
@@ -27,6 +43,8 @@ class InvoiceXml extends AbstractXml
 
     /**
      * Get the e-NCF (Electronic Fiscal Receipt Sequence Number).
+     *
+     * @return string|null The e-NCF sequence or null if not found.
      */
     public function getSequenceNumber(): ?string
     {
@@ -39,6 +57,10 @@ class InvoiceXml extends AbstractXml
 
     /**
      * Get the 6-digit security code for the e-CF.
+     *
+     * For RFCE, it's explicitly defined; for standard e-CF, it's derived from the signature.
+     *
+     * @return string|null The 6-digit security code.
      */
     public function getSecurityCode(): ?string
     {
@@ -54,7 +76,9 @@ class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Get the digital signature date and time.
+     * Get the digital signature date and time from the document.
+     *
+     * @return string|null ISO format date/time or null.
      */
     public function getSignatureDate(): ?string
     {
@@ -67,6 +91,8 @@ class InvoiceXml extends AbstractXml
 
     /**
      * Get the invoice type code (e.g., 31, 32, 33, 41).
+     *
+     * @return string|null The e-CF type code.
      */
     public function getInvoiceType(): ?string
     {
@@ -79,6 +105,8 @@ class InvoiceXml extends AbstractXml
 
     /**
      * Get the total amount of the document.
+     *
+     * @return string|null The total amount as a string.
      */
     public function getTotalAmount(): ?string
     {
@@ -91,6 +119,8 @@ class InvoiceXml extends AbstractXml
 
     /**
      * Determine if the XML is an RFCE (Consolidated Consumption Summary).
+     *
+     * @return bool True if it is an RFCE.
      */
     public function isRfce(): bool
     {
@@ -98,7 +128,9 @@ class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Determine if it's a consumption invoice (B32) based on type and threshold.
+     * Determine if it's a consumption invoice (B32) based on type and threshold rules.
+     *
+     * @return bool True if it's considered a consumption invoice.
      */
     public function isConsumeInvoice(): bool
     {
@@ -112,6 +144,8 @@ class InvoiceXml extends AbstractXml
 
     /**
      * Get the sender's identification (RNC).
+     *
+     * @return string|null The sender's RNC.
      */
     public function getSenderIdentification(): ?string
     {
@@ -123,7 +157,9 @@ class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Get the document release date.
+     * Get the document emission date.
+     *
+     * @return string|null The emission date string.
      */
     public function getReleaseDate(): ?string
     {
@@ -136,6 +172,8 @@ class InvoiceXml extends AbstractXml
 
     /**
      * Get the buyer's identification (RNC or Foreign ID).
+     *
+     * @return string|null The buyer's ID or null if anonymous/missing.
      */
     public function getBuyerIdentification(): ?string
     {
@@ -151,7 +189,9 @@ class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Get a suggested file name for the XML.
+     * Get a suggested file name for the XML based on sender and sequence.
+     *
+     * @return string|null The generated filename.
      */
     public function getXmlName(): ?string
     {
@@ -164,6 +204,8 @@ class InvoiceXml extends AbstractXml
 
     /**
      * Get the sequence expiration date.
+     *
+     * @return string|null The expiration date string.
      */
     public function getSequenceDueDate(): ?string
     {
@@ -175,7 +217,9 @@ class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Get the modified e-NCF (for Credit/Debit Notes).
+     * Get the modified e-NCF (referenced in Credit/Debit Notes).
+     *
+     * @return string|null The original e-NCF sequence number.
      */
     public function getModifiedSequenceNumber(): ?string
     {
@@ -187,7 +231,9 @@ class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Get the modification code.
+     * Get the modification reason code for notes.
+     *
+     * @return string|null The modification code.
      */
     public function getModificationCode(): ?string
     {
@@ -199,7 +245,9 @@ class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Get additional information about the buyer.
+     * Get additional information about the buyer if present.
+     *
+     * @return string|null Additional info or null.
      */
     public function getObservations(): ?string
     {
@@ -211,7 +259,7 @@ class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Get all invoice line items.
+     * Get all invoice line items from the document.
      *
      * @return array List of items with their quantities, prices, and totals.
      */
@@ -238,6 +286,8 @@ class InvoiceXml extends AbstractXml
 
     /**
      * Get the buyer's corporate name (Razon Social).
+     *
+     * @return string|null The corporate name or null.
      */
     public function getBuyerCorporateName(): ?string
     {
@@ -249,7 +299,9 @@ class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Get the buyer's address.
+     * Get the buyer's physical address.
+     *
+     * @return string|null The address string or null.
      */
     public function getBuyerAddress(): ?string
     {
@@ -261,7 +313,9 @@ class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Check if the buyer is a foreigner.
+     * Check if the buyer is identified as a foreigner.
+     *
+     * @return bool True if buyer has a foreign identifier.
      */
     public function isBuyerForeigner(): bool
     {
@@ -270,6 +324,8 @@ class InvoiceXml extends AbstractXml
 
     /**
      * Get the sender's corporate name (Razon Social).
+     *
+     * @return string|null The corporate name or null.
      */
     public function getSenderCorporateName(): ?string
     {
@@ -281,7 +337,9 @@ class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Get the sender's address.
+     * Get the sender's physical address.
+     *
+     * @return string|null The address string or null.
      */
     public function getSenderAddress(): ?string
     {
@@ -293,7 +351,9 @@ class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Get the total ITBIS (tax) amount.
+     * Get the total ITBIS (VAT) amount.
+     *
+     * @return float|null Total taxes or null.
      */
     public function getTotalTaxes(): ?float
     {
@@ -305,7 +365,9 @@ class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Get the total amount subject to taxes.
+     * Get the total amount subject to taxes (Monto Gravado).
+     *
+     * @return float|null Total taxed amount or null.
      */
     public function getTotalAmountTaxed(): ?float
     {
@@ -318,6 +380,8 @@ class InvoiceXml extends AbstractXml
 
     /**
      * Get the total exempt amount.
+     *
+     * @return float|null Total exempt amount or null.
      */
     public function getTotalExempt(): ?float
     {
@@ -327,4 +391,5 @@ class InvoiceXml extends AbstractXml
 
         return null;
     }
+}
 }

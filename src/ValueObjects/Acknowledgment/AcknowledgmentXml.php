@@ -10,7 +10,9 @@ use PlatinumPlace\LaravelDgii\Abstracts\AbstractXml;
 class AcknowledgmentXml extends AbstractXml
 {
     /**
-     * Get the buyer's identification (RNC) from the document.
+     * Get the buyer's identification (RNC) from the document content.
+     *
+     * @return string|null The buyer's identification number or null if not found.
      */
     public function getBuyerIdentification(): ?string
     {
@@ -22,7 +24,9 @@ class AcknowledgmentXml extends AbstractXml
     }
 
     /**
-     * Get the e-CF sequence number (eNCF) from the document.
+     * Get the e-CF sequence number (eNCF) from the document content.
+     *
+     * @return string|null The e-CF sequence number or null if not found.
      */
     public function getSequenceNumber(): ?string
     {
@@ -35,6 +39,10 @@ class AcknowledgmentXml extends AbstractXml
 
     /**
      * Get the suggested name for the XML file based on its content.
+     *
+     * Combines buyer RNC and e-CF sequence number.
+     *
+     * @return string|null The generated XML filename or null if required data is missing.
      */
     public function getXmlName(): ?string
     {

@@ -24,6 +24,10 @@ readonly class InvoiceReceived
 
     /**
      * Get the descriptive message(s) from the DGII response.
+     *
+     * Extracts and combines all message values into a single string.
+     *
+     * @return string|null The combined messages or null if empty.
      */
     public function getMessage(): ?string
     {
@@ -45,7 +49,9 @@ readonly class InvoiceReceived
     }
 
     /**
-     * Get the trackId provided by DGII for async tracking.
+     * Get the tracking ID (trackId) provided by DGII for asynchronous processing.
+     *
+     * @return string|null The track ID or null if not available.
      */
     public function getTrackId(): ?string
     {
@@ -53,7 +59,9 @@ readonly class InvoiceReceived
     }
 
     /**
-     * Check if the sequence was already consumed (secuenciaUtilizada).
+     * Check if the e-NCF sequence was already consumed (secuenciaUtilizada).
+     *
+     * @return bool True if the sequence was already used.
      */
     public function getSequenceConsumed(): ?bool
     {
@@ -61,7 +69,9 @@ readonly class InvoiceReceived
     }
 
     /**
-     * Get the reception date from the DGII response.
+     * Get the reception date and time from the DGII response.
+     *
+     * @return string|null The reception date string or null.
      */
     public function getDate(): ?string
     {
@@ -69,13 +79,20 @@ readonly class InvoiceReceived
     }
 
     /**
-     * Get the processing status from the DGII response.
+     * Get the overall processing status from the DGII response.
+     *
+     * @return string|null The status name (e.g., 'Aceptado', 'Rechazado') or null.
      */
     public function getStatus(): ?string
     {
         return $this->response['estado'] ?? null;
     }
 
+    /**
+     * Determine if the invoice was not successfully received based on the commercial approval status.
+     *
+     * @return bool True if NOT_RECEIVED.
+     */
     public function notReceived(): bool
     {
         return $this->arecfStatusEnum === ArecfStatusEnum::NOT_RECEIVED;

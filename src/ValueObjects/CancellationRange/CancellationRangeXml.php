@@ -10,7 +10,9 @@ use PlatinumPlace\LaravelDgii\Abstracts\AbstractXml;
 class CancellationRangeXml extends AbstractXml
 {
     /**
-     * Get the total number of canceled sequences.
+     * Get the total number of canceled sequences from the header.
+     *
+     * @return int|null Total number of cancellations or null if not found.
      */
     public function getTotal(): ?int
     {
@@ -22,7 +24,9 @@ class CancellationRangeXml extends AbstractXml
     }
 
     /**
-     * Get the date and time of the cancellation.
+     * Get the date and time of the cancellation from the header.
+     *
+     * @return string|null ISO format date/time or null if not found.
      */
     public function getDate(): ?string
     {
