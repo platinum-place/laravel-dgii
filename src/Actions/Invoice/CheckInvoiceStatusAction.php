@@ -46,9 +46,7 @@ class CheckInvoiceStatusAction
      */
     public function handle(string $xmlPath, ?string $trackId = null, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceReceived
     {
-        $xml = $this->storageService->get($xmlPath);
-
-        $invoiceXml = new InvoiceXml($xml);
+        $invoiceXml =  InvoiceXml::fromXmlPath($xmlPath);
 
         return $this->catchResponse(function () use ($env, $certPath, $certPassword, $invoiceXml, $trackId) {
             $token = $this->authenticateAction->handle($env, $certPath, $certPassword);

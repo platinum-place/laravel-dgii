@@ -197,6 +197,7 @@ class DgiiInvoiceService
 
         return new InvoiceData(
             InvoiceXml::fromXmlPath($xmlPath),
+            $xmlPath,
             invoiceReceived: $invoiceReceived,
         );
     }
@@ -204,10 +205,11 @@ class DgiiInvoiceService
     /**
      * Generate the PDF representation (Representación Impresa) for an e-CF.
      *
-     * @param  string  $xmlContent  The signed XML content to include in the PDF.
-     * @param  string  $qrLink  The full verification URL for the QR code.
-     * @param  string|null  $logo  Binary logo content or null.
+     * @param string $xmlContent The signed XML content to include in the PDF.
+     * @param string $qrLink The full verification URL for the QR code.
+     * @param string|null $logo Binary logo content or null.
      * @return string The raw binary content of the generated PDF.
+     * @throws Exception
      */
     public function generatePdf(string $xmlContent, string $qrLink, ?string $logo = null): string
     {
@@ -236,6 +238,7 @@ class DgiiInvoiceService
 
         return new InvoiceData(
             InvoiceXml::fromXmlPath($xmlPath),
+            $xmlPath,
             invoiceReceived: $invoiceReceived,
         );
     }
