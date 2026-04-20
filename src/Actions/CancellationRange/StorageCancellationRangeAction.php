@@ -2,9 +2,9 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\CancellationRange;
 
+use PlatinumPlace\LaravelDgii\Data\CancellationRangeData;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
 use PlatinumPlace\LaravelDgii\ValueObjects\CancellationRange\CancellationRangeXml;
-use PlatinumPlace\LaravelDgii\ValueObjects\CancellationRange\StoredCancellationRange;
 
 /**
  * Action to persist a Cancellation Range (ANECF) XML to storage.
@@ -24,13 +24,11 @@ class StorageCancellationRangeAction
     /**
      * Store the signed Cancellation Range XML content.
      *
-     * @param  CancellationRangeXml  $cancellationRangeXml  The cancellation range XML object.
-     * @return StoredCancellationRange The stored cancellation range data.
+     * @param string $cancellationRangeXml The signed XML content to store.
+     * @return string The relative path of the stored XML file.
      */
-    public function handle(CancellationRangeXml $cancellationRangeXml): StoredCancellationRange
+    public function handle(string $cancellationRangeXml): string
     {
-        $cancellationRangeXmlPath = $this->storageService->putXml($cancellationRangeXml->xmlContent);
-
-        return new StoredCancellationRange($cancellationRangeXml, $cancellationRangeXmlPath);
+        return $this->storageService->putXml($cancellationRangeXml);
     }
 }

@@ -21,9 +21,9 @@ class SignAcknowledgmentAction
     }
 
     /**
-     * Sign the Acknowledgment XML content.
+     * Sign the Acknowledgment XML content using a digital certificate.
      *
-     * @param  string  $acknowledgmentXmlContent  Raw XML content to sign.
+     * @param  string  $acknowledgmentXmlContent  The raw generated XML content to sign.
      * @param  string|null  $certPath  Optional certificate path.
      * @param  string|null  $certPassword  Optional certificate password.
      * @return AcknowledgmentXml The signed Acknowledgment value object.

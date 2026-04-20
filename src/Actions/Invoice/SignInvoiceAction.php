@@ -3,9 +3,7 @@
 namespace PlatinumPlace\LaravelDgii\Actions\Invoice;
 
 use PlatinumPlace\LaravelDgii\Support\XmlSigner;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceGenerated;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\SignedInvoice;
 
 /**
  * Action to digitally sign generated Invoice XMLs.
@@ -26,32 +24,27 @@ class SignInvoiceAction
     }
 
     /**
-     * Sign the generated invoice XML(s) and generate the QR verification link.
+     * Sign the generated invoice XML(s) using digital signatures.
      *
-     * @param  InvoiceGenerated  $invoiceGenerated  Generated XML object.
+     * @param  InvoiceXml  $invoiceXml  Main e-CF XML object.
      * @param  string|null  $env  The environment to use.
      * @param  string|null  $certPath  Optional certificate path.
      * @param  string|null  $certPassword  Optional certificate password.
-     * @return SignedInvoice The signed invoice object.
+     * @param  InvoiceXml|null  $integralInvoiceXml  Optional integral invoice (e-CF part of consumer summary).
+     * @return array An array containing [InvoiceXml, ?InvoiceXml] (signed XMLs).
      */
-    public function handle(InvoiceGenerated $invoiceGenerated, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): SignedInvoice
+    public function handle(InvoiceXml $invoiceXml, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?InvoiceXml $integralInvoiceXml = null): array
     {
-        $signedXml = $this->xmlSigner->sign($invoiceGenerated->invoiceXml->xmlContent, $certPath, $certPassword);
+        $signedXml = $this->xmlSigner->sign($invoiceXml->xmlContent, $certPath, $certPassword);
 
         $invoiceXml = new InvoiceXml($signedXml);
 
-        $integralInvoiceXml = null;
-
-        if ($invoiceGenerated->integralInvoiceXml) {
-            $signedXml = $this->xmlSigner->sign($invoiceGenerated->integralInvoiceXml->xmlContent, $certPath, $certPassword);
+        if ($integralInvoiceXml) {
+            $signedXml = $this->xmlSigner->sign($integralInvoiceXml->xmlContent, $certPath, $certPassword);
 
             $integralInvoiceXml = new InvoiceXml($signedXml);
         }
 
-        return new SignedInvoice(
-            $invoiceXml,
-            $this->generateInvoiceQrLinkAction->handle($invoiceXml, $env),
-            $integralInvoiceXml,
-        );
+        return [$invoiceXml, $integralInvoiceXml];
     }
 }

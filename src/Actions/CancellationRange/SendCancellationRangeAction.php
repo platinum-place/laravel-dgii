@@ -7,6 +7,7 @@ use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\AuthenticateAction;
 use PlatinumPlace\LaravelDgii\Clients\CancellationRangeClient;
 use PlatinumPlace\LaravelDgii\Traits\HasResponse;
+use PlatinumPlace\LaravelDgii\ValueObjects\CancellationRange\CancellationRangeReceived;
 
 /**
  * Action to send a signed Cancellation Range (ANECF) XML to DGII.
@@ -35,16 +36,18 @@ class SendCancellationRangeAction
      * @param  string|null  $env  The environment to use.
      * @param  string|null  $certPath  Optional certificate path.
      * @param  string|null  $certPassword  Optional certificate password.
-     * @return array DGII response.
+     * @return CancellationRangeReceived The response object containing the DGII submission status.
      *
      * @throws ConnectionException|RequestException
      */
-    public function handle(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): array
+    public function handle(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): CancellationRangeReceived
     {
-        return $this->catchResponse(function () use ($xmlPath, $env, $certPath, $certPassword) {
+        $response= $this->catchResponse(function () use ($xmlPath, $env, $certPath, $certPassword) {
             $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
 
             return $this->cancellationRangeClient->send($token, $xmlPath, $env);
         });
+
+        return new  CancellationRangeReceived($response);
     }
 }

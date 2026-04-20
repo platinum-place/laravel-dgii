@@ -36,18 +36,18 @@ class SendCommercialApprovalAction
      * @param  string|null  $certPath  Optional certificate path for authentication.
      * @param  string|null  $certPassword  Optional certificate password.
      * @param  string|null  $token  Optional existing authentication token.
-     * @return array DGII response.
+     * @return array The raw DGII response array.
      *
      * @throws ConnectionException|RequestException
      */
     public function handle(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): array
     {
-        return $this->catchResponse(function () use ($xmlPath, $env, $certPath, $certPassword, $token) {
+//        return $this->catchResponse(function () use ($xmlPath, $env, $certPath, $certPassword, $token) {
             if (! $token) {
                 $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
             }
 
             return $this->commercialApprovalClient->send($token, $xmlPath, $env);
-        });
+//        });
     }
 }

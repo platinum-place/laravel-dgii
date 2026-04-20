@@ -3,8 +3,7 @@
 namespace PlatinumPlace\LaravelDgii\Actions\Invoice;
 
 use PlatinumPlace\LaravelDgii\Support\StorageService;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\SignedInvoice;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\StoredInvoice;
+use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 
 /**
  * Action to persist signed Invoice XML(s) to storage.
@@ -22,21 +21,22 @@ class StorageInvoiceAction
     }
 
     /**
-     * Store the signed Invoice XML(s) and return the stored data object.
+     * Store the signed Invoice XML(s) and return their stored paths.
      *
-     * @param  SignedInvoice  $signedInvoice  The signed invoice object.
-     * @return StoredInvoice Stored invoice with file paths.
+     * @param  InvoiceXml  $invoiceXml  The signed main invoice XML.
+     * @param  InvoiceXml|null  $integralInvoiceXml  The signed integral invoice XML (for consumer summary).
+     * @return array An array containing [string $invoiceXmlPath, ?string $integralInvoiceXmlPath].
      */
-    public function handle(SignedInvoice $signedInvoice): StoredInvoice
+    public function handle(InvoiceXml $invoiceXml, ?InvoiceXml $integralInvoiceXml = null): array
     {
-        $invoiceXmlPath = $this->storageService->putXml($signedInvoice->invoiceXml->xmlContent, $signedInvoice->invoiceXml->getXmlName());
+        $invoiceXmlPath = $this->storageService->putXml($invoiceXml->xmlContent, $invoiceXml->getXmlName());
 
         $integralInvoiceXmlPath = null;
 
-        if ($signedInvoice->integralInvoiceXml) {
-            $integralInvoiceXmlPath = $this->storageService->putXml($signedInvoice->integralInvoiceXml->xmlContent, $signedInvoice->integralInvoiceXml->getXmlName());
+        if ($integralInvoiceXml) {
+            $integralInvoiceXmlPath = $this->storageService->putXml($integralInvoiceXml->xmlContent, $integralInvoiceXml->getXmlName());
         }
 
-        return new StoredInvoice($signedInvoice, $invoiceXmlPath, $integralInvoiceXmlPath);
+        return [$invoiceXmlPath, $integralInvoiceXmlPath];
     }
 }

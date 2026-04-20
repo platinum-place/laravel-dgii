@@ -3,7 +3,6 @@
 namespace PlatinumPlace\LaravelDgii\Actions\Invoice;
 
 use Illuminate\Support\Facades\View;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceGenerated;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 
 /**
@@ -20,7 +19,10 @@ class GenerateInvoiceAction
     }
 
     /**
-     * Generate the standard e-CF XML content.
+     * Generate the standard e-CF XML content based on document type.
+     *
+     * @param  array  $data  Invoice data to populate templates.
+     * @return InvoiceXml The generated XML value object.
      */
     private function signEcf(array $data): InvoiceXml
     {
@@ -30,7 +32,11 @@ class GenerateInvoiceAction
     }
 
     /**
-     * Generate the Consumer Summary (RFCE) XML content if required.
+     * Generate the Consumer Summary (RFCE) XML content for consumer invoices.
+     *
+     * @param  InvoiceXml  $ecf  The previously generated e-CF XML.
+     * @param  array  $data  Invoice data.
+     * @return InvoiceXml The generated RFCE XML value object.
      */
     private function signRfce(InvoiceXml $ecf, array $data): InvoiceXml
     {
@@ -42,12 +48,14 @@ class GenerateInvoiceAction
     }
 
     /**
-     * Handle the generation of one or more XML objects for an invoice.
+     * Handle the generation of XML objects for an invoice.
      *
-     * @param  array  $data  Invoice data.
-     * @return InvoiceGenerated Object containing the main and optionally integral XMLs.
+     * It may return two XMLs if the invoice is a consumer invoice (RFCE + e-CF).
+     *
+     * @param  array  $data  Full invoice data.
+     * @return array An array containing [InvoiceXml, ?InvoiceXml] (main and optionally integral XML).
      */
-    public function handle(array $data): InvoiceGenerated
+    public function handle(array $data): array
     {
         $invoiceXml = $this->signEcf($data);
 
@@ -59,6 +67,6 @@ class GenerateInvoiceAction
             $invoiceXml = $this->signRfce($invoiceXml, $data);
         }
 
-        return new InvoiceGenerated($invoiceXml, $integralInvoiceXml);
+        return [$invoiceXml, $integralInvoiceXml];
     }
 }

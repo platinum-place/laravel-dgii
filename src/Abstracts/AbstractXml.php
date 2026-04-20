@@ -13,18 +13,25 @@ use SimpleXMLElement;
 #[AllowDynamicProperties]
 abstract class AbstractXml
 {
-    /** @var SimpleXMLElement The loaded XML root element. */
+    /** @var SimpleXMLElement The loaded XML root element for structured access. */
     protected SimpleXMLElement $xml;
 
     /** @var string The raw XML content as a string. */
     public string $xmlContent;
 
     /**
+     * @var SimpleXMLElement Alias for the loaded XML root element (legacy/compatibility).
+     */
+    public SimpleXMLElement $xmlSigner;
+
+    /**
      * Create a new class instance and validate XML content.
      *
-     * @param  string  $xml  The XML content to process.
+     * Automatically parses the XML string into a SimpleXMLElement.
      *
-     * @throws InvalidArgumentException If the XML content is invalid.
+     * @param  string  $xml  The raw XML content to process and validate.
+     *
+     * @throws InvalidArgumentException If the XML content is malformed or invalid.
      */
     public function __construct(string $xml)
     {

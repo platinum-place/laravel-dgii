@@ -21,9 +21,9 @@ class SignCancellationRangeAction
     }
 
     /**
-     * Sign the Cancellation Range XML content.
+     * Sign the Cancellation Range XML content using a digital certificate.
      *
-     * @param  string  $cancellationRangeXmlContent  Raw XML content to sign.
+     * @param  string  $cancellationRangeXmlContent  The raw generated XML content to sign.
      * @param  string|null  $certPath  Optional certificate path.
      * @param  string|null  $certPassword  Optional certificate password.
      * @return CancellationRangeXml The signed Cancellation Range value object.
