@@ -51,7 +51,13 @@ class GenerateInvoiceAction
     {
         $invoiceXml = $this->signEcf($data);
 
-        $integralInvoiceXml = $invoiceXml->isConsumeInvoice() ? $this->signRfce($invoiceXml, $data) : null;
+        $integralInvoiceXml = null;
+
+        if ($invoiceXml->isConsumeInvoice()) {
+            $integralInvoiceXml = $invoiceXml;
+
+            $invoiceXml = $this->signRfce($invoiceXml, $data);
+        }
 
         return new InvoiceGenerated($invoiceXml, $integralInvoiceXml);
     }
