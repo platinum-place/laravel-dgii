@@ -30,11 +30,11 @@ class DgiiInvoiceService
     }
 
     /**
-     * Generate the verification QR link for an e-CF.
+     * Generate the official verification QR link (fiscal stamp) for an e-CF.
      *
-     * @param  string  $xmlPath  Relative path of the signed XML file.
+     * @param  string  $xmlPath  Relative path of the stored signed XML file.
      * @param  string|null  $env  The environment to use.
-     * @return string Full QR verification URL.
+     * @return string The full verification URL for the QR code.
      *
      * @throws Exception
      */
@@ -44,6 +44,13 @@ class DgiiInvoiceService
     }
 
     /**
+     * Internal method to wrap stored XML objects into an InvoiceData DTO.
+     *
+     * @param  InvoiceXml  $invoiceXml  The main signed invoice XML.
+     * @param  string|null  $env  The environment for QR generation.
+     * @param  InvoiceXml|null  $integralInvoiceXml  The optional integral invoice XML.
+     * @return InvoiceData The populated data transfer object.
+     *
      * @throws Exception
      */
     private function returnStoredInvoiceData(InvoiceXml $invoiceXml, ?string $env = null, ?InvoiceXml $integralInvoiceXml = null): InvoiceData
@@ -62,11 +69,12 @@ class DgiiInvoiceService
     }
 
     /**
-     * Store a signed XML invoice in the file system.
+     * Store signed XML content into the configured storage and return its data.
      *
-     * @param  string  $xmlContent  Signed XML content.
+     * @param  string  $xmlContent  Signed main XML content.
      * @param  string|null  $env  The environment to use.
-     * @return InvoiceData Invoice data with stored invoice information.
+     * @param  string|null  $integralXmlContent  Optional signed integral XML content.
+     * @return InvoiceData Data object containing stored paths and QR link.
      *
      * @throws Exception
      */
@@ -104,7 +112,14 @@ class DgiiInvoiceService
     }
 
     /**
-     * Internal method to send the invoice and generate the acknowledgment.
+     * Internal orchestration to send the invoice and generate/store the acknowledgment.
+     *
+     * @param  InvoiceData  $invoiceData  The current transaction data.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path for acknowledgment signing.
+     * @param  string|null  $certPassword  Optional certificate password.
+     * @param  string|null  $token  Optional authentication token.
+     * @return InvoiceData The updated transaction data with response and acknowledgment.
      *
      * @throws Exception
      */
@@ -175,12 +190,28 @@ class DgiiInvoiceService
         );
     }
 
+    /**
+     * Generate the PDF representation (Representación Impresa) for an e-CF.
+     *
+     * @param  string  $xmlContent  The signed XML content to include in the PDF.
+     * @param  string  $qrLink  The full verification URL for the QR code.
+     * @param  string|null  $logo  Binary logo content or null.
+     * @return string The raw binary content of the generated PDF.
+     */
     public function generatePdf(string $xmlContent, string $qrLink, ?string $logo = null): string
     {
         return app(GenerateInvoicePdfAction::class)->handle($xmlContent, $qrLink, $logo);
     }
 
     /**
+     * Re-submit an existing stored XML file to DGII.
+     *
+     * @param  string  $xmlPath  The relative path of the stored XML.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path.
+     * @param  string|null  $certPassword  Optional certificate password.
+     * @return InvoiceData The transaction result with the new DGII response.
+     *
      * @throws Exception
      */
     public function submit(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData

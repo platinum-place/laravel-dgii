@@ -14,7 +14,6 @@ class InvoiceXml extends AbstractXml
      * Create an InvoiceXml instance from a stored XML file path.
      *
      * @param  string  $xmlPath  The relative path of the XML file.
-     * @return self
      */
     public static function fromXmlPath(string $xmlPath): self
     {
@@ -391,5 +390,4 @@ class InvoiceXml extends AbstractXml
 
         return null;
     }
-}
 }

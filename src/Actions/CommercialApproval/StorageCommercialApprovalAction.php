@@ -13,7 +13,7 @@ class StorageCommercialApprovalAction
     /**
      * Create a new class instance.
      *
-     * @param StorageService $storageService Storage service instance.
+     * @param  StorageService  $storageService  Storage service instance.
      */
     public function __construct(protected StorageService $storageService)
     {
@@ -23,7 +23,7 @@ class StorageCommercialApprovalAction
     /**
      * Store the signed Commercial Approval XML content.
      *
-     * @param CommercialApprovalXml $commercialApprovalXml The commercial approval XML object.
+     * @param  CommercialApprovalXml  $commercialApprovalXml  The commercial approval XML object.
      * @return string The relative path of the stored XML file.
      */
     public function handle(CommercialApprovalXml $commercialApprovalXml): string

@@ -2,8 +2,6 @@
 
 namespace PlatinumPlace\LaravelDgii\ValueObjects\CancellationRange;
 
-use PlatinumPlace\LaravelDgii\Data\CancellationRangeData;
-
 /**
  * Represents the response received after sending a Cancellation Range (ANECF) to DGII.
  */
@@ -12,12 +10,11 @@ readonly class CancellationRangeReceived
     /**
      * Create a new class instance.
      *
-     * @param array $response The HTTP response data from DGII.
+     * @param  array  $response  The HTTP response data from DGII.
      */
     public function __construct(
         public array $response,
-    )
-    {
+    ) {
         //
     }
 

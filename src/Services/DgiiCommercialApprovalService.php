@@ -8,9 +8,6 @@ use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\CommercialApproval\SendCommercialApprovalAction;
 use PlatinumPlace\LaravelDgii\Actions\CommercialApproval\StorageCommercialApprovalAction;
 use PlatinumPlace\LaravelDgii\Data\CommercialApprovalData;
-use PlatinumPlace\LaravelDgii\Support\StorageService;
-use PlatinumPlace\LaravelDgii\Support\XmlSigner;
-use PlatinumPlace\LaravelDgii\ValueObjects\CommercialApproval\CommercialApprovalReceived;
 use PlatinumPlace\LaravelDgii\ValueObjects\CommercialApproval\CommercialApprovalXml;
 
 /**
@@ -27,18 +24,16 @@ class DgiiCommercialApprovalService
     }
 
     /**
-     * Handle the commercial approval process for a received e-CF.
+     * Handle the commercial approval (ARECF) process for a received e-CF.
      *
-     * @param string $xmlContent Signed XML content of the approval.
-     * @param string|null $env The environment to use.
-     * @param string|null $certPath Optional certificate path.
-     * @param string|null $certPassword Optional certificate password.
-     * @param string|null $token Optional existing authentication token.
-     * @return CommercialApprovalData The final result of the operation.
+     * @param  string  $xmlContent  Signed XML content of the approval document.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path for authentication.
+     * @param  string|null  $certPassword  Optional certificate password.
+     * @param  string|null  $token  Optional existing authentication token.
+     * @return CommercialApprovalData The data object containing XML, path, and DGII response.
      *
-     * @throws RequestException
-     * @throws ConnectionException
-     * @throws Exception
+     * @throws ConnectionException|RequestException|Exception
      */
     public function send(string $xmlContent, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): CommercialApprovalData
     {

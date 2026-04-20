@@ -22,12 +22,11 @@ class DgiiService
     }
 
     /**
-     * Get the current status of all DGII web services.
+     * Get the current status of all DGII web services (e-CF, Tracking, etc.).
      *
-     * @return array List of services and their status.
+     * @return array List of services and their current operational status.
      *
-     * @throws RequestException
-     * @throws ConnectionException
+     * @throws ConnectionException|RequestException
      */
     public function getServiceStatus(): array
     {
@@ -35,12 +34,11 @@ class DgiiService
     }
 
     /**
-     * Get scheduled maintenance windows from DGII.
+     * Get scheduled maintenance windows published by DGII.
      *
-     * @return array List of maintenance windows.
+     * @return array List of planned maintenance events.
      *
-     * @throws RequestException
-     * @throws ConnectionException
+     * @throws ConnectionException|RequestException
      */
     public function getMaintenanceWindows(): array
     {
@@ -48,13 +46,12 @@ class DgiiService
     }
 
     /**
-     * Get the status of a specific DGII environment.
+     * Get the availability status of a specific DGII environment (test, cert, prod).
      *
-     * @param  string|null  $env  The environment to check.
-     * @return array Status data for the environment.
+     * @param  string|null  $env  The environment code to check.
+     * @return array Status data for the requested environment.
      *
-     * @throws RequestException
-     * @throws ConnectionException
+     * @throws ConnectionException|RequestException
      */
     public function getEnvironmentStatus(?string $env = null): array
     {

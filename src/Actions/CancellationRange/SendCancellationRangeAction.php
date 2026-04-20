@@ -42,12 +42,12 @@ class SendCancellationRangeAction
      */
     public function handle(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): CancellationRangeReceived
     {
-        $response= $this->catchResponse(function () use ($xmlPath, $env, $certPath, $certPassword) {
+        $response = $this->catchResponse(function () use ($xmlPath, $env, $certPath, $certPassword) {
             $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
 
             return $this->cancellationRangeClient->send($token, $xmlPath, $env);
         });
 
-        return new  CancellationRangeReceived($response);
+        return new CancellationRangeReceived($response);
     }
 }
