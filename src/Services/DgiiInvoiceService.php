@@ -162,6 +162,14 @@ class DgiiInvoiceService
         return app(CheckInvoiceStatusAction::class)->handle($xmlPath, $trackId, $env, $certPath, $certPassword);
     }
 
+    /**
+     * Generate a PDF representation for an invoice.
+     *
+     * @param  string  $xmlContent  Signed XML content.
+     * @param  string  $qrLink  QR verification URL.
+     * @param  string|null  $logo  Path to the logo image.
+     * @return string PDF binary content.
+     */
     public function generatePdf(string $xmlContent, string $qrLink, ?string $logo = null): string
     {
         return app(GenerateInvoicePdfAction::class)->handle($xmlContent, $qrLink, $logo);
