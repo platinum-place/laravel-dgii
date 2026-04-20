@@ -41,7 +41,7 @@ class DgiiCancellationRangeService
 
         $cancellationRangeXml = app(SignCancellationRangeAction::class)->handle($cancellationRangeXmlContent, $certPath, $certPassword);
 
-        $cancellationRangeXmlPath = app(StorageCancellationRangeAction::class)->handle($cancellationRangeXml);
+        $cancellationRangeXmlPath = app(StorageCancellationRangeAction::class)->handle($cancellationRangeXml->xmlContent);
 
         $cancellationRangeReceived = app(SendCancellationRangeAction::class)->handle($cancellationRangeXmlPath, $env, $certPath, $certPassword);
 
