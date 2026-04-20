@@ -65,7 +65,7 @@ $invoiceData = [...];
 $result = DgiiInvoice::send($invoiceData);
 
 echo $result->invoiceReceived->getTrackId();
-echo $result->storedInvoice->signedInvoice->qrLink;
+echo $result->qrLink;
 ```
 
 ### Range Cancellation (ANECF)

@@ -5,6 +5,19 @@ All notable changes to `laravel-dgii` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-04-20
+
+### Added
+- New Data Transfer Object architecture (`InvoiceData`, `CancellationRangeData`, `CommercialApprovalData`).
+- Full lifecycle support for Acknowledgment (Acuse de Recibo) of e-CF.
+- Specialized Actions for Acknowledgment: `GenerateAcknowledgmentAction`, `SignAcknowledgmentAction`, `StorageAcknowledgmentAction`.
+- `ConsumeInvoiceClient` for specialized invoice consumption services.
+- Improved documentation and code examples in README.
+
+### Changed
+- Refactored Actions into sub-namespaces (`Invoice`, `Acknowledgment`, `CancellationRange`, `CommercialApproval`, `Seed`).
+- Updated `InvoiceData` structure to provide direct access to `qrLink` and other lifecycle fields.
+
 ## [1.1.0] - 2026-04-14
 
 ### Added

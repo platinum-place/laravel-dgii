@@ -19,10 +19,10 @@ El paquete sigue una arquitectura orientada a servicios y acciones:
 - **Support (`src/Support/`):** Utilidades técnicas (XmlSigner para firmas, StorageService para manejo de archivos).
 - **Abstracts (`src/Abstracts/`):** Contiene `AbstractXml`, la clase base que unifica la validación y el acceso estructurado a todos los documentos XML.
 - **Services (`src/Services/`):** Fachadas de alto nivel para el usuario final (`DgiiInvoiceService`, `DgiiSeedService`, `DgiiCancellationRangeService`, `DgiiCommercialApprovalService`).
-- **Actions (`src/Actions/`):** Orquestadores de lógica de negocio aislada. Cada acción realiza una tarea atómica y completa (ej: `SignInvoiceAction`, `SendCancellationRangeAction`).
-- **Clients (`src/Clients/`):** Clientes especializados (`InvoiceClient`, `SeedClient`, `CancellationRangeClient`, `CommercialApprovalClient`) que encapsulan las peticiones HTTP a los endpoints de la DGII.
-- **Value Objects (`src/ValueObjects/`):** Objetos inmutables que envuelven los XML (`InvoiceXml`, `AcknowledgmentXml`) o agrupan datos con su ubicación física (`StoredInvoice`, `StoredAcknowledgment`).
-- **Data Transfer Objects (`src/Data/`):** `InvoiceData` transporta el estado completo de una transacción entre las capas del sistema.
+- **Actions (`src/Actions/`):** Orquestadores de lógica de negocio aislada. Cada acción realiza una tarea atómica y completa (ej: `SignInvoiceAction`, `SendCancellationRangeAction`). Incluye sub-namespaces para `Invoice`, `CancellationRange`, `CommercialApproval`, `Acknowledgment` y `Seed`.
+- **Clients (`src/Clients/`):** Clientes especializados (`InvoiceClient`, `SeedClient`, `CancellationRangeClient`, `CommercialApprovalClient`, `ConsumeInvoiceClient`) que encapsulan las peticiones HTTP a los endpoints de la DGII.
+- **Value Objects (`src/ValueObjects/`):** Objetos inmutables que envuelven los XML (`InvoiceXml`, `AcknowledgmentXml`, `CancellationRangeXml`, `CommercialApprovalXml`) o agrupan datos de respuesta (`InvoiceReceived`, `CancellationRangeReceived`).
+- **Data Transfer Objects (`src/Data/`):** `InvoiceData`, `CancellationRangeData` y `CommercialApprovalData` transportan el estado completo de una transacción entre las capas del sistema.
 - **Templates (`resources/views/`):** Plantillas Blade para generar los diferentes tipos de XML requeridos por la DGII.
 
 ## 🛠️ Comandos de Desarrollo
