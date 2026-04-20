@@ -3,13 +3,12 @@
 namespace PlatinumPlace\LaravelDgii\Services;
 
 use Exception;
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\GenerateAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\SignAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\StorageAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\CheckInvoiceStatusAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceAction;
+use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoicePdfAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceQrLinkAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\SendInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\SignInvoiceAction;
@@ -49,7 +48,7 @@ class DgiiInvoiceService
      *
      * @throws Exception
      */
-    public function getQrlInk(string $xmlContent, ?string $env = null): string
+    public function getQrLink(string $xmlContent, ?string $env = null): string
     {
         return app(GenerateInvoiceQrLinkAction::class)->handle($xmlContent, $env);
     }
@@ -67,7 +66,7 @@ class DgiiInvoiceService
     {
         $signedInvoice = new SignedInvoice(
             new InvoiceXml($xmlContent),
-            $this->getQrlInk($xmlContent, $env),
+            $this->getQrLink($xmlContent, $env),
         );
 
         return app(StorageInvoiceAction::class)->handle($signedInvoice);
@@ -94,13 +93,18 @@ class DgiiInvoiceService
     }
 
     /**
-     * Internal method to send the invoice and generate the acknowledgment.
+     * Submit a stored invoice to DGII and generate the acknowledgment.
      *
-     * @throws RequestException
-     * @throws ConnectionException
+     * @param  StoredInvoice  $storedInvoice  The stored invoice object.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path.
+     * @param  string|null  $certPassword  Optional certificate password.
+     * @param  string|null  $token  Optional existing authentication token.
+     * @return InvoiceData Complete transaction data including response and acknowledgment.
+     *
      * @throws Exception
      */
-    private function returnInvoiceData(StoredInvoice $storedInvoice, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): InvoiceData
+    public function submit(StoredInvoice $storedInvoice, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): InvoiceData
     {
         $invoiceReceived = app(SendInvoiceAction::class)->handle($storedInvoice, $env, $certPath, $certPassword, $token);
 
@@ -123,8 +127,6 @@ class DgiiInvoiceService
      * @param  string|null  $token  Optional existing authentication token.
      * @return InvoiceData Complete transaction data including response and acknowledgment.
      *
-     * @throws RequestException
-     * @throws ConnectionException
      * @throws Exception
      */
     public function send(string|array $xmlContent, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): InvoiceData
@@ -134,13 +136,13 @@ class DgiiInvoiceService
         } else {
             $signedInvoice = new SignedInvoice(
                 new InvoiceXml($xmlContent),
-                $this->getQrlInk($xmlContent, $env),
+                $this->getQrLink($xmlContent, $env),
             );
 
             $storedInvoice = app(StorageInvoiceAction::class)->handle($signedInvoice);
         }
 
-        return $this->returnInvoiceData($storedInvoice, $env, $certPath, $certPassword, $token);
+        return $this->submit($storedInvoice, $env, $certPath, $certPassword, $token);
     }
 
     /**
@@ -153,11 +155,15 @@ class DgiiInvoiceService
      * @param  string|null  $certPassword  Optional certificate password.
      * @return InvoiceReceived Current status of the invoice.
      *
-     * @throws RequestException
-     * @throws ConnectionException
+     * @throws Exception
      */
     public function checkStatus(string $xmlPath, ?string $trackId = null, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceReceived
     {
         return app(CheckInvoiceStatusAction::class)->handle($xmlPath, $trackId, $env, $certPath, $certPassword);
+    }
+
+    public function generatePdf(string $xmlContent, string $qrLink, ?string $logo = null): string
+    {
+        return app(GenerateInvoicePdfAction::class)->handle($xmlContent, $qrLink, $logo);
     }
 }
