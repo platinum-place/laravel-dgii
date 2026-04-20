@@ -26,25 +26,15 @@ class SignInvoiceAction
     /**
      * Sign the generated invoice XML(s) using digital signatures.
      *
-     * @param  InvoiceXml  $invoiceXml  Main e-CF XML object.
-     * @param  string|null  $env  The environment to use.
-     * @param  string|null  $certPath  Optional certificate path.
-     * @param  string|null  $certPassword  Optional certificate password.
-     * @param  InvoiceXml|null  $integralInvoiceXml  Optional integral invoice (e-CF part of consumer summary).
-     * @return array An array containing [InvoiceXml, ?InvoiceXml] (signed XMLs).
+     * @param string $xmlContent Main e-CF XML content.
+     * @param string|null $certPath Optional certificate path.
+     * @param string|null $certPassword Optional certificate password.
+     * @return InvoiceXml A signed XML.
      */
-    public function handle(InvoiceXml $invoiceXml, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?InvoiceXml $integralInvoiceXml = null): array
+    public function handle(string $xmlContent,?string $certPath = null, ?string $certPassword = null): InvoiceXml
     {
-        $signedXml = $this->xmlSigner->sign($invoiceXml->xmlContent, $certPath, $certPassword);
+        $signedXml = $this->xmlSigner->sign($xmlContent, $certPath, $certPassword);
 
-        $invoiceXml = new InvoiceXml($signedXml);
-
-        if ($integralInvoiceXml) {
-            $signedXml = $this->xmlSigner->sign($integralInvoiceXml->xmlContent, $certPath, $certPassword);
-
-            $integralInvoiceXml = new InvoiceXml($signedXml);
-        }
-
-        return [$invoiceXml, $integralInvoiceXml];
+        return new InvoiceXml($signedXml);
     }
 }

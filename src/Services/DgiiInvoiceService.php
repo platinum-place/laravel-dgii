@@ -7,6 +7,7 @@ use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\GenerateAcknowledgmentActio
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\SignAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\StorageAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\CheckInvoiceStatusAction;
+use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateConsumeInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoicePdfAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceQrLinkAction;
@@ -104,9 +105,19 @@ class DgiiInvoiceService
      */
     public function sign(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
-        [$invoiceXml, $integralInvoiceXml] = app(GenerateInvoiceAction::class)->handle($data);
+        $invoiceXmlContent = app(GenerateInvoiceAction::class)->handle($data);
 
-        [$invoiceXml, $integralInvoiceXml] = app(SignInvoiceAction::class)->handle($invoiceXml, $env, $certPath, $certPassword, $integralInvoiceXml);
+        $invoiceXml = app(SignInvoiceAction::class)->handle($invoiceXmlContent, $certPath, $certPassword);
+
+        $integralInvoiceXml = null;
+
+        if ($invoiceXml->isConsumeInvoice()) {
+            $integralInvoiceXml = $invoiceXml;
+
+            $invoiceXmlContent = app(GenerateConsumeInvoiceAction::class)->handle($invoiceXml, $data);
+
+            $invoiceXml = app(SignInvoiceAction::class)->handle($invoiceXmlContent, $certPath, $certPassword);
+        }
 
         return $this->returnStoredInvoiceData($invoiceXml, $env, $integralInvoiceXml);
     }
@@ -218,6 +229,7 @@ class DgiiInvoiceService
     {
         $invoiceData = new InvoiceData(
             InvoiceXml::fromXmlPath($xmlPath),
+            $xmlPath,
         );
 
         $invoiceReceived = app(SendInvoiceAction::class)->handle($invoiceData, $env, $certPath, $certPassword);
