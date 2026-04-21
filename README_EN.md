@@ -13,6 +13,7 @@ An elegant Laravel integration with the **General Directorate of Internal Taxes 
 ## 🚀 Key Features
 
 - **Digital Signature:** Automatic XML signing using `.p12` / `.pfx` certificates.
+- **Robust Validation:** Preventive certificate validation before signing or submission.
 - **Smart Authentication:** Automatic management of seeds and tokens with integrated caching.
 - **Full e-CF Lifecycle:** Generation, signing, submission, and status inquiry for electronic invoices.
 - **Extended Support:** Tax credit (31), consumption (32), credit notes (33), and more.

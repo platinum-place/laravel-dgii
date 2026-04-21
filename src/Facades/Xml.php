@@ -7,6 +7,7 @@ use PlatinumPlace\LaravelDgii\Support\XmlSigner;
 
 /**
  * @method static string sign(string $xml, ?string $certPath = null, ?string $certPassword = null)
+ * @method static array validateCertificate(?string $certPath = null, ?string $certPassword = null)
  *
  * @see XmlSigner
  */

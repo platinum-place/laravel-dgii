@@ -7,6 +7,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\CommercialApproval\SendCommercialApprovalAction;
 use PlatinumPlace\LaravelDgii\Actions\CommercialApproval\StorageCommercialApprovalAction;
+use PlatinumPlace\LaravelDgii\Actions\ValidateCertAction;
 use PlatinumPlace\LaravelDgii\Data\CommercialApprovalData;
 use PlatinumPlace\LaravelDgii\ValueObjects\CommercialApproval\CommercialApprovalXml;
 
@@ -37,6 +38,8 @@ class DgiiCommercialApprovalService
      */
     public function send(string $xmlContent, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): CommercialApprovalData
     {
+        app(ValidateCertAction::class)->handle($certPath, $certPassword);
+
         $commercialApprovalXml = new CommercialApprovalXml($xmlContent);
 
         $commercialApprovalXmlPath = app(StorageCommercialApprovalAction::class)->handle($commercialApprovalXml);

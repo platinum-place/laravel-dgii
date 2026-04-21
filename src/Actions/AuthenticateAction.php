@@ -30,7 +30,7 @@ class AuthenticateAction
         protected SeedClient $seedClient,
         protected XmlSigner $xmlSigner,
         protected StorageService $storageService,
-        protected ReceiveSeedAction $receiveSeedAction
+        protected ReceiveSeedAction $receiveSeedAction,
     ) {
         //
     }

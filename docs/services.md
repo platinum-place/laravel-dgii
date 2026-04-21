@@ -6,7 +6,8 @@ Los Servicios en este paquete son orquestadores de alto nivel. Su función princ
 
 - **Orquestación:** No realizan lógica atómica por sí mismos, sino que delegan en `Actions`.
 - **Inyección de Dependencias:** Utilizan el contenedor de servicios de Laravel para recibir las acciones necesarias en su constructor.
-- **Flujos de Trabajo (Workflows):** Un solo método de un servicio puede involucrar autenticación automática, firma de documentos, envío a la DGII y persistencia en disco.
+- **Flujos de Trabajo (Workflows):** Un solo método de un servicio puede involucrar validación automática del certificado, autenticación, firma de documentos, envío a la DGII y persistencia en disco.
+- **Validación Preventiva:** Los servicios validan el certificado digital antes de intentar cualquier operación de firma o comunicación, lo que permite fallar temprano con errores claros en lugar de errores crípticos de red o firma.
 
 ## Principales Servicios Disponibles
 

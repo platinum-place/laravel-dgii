@@ -12,6 +12,10 @@ Las Acciones representan la lógica de negocio atómica y reutilizable del paque
 
 Las acciones se organizan en sub-namespaces según el área de negocio a la que pertenecen:
 
+### Generales (General)
+- `AuthenticateAction`: Gestiona la autenticación con la DGII y el almacenamiento en caché de tokens.
+- `ValidateCertAction`: Valida que el certificado digital exista y la contraseña sea correcta.
+
 ### Invoice (Facturación)
 - `SignInvoiceAction`: Realiza la firma digital del XML de la factura.
 - `SendInvoiceAction`: Envía la factura firmada a los servidores de la DGII.

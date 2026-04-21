@@ -9,6 +9,7 @@ use PlatinumPlace\LaravelDgii\Actions\CancellationRange\GenerateCancellationRang
 use PlatinumPlace\LaravelDgii\Actions\CancellationRange\SendCancellationRangeAction;
 use PlatinumPlace\LaravelDgii\Actions\CancellationRange\SignCancellationRangeAction;
 use PlatinumPlace\LaravelDgii\Actions\CancellationRange\StorageCancellationRangeAction;
+use PlatinumPlace\LaravelDgii\Actions\ValidateCertAction;
 use PlatinumPlace\LaravelDgii\Data\CancellationRangeData;
 
 /**
@@ -37,6 +38,8 @@ class DgiiCancellationRangeService
      */
     public function send(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): CancellationRangeData
     {
+        app(ValidateCertAction::class)->handle($certPath, $certPassword);
+
         $cancellationRangeXmlContent = app(GenerateCancellationRangeAction::class)->handle($data);
 
         $cancellationRangeXml = app(SignCancellationRangeAction::class)->handle($cancellationRangeXmlContent, $certPath, $certPassword);

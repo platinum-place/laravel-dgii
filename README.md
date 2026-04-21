@@ -13,6 +13,7 @@ Integración elegante con los servicios web de la **Dirección General de Impues
 ## 🚀 Características principales
 
 - **Firma Digital:** Firma automática de XML utilizando certificados `.p12` / `.pfx`.
+- **Validación Robusta:** Validación preventiva de certificados antes de iniciar procesos de firma o envío.
 - **Autenticación Inteligente:** Gestión automática de semillas y tokens con caché integrado.
 - **Ciclo Completo e-CF:** Generación, firma, envío y consulta de estado de facturas electrónicas.
 - **Soporte Extendido:** Facturas de crédito fiscal (31), consumo (32), notas de crédito (33), y más.

@@ -14,6 +14,7 @@ use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceQrLinkAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\SendInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\SignInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\StorageInvoiceAction;
+use PlatinumPlace\LaravelDgii\Actions\ValidateCertAction;
 use PlatinumPlace\LaravelDgii\Data\InvoiceData;
 use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 
@@ -105,6 +106,8 @@ class DgiiInvoiceService
      */
     public function sign(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
+        app(ValidateCertAction::class)->handle($certPath, $certPassword);
+
         $invoiceXmlContent = app(GenerateInvoiceAction::class)->handle($data);
 
         $invoiceXml = app(SignInvoiceAction::class)->handle($invoiceXmlContent, $certPath, $certPassword);
@@ -170,6 +173,8 @@ class DgiiInvoiceService
      */
     public function send(string|array $xmlContent, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): InvoiceData
     {
+        app(ValidateCertAction::class)->handle($certPath, $certPassword);
+
         if (is_array($xmlContent)) {
             $invoiceData = $this->sign($xmlContent, $env, $certPath, $certPassword);
         } else {
@@ -193,6 +198,8 @@ class DgiiInvoiceService
      */
     public function checkStatus(string $xmlPath, ?string $trackId = null, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
+        app(ValidateCertAction::class)->handle($certPath, $certPassword);
+
         $invoiceReceived = app(CheckInvoiceStatusAction::class)->handle($xmlPath, $trackId, $env, $certPath, $certPassword);
 
         return new InvoiceData(
@@ -205,10 +212,11 @@ class DgiiInvoiceService
     /**
      * Generate the PDF representation (Representación Impresa) for an e-CF.
      *
-     * @param string $xmlContent The signed XML content to include in the PDF.
-     * @param string $qrLink The full verification URL for the QR code.
-     * @param string|null $logo Binary logo content or null.
+     * @param  string  $xmlContent  The signed XML content to include in the PDF.
+     * @param  string  $qrLink  The full verification URL for the QR code.
+     * @param  string|null  $logo  Binary logo content or null.
      * @return string The raw binary content of the generated PDF.
+     *
      * @throws Exception
      */
     public function generatePdf(string $xmlContent, string $qrLink, ?string $logo = null): string
@@ -229,6 +237,8 @@ class DgiiInvoiceService
      */
     public function submit(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
+        app(ValidateCertAction::class)->handle($certPath, $certPassword);
+
         $invoiceData = new InvoiceData(
             InvoiceXml::fromXmlPath($xmlPath),
             $xmlPath,

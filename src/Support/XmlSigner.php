@@ -2,6 +2,7 @@
 
 namespace PlatinumPlace\LaravelDgii\Support;
 
+use PlatinumPlace\DgiiXmlSigner\Exception\DgiiXmlSignerException;
 use PlatinumPlace\DgiiXmlSigner\SignManager;
 
 /**
@@ -33,6 +34,23 @@ class XmlSigner
             $this->storageService->get($certPath ?? config('dgii.certificate')),
             $certPassword ?? config('dgii.certificate_password'),
             $xml
+        );
+    }
+
+    /**
+     * Validate the certificate and its password.
+     *
+     * @param  string|null  $certPath  Path to the certificate in storage.
+     * @param  string|null  $certPassword  The certificate password.
+     * @return array The parsed certificate data.
+     *
+     * @throws DgiiXmlSignerException
+     */
+    public function validateCertificate(?string $certPath = null, ?string $certPassword = null): array
+    {
+        return (new SignManager)->validateCertificate(
+            $this->storageService->get($certPath ?? config('dgii.certificate')),
+            $certPassword ?? config('dgii.certificate_password')
         );
     }
 }
