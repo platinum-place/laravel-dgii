@@ -43,9 +43,10 @@ class CancellationRangeClient
         $env ??= config('dgii.environment');
 
         $url = sprintf(
-            '%s/%s/anulacionrangos/api/operaciones/anularrango',
+            '%s/%s/%s',
             config('dgii.domains.ecf'),
-            $env
+            $env,
+            config('dgii.endpoints.cancellation.send')
         );
 
         return Http::withToken($token)

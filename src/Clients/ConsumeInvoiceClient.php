@@ -44,9 +44,10 @@ class ConsumeInvoiceClient
         $env ??= config('dgii.environment');
 
         $url = sprintf(
-            '%s/%s/recepcionfc/api/recepcion/ecf',
+            '%s/%s/%s',
             config('dgii.domains.fc'),
-            $env
+            $env,
+            config('dgii.endpoints.fc.send')
         );
 
         return Http::withToken($token)
@@ -65,9 +66,10 @@ class ConsumeInvoiceClient
         $env ??= config('dgii.environment');
 
         $url = sprintf(
-            '%s/%s/consultarfce/api/Consultas/Consulta',
+            '%s/%s/%s',
             config('dgii.domains.fc'),
-            $env
+            $env,
+            config('dgii.endpoints.fc.status')
         );
 
         return Http::withToken($token)
@@ -108,7 +110,7 @@ class ConsumeInvoiceClient
             '%s/%s/%s?%s',
             config('dgii.domains.fc'),
             $env,
-            'ConsultaTimbre',
+            config('dgii.endpoints.fc.timbre'),
             http_build_query($parameters)
         );
     }

@@ -43,9 +43,10 @@ class CommercialApprovalClient
         $env ??= config('dgii.environment');
 
         $url = sprintf(
-            '%s/%s/aprobacioncomercial/api/aprobacioncomercial',
+            '%s/%s/%s',
             config('dgii.domains.ecf'),
-            $env
+            $env,
+            config('dgii.endpoints.approval.send')
         );
 
         return Http::withToken($token)

@@ -36,8 +36,9 @@ class DgiiClient
     public function fetchServiceStatus(): array
     {
         $url = sprintf(
-            '%s/api/estatusservicios/obtenerestatus',
+            '%s/%s',
             config('dgii.domains.statusecf'),
+            config('dgii.endpoints.status.services')
         );
 
         return Http::withHeaders([
@@ -60,8 +61,9 @@ class DgiiClient
     public function fetchMaintenanceWindows(): array
     {
         $url = sprintf(
-            '%s/api/estatusservicios/obtenerventanasmantenimiento',
+            '%s/%s',
             config('dgii.domains.statusecf'),
+            config('dgii.endpoints.status.maintenance')
         );
 
         return Http::withHeaders([
@@ -86,8 +88,9 @@ class DgiiClient
     {
         $env ??= config('dgii.environment');
         $url = sprintf(
-            '%s/api/estatusservicios/verificarestado',
+            '%s/%s',
             config('dgii.domains.statusecf'),
+            config('dgii.endpoints.status.environment')
         );
 
         return Http::withHeaders([

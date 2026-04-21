@@ -44,9 +44,10 @@ class InvoiceClient
         $env ??= config('dgii.environment');
 
         $url = sprintf(
-            '%s/%s/recepcion/api/facturaselectronicas',
+            '%s/%s/%s',
             config('dgii.domains.ecf'),
-            $env
+            $env,
+            config('dgii.endpoints.invoice.send')
         );
 
         return Http::withToken($token)
@@ -72,9 +73,10 @@ class InvoiceClient
         $env ??= config('dgii.environment');
 
         $url = sprintf(
-            '%s/%s/consultaresultado/api/consultas/estado',
+            '%s/%s/%s',
             config('dgii.domains.ecf'),
-            $env
+            $env,
+            config('dgii.endpoints.invoice.status')
         );
 
         return Http::withToken($token)
@@ -99,9 +101,10 @@ class InvoiceClient
         $env ??= config('dgii.environment');
 
         $url = sprintf(
-            '%s/%s/consultatrackids/api/trackids/consulta',
+            '%s/%s/%s',
             config('dgii.domains.ecf'),
-            $env
+            $env,
+            config('dgii.endpoints.invoice.trackids')
         );
 
         return Http::withToken($token)
@@ -141,7 +144,7 @@ class InvoiceClient
             '%s/%s/%s?%s',
             config('dgii.domains.ecf'),
             $env,
-            'ConsultaTimbre',
+            config('dgii.endpoints.invoice.timbre'),
             http_build_query($parameters)
         );
     }
@@ -175,9 +178,10 @@ class InvoiceClient
         }
 
         $url = sprintf(
-            '%s/%s/consultaestado/api/consultas/estado',
+            '%s/%s/%s',
             config('dgii.domains.ecf'),
-            $env
+            $env,
+            config('dgii.endpoints.invoice.check')
         );
 
         return Http::withToken($token)
