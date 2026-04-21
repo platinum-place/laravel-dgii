@@ -96,7 +96,6 @@ class DgiiClient
         ])
             ->get($url, [
                 'ambiente' => match ($env) {
-                    'testecf' => 1,
                     'ecf' => 2,
                     'certecf' => 3,
                     default => 1,

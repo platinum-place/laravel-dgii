@@ -114,4 +114,55 @@ return [
         'buffer' => (int) env('DGII_CACHE_BUFFER', 600),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | DGII Endpoints
+    |--------------------------------------------------------------------------
+    |
+    | Relative paths for the different DGII web services. These are combined
+    | with domains and environments to form the final URLs.
+    |
+    */
+
+    'endpoints' => [
+        // Authentication & Seed Services (Domain: ecf)
+        'auth' => [
+            'seed' => 'autenticacion/api/autenticacion/semilla',
+            'validate' => 'autenticacion/api/autenticacion/validarsemilla',
+        ],
+
+        // e-CF Reception & Query Services (Domain: ecf)
+        'invoice' => [
+            'send' => 'recepcion/api/facturaselectronicas',
+            'status' => 'consultaresultado/api/consultas/estado',
+            'trackids' => 'consultatrackids/api/trackids/consulta',
+            'check' => 'consultaestado/api/consultas/estado',
+            'timbre' => 'ConsultaTimbre',
+        ],
+
+        // Consumption Invoice Services (Domain: fc)
+        'fc' => [
+            'send' => 'recepcionfc/api/recepcion/ecf',
+            'status' => 'consultarfce/api/Consultas/Consulta',
+            'timbre' => 'ConsultaTimbre',
+        ],
+
+        // Cancellation Range Services (Domain: ecf)
+        'cancellation' => [
+            'send' => 'anulacionrangos/api/operaciones/anularrango',
+        ],
+
+        // Commercial Approval Services (Domain: ecf)
+        'approval' => [
+            'send' => 'aprobacioncomercial/api/aprobacioncomercial',
+        ],
+
+        // Status & Availability Services (Domain: statusecf)
+        'status' => [
+            'services' => 'api/estatusservicios/obtenerestatus',
+            'maintenance' => 'api/estatusservicios/obtenerventanasmantenimiento',
+            'environment' => 'api/estatusservicios/verificarestado',
+        ],
+    ],
+
 ];

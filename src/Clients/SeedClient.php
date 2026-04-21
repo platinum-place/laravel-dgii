@@ -11,7 +11,7 @@ use PlatinumPlace\LaravelDgii\Support\StorageService;
  * Client to interact with DGII Authentication (Seed) Services.
  *
  * This class handles the first part of the DGII authentication lifecycle:
- * fetching the seed XML and validating it (after signing) to obtain a token.
+ * fetching the seed XML and validating it (after signing) to get a token.
  */
 class SeedClient
 {
@@ -39,9 +39,10 @@ class SeedClient
         $env ??= config('dgii.environment');
 
         $url = sprintf(
-            '%s/%s/autenticacion/api/autenticacion/semilla',
+            '%s/%s/%s',
             config('dgii.domains.ecf'),
-            $env
+            $env,
+            config('dgii.endpoints.auth.seed')
         );
 
         return Http::get($url)
@@ -66,12 +67,13 @@ class SeedClient
         $env ??= config('dgii.environment');
 
         $url = sprintf(
-            '%s/%s/autenticacion/api/autenticacion/validarsemilla',
+            '%s/%s/%s',
             config('dgii.domains.ecf'),
-            $env
+            $env,
+            config('dgii.endpoints.auth.validate')
         );
 
-        return Http::attach('xml', fopen($filePath, 'r'), basename($xmlPath))
+        return Http::attach('xml', fopen($filePath, 'rb'), basename($xmlPath))
             ->post($url)
             ->throw()
             ->json();

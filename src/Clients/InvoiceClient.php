@@ -50,7 +50,7 @@ class InvoiceClient
         );
 
         return Http::withToken($token)
-            ->attach('xml', fopen($filePath, 'r'), basename($xmlPath))
+            ->attach('xml', fopen($filePath, 'rb'), basename($xmlPath))
             ->post($url)
             ->throw()
             ->json();
