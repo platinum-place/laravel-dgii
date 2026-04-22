@@ -19,7 +19,7 @@ Cuando el usuario invoca un método desde un **Facade**:
 2.  El Service recibe la solicitud y comienza a orquestar las **Actions** necesarias.
 3.  Por ejemplo, al enviar una factura:
     *   Se ejecuta `SignInvoiceAction` para firmar digitalmente el documento.
-    *   Se invoca `SendInvoiceAction` para realizar el envío a través del `InvoiceClient`.
+    2.  Se invoca `SendInvoiceAction`, que evalúa el tipo de factura y delega el envío a `SendStandardInvoiceAction` o `SendConsumeInvoiceAction` a través de sus respectivos clientes (`InvoiceClient` o `ConsumeInvoiceClient`).
     *   Se usa `StorageInvoiceAction` para persistir el XML firmado en el disco configurado.
 4.  El Service devuelve una respuesta estructurada al usuario final.
 

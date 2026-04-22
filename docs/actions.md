@@ -18,7 +18,12 @@ Las acciones se organizan en sub-namespaces según el área de negocio a la que 
 
 ### Invoice (Facturación)
 - `SignInvoiceAction`: Realiza la firma digital del XML de la factura.
-- `SendInvoiceAction`: Envía la factura firmada a los servidores de la DGII.
+- `SendInvoiceAction`: Orquestador que delega el envío a `SendStandardInvoiceAction` o `SendConsumeInvoiceAction`.
+- `SendStandardInvoiceAction`: Envía facturas electrónicas estándar a la DGII.
+- `SendConsumeInvoiceAction`: Envía resúmenes de facturas de consumo (RFCE) a la DGII.
+- `ValidateInvoiceAction`: Orquestador que delega la validación de estatus a `ValidateStandardInvoiceAction` o `ValidateConsumeInvoiceAction`.
+- `ValidateStandardInvoiceAction`: Consulta el estatus de facturas estándar enviadas.
+- `ValidateConsumeInvoiceAction`: Consulta el estatus de resúmenes de consumo enviados.
 - `StorageInvoiceAction`: Persiste el archivo XML y los datos de respuesta en disco.
 - `GenerateInvoicePdfAction`: Crea la representación impresa (PDF) con código QR.
 
