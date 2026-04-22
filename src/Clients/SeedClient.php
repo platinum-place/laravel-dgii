@@ -62,7 +62,7 @@ class SeedClient
      */
     public function fetchToken(string $xmlPath, ?string $env = null): array
     {
-        $filePath = $this->storageService->path($xmlPath);
+        $filePath = $this->storageService->realPath($xmlPath);
 
         $env ??= config('dgii.environment');
 
