@@ -5,7 +5,6 @@ namespace PlatinumPlace\LaravelDgii\Clients;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
 /**
  * Client to interact with DGII Commercial Approval Services (ARECF).

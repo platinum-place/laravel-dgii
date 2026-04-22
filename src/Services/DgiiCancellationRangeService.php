@@ -26,11 +26,12 @@ class DgiiCancellationRangeService
     /**
      * Generate, sign, store, and send a sequence range cancellation (ANECF) request to DGII.
      *
-     * @param array $data Template data for the cancellation request.
-     * @param string|null $env The environment to use.
-     * @param string|null $certPath Optional certificate path.
-     * @param string|null $certPassword Optional certificate password.
+     * @param  array  $data  Template data for the cancellation request.
+     * @param  string|null  $env  The environment to use.
+     * @param  string|null  $certPath  Optional certificate path.
+     * @param  string|null  $certPassword  Optional certificate password.
      * @return CancellationRangeData The data object containing XMLs, path, and DGII response.
+     *
      * @throws \Exception
      */
     public function send(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): CancellationRangeData
