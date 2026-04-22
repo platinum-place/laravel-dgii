@@ -2,8 +2,8 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\CancellationRange;
 
+use PlatinumPlace\LaravelDgii\Data\CancellationRange\CancellationRangeXml;
 use PlatinumPlace\LaravelDgii\Support\XmlSigner;
-use PlatinumPlace\LaravelDgii\ValueObjects\CancellationRange\CancellationRangeXml;
 
 /**
  * Action to digitally sign a Cancellation Range (ANECF) XML.

@@ -1,8 +1,6 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Data;
-
-use PlatinumPlace\LaravelDgii\ValueObjects\CommercialApproval\CommercialApprovalXml;
+namespace PlatinumPlace\LaravelDgii\Data\CommercialApproval;
 
 /**
  * Data object for a stored Commercial Approval document in the file system.

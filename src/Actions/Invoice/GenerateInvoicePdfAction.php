@@ -3,7 +3,7 @@
 namespace PlatinumPlace\LaravelDgii\Actions\Invoice;
 
 use Barryvdh\DomPDF\Facade\Pdf;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
+use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 /**

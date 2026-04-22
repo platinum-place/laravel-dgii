@@ -2,8 +2,8 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\Invoice;
 
+use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 
 /**
  * Action to persist signed Invoice XML(s) to storage.

@@ -2,8 +2,8 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\Acknowledgment;
 
+use PlatinumPlace\LaravelDgii\Data\Acknowledgment\AcknowledgmentXml;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
-use PlatinumPlace\LaravelDgii\ValueObjects\Acknowledgment\AcknowledgmentXml;
 
 /**
  * Action to persist an Acknowledgment (Acuse de Recibo) XML to storage.

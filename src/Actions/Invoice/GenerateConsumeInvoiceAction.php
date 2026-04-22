@@ -3,7 +3,7 @@
 namespace PlatinumPlace\LaravelDgii\Actions\Invoice;
 
 use Illuminate\Support\Facades\View;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
+use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 
 /**
  * Action to generate raw Invoice XML (e-CF) content from templates.

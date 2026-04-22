@@ -5,8 +5,6 @@ namespace PlatinumPlace\LaravelDgii\Clients;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use PlatinumPlace\LaravelDgii\Support\StorageService;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 
 /**
  * Client to interact with DGII e-CF (Electronic Invoice) Services.
@@ -18,10 +16,8 @@ class InvoiceClient
 {
     /**
      * Create a new client instance.
-     *
-     * @param  StorageService  $storageService  Helper to interact with file storage.
      */
-    public function __construct(protected StorageService $storageService)
+    public function __construct()
     {
         //
     }
@@ -39,8 +35,6 @@ class InvoiceClient
      */
     public function send(string $token, string $xmlPath, ?string $env = null): array
     {
-        $filePath = $this->storageService->path($xmlPath);
-
         $env ??= config('dgii.environment');
 
         $url = sprintf(
@@ -51,7 +45,7 @@ class InvoiceClient
         );
 
         return Http::withToken($token)
-            ->attach('xml', fopen($filePath, 'rb'), basename($xmlPath))
+            ->attach('xml', fopen($xmlPath, 'rb'), basename($xmlPath))
             ->post($url)
             ->throw()
             ->json();
@@ -89,14 +83,15 @@ class InvoiceClient
      * Fetch the history of TrackIds associated with a specific e-CF.
      *
      * @param  string  $token  Valid authentication token.
-     * @param  InvoiceXml  $invoiceXml  Invoice XML value object.
+     * @param  string  $senderIdentification  Sender identification number.
+     * @param  string  $sequenceNumber  Sequence number of the invoice.
      * @param  string|null  $env  The environment (testecf, certecf, ecf).
      * @return array List of TrackIds and their statuses.
      *
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function fetchTrackIdList(string $token, InvoiceXml $invoiceXml, ?string $env = null): array
+    public function fetchTrackIdList(string $token, string $senderIdentification, string $sequenceNumber, ?string $env = null): array
     {
         $env ??= config('dgii.environment');
 
@@ -109,8 +104,8 @@ class InvoiceClient
 
         return Http::withToken($token)
             ->get($url, [
-                'RncEmisor' => $invoiceXml->getSenderIdentification(),
-                'Encf' => $invoiceXml->getSequenceNumber(),
+                'RncEmisor' => $senderIdentification,
+                'Encf' => $sequenceNumber,
             ])
             ->throw()
             ->json();
@@ -119,24 +114,38 @@ class InvoiceClient
     /**
      * Generate the link for the QR stamp verification.
      *
-     * @param  InvoiceXml  $invoiceXml  Invoice XML value object.
+     * @param  string  $senderIdentification  Sender identification number.
+     * @param  string  $sequenceNumber  Sequence number of the invoice.
+     * @param  string  $totalAmount  Total amount of the invoice.
+     * @param  string  $securityCode  Security code of the invoice.
+     * @param  string  $releaseDate  Release date of the invoice.
+     * @param  string  $signatureDate  Signature date of the invoice.
+     * @param  string|null  $buyerIdentification  Optional buyer identification number.
      * @param  string|null  $env  The environment (testecf, certecf, ecf).
      * @return string Full URL for the QR code.
      */
-    public function fetchQRLink(InvoiceXml $invoiceXml, ?string $env = null): string
-    {
+    public function fetchQRLink(
+        string $senderIdentification,
+        string $sequenceNumber,
+        string $totalAmount,
+        string $securityCode,
+        string $releaseDate,
+        string $signatureDate,
+        ?string $buyerIdentification = null,
+        ?string $env = null
+    ): string {
         $env ??= config('dgii.environment');
 
         $parameters = [
-            'RncEmisor' => $invoiceXml->getSenderIdentification(),
-            'ENCF' => $invoiceXml->getSequenceNumber(),
-            'MontoTotal' => $invoiceXml->getTotalAmount(),
-            'CodigoSeguridad' => $invoiceXml->getSecurityCode(),
-            'FechaEmision' => $invoiceXml->getReleaseDate(),
-            'FechaFirma' => $invoiceXml->getSignatureDate(),
+            'RncEmisor' => $senderIdentification,
+            'ENCF' => $sequenceNumber,
+            'MontoTotal' => $totalAmount,
+            'CodigoSeguridad' => $securityCode,
+            'FechaEmision' => $releaseDate,
+            'FechaFirma' => $signatureDate,
         ];
 
-        if ($buyerIdentification = $invoiceXml->getBuyerIdentification()) {
+        if ($buyerIdentification) {
             $parameters['RncComprador'] = $buyerIdentification;
         }
 
@@ -153,27 +162,36 @@ class InvoiceClient
      * Query the current status of an e-CF.
      *
      * @param  string  $token  Valid authentication token.
-     * @param  InvoiceXml  $invoiceXml  Invoice XML value object.
+     * @param  string  $senderIdentification  Sender identification number.
+     * @param  string  $sequenceNumber  Electronic NCF (Sequence number).
+     * @param  string|null  $buyerIdentification  Optional buyer identification number.
+     * @param  string|null  $securityCode  Optional security code.
      * @param  string|null  $env  The environment (testecf, certecf, ecf).
      * @return array Details of the document status.
      *
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function fetchStatus(string $token, InvoiceXml $invoiceXml, ?string $env = null): array
-    {
+    public function fetchStatus(
+        string $token,
+        string $senderIdentification,
+        string $sequenceNumber,
+        ?string $buyerIdentification = null,
+        ?string $securityCode = null,
+        ?string $env = null
+    ): array {
         $env ??= config('dgii.environment');
 
         $parameters = [
-            'RncEmisor' => $invoiceXml->getSenderIdentification(),
-            'NcfElectronico' => $invoiceXml->getSequenceNumber(),
+            'RncEmisor' => $senderIdentification,
+            'NcfElectronico' => $sequenceNumber,
         ];
 
-        if ($buyerIdentification = $invoiceXml->getBuyerIdentification()) {
+        if ($buyerIdentification) {
             $parameters['RncComprador'] = $buyerIdentification;
         }
 
-        if ($securityCode = $invoiceXml->getSecurityCode()) {
+        if ($securityCode) {
             $parameters['CodigoSeguridad'] = $securityCode;
         }
 

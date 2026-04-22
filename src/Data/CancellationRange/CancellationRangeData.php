@@ -1,9 +1,6 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Data;
-
-use PlatinumPlace\LaravelDgii\ValueObjects\CancellationRange\CancellationRangeReceived;
-use PlatinumPlace\LaravelDgii\ValueObjects\CancellationRange\CancellationRangeXml;
+namespace PlatinumPlace\LaravelDgii\Data\CancellationRange;
 
 /**
  * Data object for a stored Cancellation Range document in the file system.

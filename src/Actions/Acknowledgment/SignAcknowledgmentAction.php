@@ -2,8 +2,8 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\Acknowledgment;
 
+use PlatinumPlace\LaravelDgii\Data\Acknowledgment\AcknowledgmentXml;
 use PlatinumPlace\LaravelDgii\Support\XmlSigner;
-use PlatinumPlace\LaravelDgii\ValueObjects\Acknowledgment\AcknowledgmentXml;
 
 /**
  * Action to digitally sign an Acknowledgment (Acuse de Recibo) XML.

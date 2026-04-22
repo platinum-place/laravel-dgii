@@ -6,8 +6,8 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\AuthenticateAction;
 use PlatinumPlace\LaravelDgii\Clients\CancellationRangeClient;
+use PlatinumPlace\LaravelDgii\Data\CancellationRange\CancellationRangeReceived;
 use PlatinumPlace\LaravelDgii\Traits\HasResponse;
-use PlatinumPlace\LaravelDgii\ValueObjects\CancellationRange\CancellationRangeReceived;
 
 /**
  * Action to send a signed Cancellation Range (ANECF) XML to DGII.

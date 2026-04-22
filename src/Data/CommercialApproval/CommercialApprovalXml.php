@@ -1,8 +1,8 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\ValueObjects\CommercialApproval;
+namespace PlatinumPlace\LaravelDgii\Data\CommercialApproval;
 
-use PlatinumPlace\LaravelDgii\Abstracts\AbstractXml;
+use PlatinumPlace\LaravelDgii\Data\AbstractXml;
 
 /**
  * Represents a Commercial Approval XML document (ARECF).

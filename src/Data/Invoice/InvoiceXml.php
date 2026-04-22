@@ -1,8 +1,8 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\ValueObjects\Invoice;
+namespace PlatinumPlace\LaravelDgii\Data\Invoice;
 
-use PlatinumPlace\LaravelDgii\Abstracts\AbstractXml;
+use PlatinumPlace\LaravelDgii\Data\AbstractXml;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
 
 /**

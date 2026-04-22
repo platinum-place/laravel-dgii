@@ -1,6 +1,6 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Abstracts;
+namespace PlatinumPlace\LaravelDgii\Data;
 
 use AllowDynamicProperties;
 use InvalidArgumentException;

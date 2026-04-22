@@ -1,6 +1,6 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\ValueObjects\CancellationRange;
+namespace PlatinumPlace\LaravelDgii\Data\CancellationRange;
 
 /**
  * Represents the response received after sending a Cancellation Range (ANECF) to DGII.

@@ -1,8 +1,8 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\ValueObjects\CancellationRange;
+namespace PlatinumPlace\LaravelDgii\Data\CancellationRange;
 
-use PlatinumPlace\LaravelDgii\Abstracts\AbstractXml;
+use PlatinumPlace\LaravelDgii\Data\AbstractXml;
 
 /**
  * Represents a Sequence Range Cancellation XML document (ANECF).

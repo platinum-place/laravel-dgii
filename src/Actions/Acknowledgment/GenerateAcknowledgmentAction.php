@@ -3,10 +3,10 @@
 namespace PlatinumPlace\LaravelDgii\Actions\Acknowledgment;
 
 use Illuminate\Support\Facades\View;
+use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceReceived;
+use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\Enums\ArecfCodeEnum;
 use PlatinumPlace\LaravelDgii\Enums\ArecfStatusEnum;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceReceived;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
 
 /**
  * Action to generate the Acknowledgment (Acuse de Recibo) XML content.

@@ -2,8 +2,8 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\CommercialApproval;
 
+use PlatinumPlace\LaravelDgii\Data\CommercialApproval\CommercialApprovalXml;
 use PlatinumPlace\LaravelDgii\Support\StorageService;
-use PlatinumPlace\LaravelDgii\ValueObjects\CommercialApproval\CommercialApprovalXml;
 
 /**
  * Action to persist a Commercial Approval (ARECF) XML to storage.

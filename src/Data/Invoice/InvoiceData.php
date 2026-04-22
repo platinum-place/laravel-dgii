@@ -1,10 +1,8 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Data;
+namespace PlatinumPlace\LaravelDgii\Data\Invoice;
 
-use PlatinumPlace\LaravelDgii\ValueObjects\Acknowledgment\AcknowledgmentXml;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceReceived;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
+use PlatinumPlace\LaravelDgii\Data\Acknowledgment\AcknowledgmentXml;
 
 /**
  * Data Transfer Object containing the complete lifecycle data of an e-CF transaction.

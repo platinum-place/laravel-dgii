@@ -1,6 +1,6 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\ValueObjects\Invoice;
+namespace PlatinumPlace\LaravelDgii\Data\Invoice;
 
 use PlatinumPlace\LaravelDgii\Enums\ArecfStatusEnum;
 

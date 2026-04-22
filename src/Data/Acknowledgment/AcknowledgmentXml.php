@@ -1,8 +1,8 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\ValueObjects\Acknowledgment;
+namespace PlatinumPlace\LaravelDgii\Data\Acknowledgment;
 
-use PlatinumPlace\LaravelDgii\Abstracts\AbstractXml;
+use PlatinumPlace\LaravelDgii\Data\AbstractXml;
 
 /**
  * Represents an Acknowledgment XML document (Acuse de Recibo).

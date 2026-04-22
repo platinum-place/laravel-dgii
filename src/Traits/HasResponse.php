@@ -2,6 +2,8 @@
 
 namespace PlatinumPlace\LaravelDgii\Traits;
 
+use PlatinumPlace\LaravelDgii\Repositories\HandlesDgiiResponse;
+
 /**
  * Trait to handle and wrap HTTP responses from DGII.
  */
