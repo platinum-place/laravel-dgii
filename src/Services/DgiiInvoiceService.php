@@ -42,7 +42,7 @@ class DgiiInvoiceService
      */
     public function getQrlInk(string $xmlPath, ?string $env = null): string
     {
-        return app(GenerateInvoiceQrAction::class)->getQRLink($xmlPath, $env);
+        return app(GenerateInvoiceQrAction::class)->handle($xmlPath, $env);
     }
 
     /**
