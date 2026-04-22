@@ -7,7 +7,7 @@ use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Enums\ArecfStatusEnum;
 
 /**
- * Action to persist signed Invoice XML(s) to storage.
+ * Wraps DGII HTTP client calls to standardize response formatting and handle common API exceptions.
  */
 class WrapDgiiResponseAction
 {

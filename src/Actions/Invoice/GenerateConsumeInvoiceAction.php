@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\View;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 
 /**
- * Action to generate raw Invoice XML (e-CF) content from templates.
+ * Generates the raw XML content for a Consumer Electronic Invoice (RFCE) from templates.
  */
 class GenerateConsumeInvoiceAction
 {

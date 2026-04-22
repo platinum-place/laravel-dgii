@@ -7,7 +7,7 @@ use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
 /**
- * Action to persist signed Invoice XML(s) to storage.
+ * Orchestrates the sending process by delegating to specialized actions based on invoice type.
  */
 class SendInvoiceAction
 {

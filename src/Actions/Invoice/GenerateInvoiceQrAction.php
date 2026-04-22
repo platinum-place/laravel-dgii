@@ -7,6 +7,9 @@ use PlatinumPlace\LaravelDgii\Clients\InvoiceClient;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
+/**
+ * Generates the official verification QR link (fiscal stamp) for an e-CF.
+ */
 class GenerateInvoiceQrAction
 {
     /**
