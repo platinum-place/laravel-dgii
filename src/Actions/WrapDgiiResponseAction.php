@@ -1,23 +1,25 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Repositories;
+namespace PlatinumPlace\LaravelDgii\Actions;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Enums\ArecfStatusEnum;
 
 /**
- * Trait to handle and wrap HTTP responses from DGII.
+ * Action to persist signed Invoice XML(s) to storage.
  */
-trait HandlesDgiiResponse
+class WrapDgiiResponseAction
 {
     /**
-     * Execute a callback and capture its response and status.
-     *
-     * @param  \Closure  $callback  The HTTP request logic to execute.
-     * @return array{0: array, 1: ArecfStatusEnum} Tuple containing response and status.
+     * Create a new class instance.
      */
-    protected function handleResponse(\Closure $callback): array
+    public function __construct()
+    {
+        //
+    }
+
+    public function handle(\Closure $callback): array
     {
         try {
             $response = $callback();

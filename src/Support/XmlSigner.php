@@ -4,6 +4,7 @@ namespace PlatinumPlace\LaravelDgii\Support;
 
 use PlatinumPlace\DgiiXmlSigner\Exception\DgiiXmlSignerException;
 use PlatinumPlace\DgiiXmlSigner\SignManager;
+use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
 /**
  * Service to handle XML digital signing.
@@ -13,9 +14,9 @@ class XmlSigner
     /**
      * Create a new XML signer instance.
      *
-     * @param  StorageService  $storageService  Storage service instance.
+     * @param  StorageRepository  $storageService  Storage service instance.
      */
-    public function __construct(protected StorageService $storageService)
+    public function __construct(protected StorageRepository $storageService)
     {
         //
     }

@@ -3,7 +3,7 @@
 namespace PlatinumPlace\LaravelDgii\Actions\CommercialApproval;
 
 use PlatinumPlace\LaravelDgii\Data\CommercialApproval\CommercialApprovalXml;
-use PlatinumPlace\LaravelDgii\Support\StorageService;
+use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
 /**
  * Action to persist a Commercial Approval (ARECF) XML to storage.
@@ -13,9 +13,9 @@ class StorageCommercialApprovalAction
     /**
      * Create a new class instance.
      *
-     * @param  StorageService  $storageService  Storage service instance.
+     * @param  StorageRepository  $storageService  Storage service instance.
      */
-    public function __construct(protected StorageService $storageService)
+    public function __construct(protected StorageRepository $storageService)
     {
         //
     }
@@ -28,6 +28,6 @@ class StorageCommercialApprovalAction
      */
     public function handle(CommercialApprovalXml $commercialApprovalXml): string
     {
-        return $this->storageService->putXml($commercialApprovalXml->xmlContent, $commercialApprovalXml->getXmlName());
+        return $this->storageService->save($commercialApprovalXml->xmlContent, $commercialApprovalXml->getXmlName());
     }
 }

@@ -2,8 +2,9 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\Invoice;
 
-use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
-use PlatinumPlace\LaravelDgii\Support\StorageService;
+use PlatinumPlace\LaravelDgii\Data\Invoice\SignedInvoice;
+use PlatinumPlace\LaravelDgii\Data\Invoice\StoredInvoice;
+use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
 /**
  * Action to persist signed Invoice XML(s) to storage.
@@ -12,31 +13,24 @@ class StorageInvoiceAction
 {
     /**
      * Create a new class instance.
-     *
-     * @param  StorageService  $storageService  Storage service instance.
      */
-    public function __construct(protected StorageService $storageService)
+    public function __construct(protected StorageRepository $storageRepository)
     {
         //
     }
 
-    /**
-     * Store the signed Invoice XML(s) and return their stored paths.
-     *
-     * @param  InvoiceXml  $invoiceXml  The signed main invoice XML.
-     * @param  InvoiceXml|null  $integralInvoiceXml  The signed integral invoice XML (for consumer summary).
-     * @return array An array containing [string $invoiceXmlPath, ?string $integralInvoiceXmlPath].
-     */
-    public function handle(InvoiceXml $invoiceXml, ?InvoiceXml $integralInvoiceXml = null): array
+    public function handle(SignedInvoice $signedInvoice): StoredInvoice
     {
-        $invoiceXmlPath = $this->storageService->putXml($invoiceXml->xmlContent, $invoiceXml->getXmlName());
+        $invoiceXml = $signedInvoice->invoiceXml;
+
+        $invoiceXmlPath = $this->storageRepository->save($invoiceXml->xmlContent, $invoiceXml->getXmlName());
 
         $integralInvoiceXmlPath = null;
 
-        if ($integralInvoiceXml) {
-            $integralInvoiceXmlPath = $this->storageService->putXml($integralInvoiceXml->xmlContent, $integralInvoiceXml->getXmlName());
+        if ($integralInvoiceXml = $signedInvoice->integralInvoiceXml) {
+            $integralInvoiceXmlPath = $this->storageRepository->save($integralInvoiceXml->xmlContent, $integralInvoiceXml->getXmlName());
         }
 
-        return [$invoiceXmlPath, $integralInvoiceXmlPath];
+        return new StoredInvoice($invoiceXmlPath, $integralInvoiceXmlPath);
     }
 }

@@ -5,7 +5,7 @@ namespace PlatinumPlace\LaravelDgii\Clients;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use PlatinumPlace\LaravelDgii\Support\StorageService;
+use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
 /**
  * Client to interact with DGII Authentication (Seed) Services.
@@ -18,9 +18,9 @@ class SeedClient
     /**
      * Create a new client instance.
      *
-     * @param  StorageService  $storageService  Helper to interact with file storage.
+     * @param  StorageRepository  $storageService  Helper to interact with file storage.
      */
-    public function __construct(protected StorageService $storageService)
+    public function __construct(protected StorageRepository $storageService)
     {
         //
     }

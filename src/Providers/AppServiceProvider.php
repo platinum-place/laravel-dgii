@@ -9,7 +9,7 @@ use PlatinumPlace\LaravelDgii\Clients\ConsumeInvoiceClient;
 use PlatinumPlace\LaravelDgii\Clients\DgiiClient;
 use PlatinumPlace\LaravelDgii\Clients\InvoiceClient;
 use PlatinumPlace\LaravelDgii\Clients\SeedClient;
-use PlatinumPlace\LaravelDgii\Support\StorageService;
+use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 use PlatinumPlace\LaravelDgii\Support\XmlSigner;
 
 class AppServiceProvider extends ServiceProvider
@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
         /**
          * Support
          */
-        StorageService::class,
+        StorageRepository::class,
         XmlSigner::class,
     ];
 

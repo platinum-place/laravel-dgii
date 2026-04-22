@@ -5,7 +5,7 @@ namespace PlatinumPlace\LaravelDgii\Actions\Seed;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Clients\SeedClient;
-use PlatinumPlace\LaravelDgii\Support\StorageService;
+use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
 /**
  * Action to receive and validate a signed seed with DGII to obtain a token.
@@ -15,11 +15,11 @@ class ReceiveSeedAction
     /**
      * Create a new class instance.
      *
-     * @param  StorageService  $storageService  Storage service instance.
+     * @param  StorageRepository  $storageService  Storage service instance.
      * @param  SeedClient  $seedClient  Seed client instance.
      */
     public function __construct(
-        protected StorageService $storageService,
+        protected StorageRepository $storageService,
         protected SeedClient $seedClient,
     ) {
         //

@@ -3,7 +3,7 @@
 namespace PlatinumPlace\LaravelDgii\Actions\Acknowledgment;
 
 use PlatinumPlace\LaravelDgii\Data\Acknowledgment\AcknowledgmentXml;
-use PlatinumPlace\LaravelDgii\Support\StorageService;
+use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
 /**
  * Action to persist an Acknowledgment (Acuse de Recibo) XML to storage.
@@ -13,9 +13,9 @@ class StorageAcknowledgmentAction
     /**
      * Create a new class instance.
      *
-     * @param  StorageService  $storageService  Storage service instance.
+     * @param  StorageRepository  $storageService  Storage service instance.
      */
-    public function __construct(protected StorageService $storageService)
+    public function __construct(protected StorageRepository $storageService)
     {
         //
     }
@@ -28,6 +28,6 @@ class StorageAcknowledgmentAction
      */
     public function handle(AcknowledgmentXml $acknowledgmentXml): string
     {
-        return $this->storageService->putXml($acknowledgmentXml->xmlContent, $acknowledgmentXml->getXmlName());
+        return $this->storageService->save($acknowledgmentXml->xmlContent, $acknowledgmentXml->getXmlName());
     }
 }

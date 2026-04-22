@@ -5,7 +5,7 @@ namespace PlatinumPlace\LaravelDgii\Clients;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use PlatinumPlace\LaravelDgii\Support\StorageService;
+use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
 /**
  * Client to interact with DGII Commercial Approval Services (ARECF).
@@ -17,10 +17,8 @@ class CommercialApprovalClient
 {
     /**
      * Create a new client instance.
-     *
-     * @param  StorageService  $storageService  Helper to interact with file storage.
      */
-    public function __construct(protected StorageService $storageService)
+    public function __construct()
     {
         //
     }
@@ -38,8 +36,6 @@ class CommercialApprovalClient
      */
     public function send(string $token, string $xmlPath, ?string $env = null): array
     {
-        $filePath = $this->storageService->path($xmlPath);
-
         $env ??= config('dgii.environment');
 
         $url = sprintf(
@@ -50,7 +46,7 @@ class CommercialApprovalClient
         );
 
         return Http::withToken($token)
-            ->attach('xml', fopen($filePath, 'rb'), basename($xmlPath))
+            ->attach('xml', fopen($xmlPath, 'rb'), basename($xmlPath))
             ->post($url)
             ->throw()
             ->json();

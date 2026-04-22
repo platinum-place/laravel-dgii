@@ -7,7 +7,7 @@ use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Cache;
 use PlatinumPlace\LaravelDgii\Actions\Seed\ReceiveSeedAction;
 use PlatinumPlace\LaravelDgii\Clients\SeedClient;
-use PlatinumPlace\LaravelDgii\Support\StorageService;
+use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 use PlatinumPlace\LaravelDgii\Support\XmlSigner;
 
 /**
@@ -23,13 +23,13 @@ class AuthenticateAction
      *
      * @param  SeedClient  $seedClient  Seed client instance.
      * @param  XmlSigner  $xmlSigner  XML signing service.
-     * @param  StorageService  $storageService  Storage service.
+     * @param  StorageRepository  $storageService  Storage service.
      * @param  ReceiveSeedAction  $receiveSeedAction  Action to receive and validate seeds.
      */
     public function __construct(
         protected SeedClient $seedClient,
         protected XmlSigner $xmlSigner,
-        protected StorageService $storageService,
+        protected StorageRepository $storageService,
         protected ReceiveSeedAction $receiveSeedAction,
     ) {
         //

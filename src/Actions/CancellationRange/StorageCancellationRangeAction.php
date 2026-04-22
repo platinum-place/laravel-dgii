@@ -2,7 +2,7 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\CancellationRange;
 
-use PlatinumPlace\LaravelDgii\Support\StorageService;
+use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
 /**
  * Action to persist a Cancellation Range (ANECF) XML to storage.
@@ -12,9 +12,9 @@ class StorageCancellationRangeAction
     /**
      * Create a new class instance.
      *
-     * @param  StorageService  $storageService  Storage service instance.
+     * @param  StorageRepository  $storageService  Storage service instance.
      */
-    public function __construct(protected StorageService $storageService)
+    public function __construct(protected StorageRepository $storageService)
     {
         //
     }

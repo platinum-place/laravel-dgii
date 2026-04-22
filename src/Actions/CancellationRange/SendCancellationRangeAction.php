@@ -2,20 +2,16 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\CancellationRange;
 
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\AuthenticateAction;
+use PlatinumPlace\LaravelDgii\Actions\WrapDgiiResponseAction;
 use PlatinumPlace\LaravelDgii\Clients\CancellationRangeClient;
 use PlatinumPlace\LaravelDgii\Data\CancellationRange\CancellationRangeReceived;
-use PlatinumPlace\LaravelDgii\Traits\HasResponse;
 
 /**
  * Action to send a signed Cancellation Range (ANECF) XML to DGII.
  */
 class SendCancellationRangeAction
 {
-    use HasResponse;
-
     /**
      * Create a new class instance.
      *
@@ -23,6 +19,7 @@ class SendCancellationRangeAction
      * @param  CancellationRangeClient  $cancellationRangeClient  Cancellation client.
      */
     public function __construct(
+        protected WrapDgiiResponseAction $wrapDgiiResponseAction,
         protected AuthenticateAction $authenticateAction,
         protected CancellationRangeClient $cancellationRangeClient
     ) {
@@ -37,12 +34,10 @@ class SendCancellationRangeAction
      * @param  string|null  $certPath  Optional certificate path.
      * @param  string|null  $certPassword  Optional certificate password.
      * @return CancellationRangeReceived The response object containing the DGII submission status.
-     *
-     * @throws ConnectionException|RequestException
      */
     public function handle(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): CancellationRangeReceived
     {
-        $response = $this->catchResponse(function () use ($xmlPath, $env, $certPath, $certPassword) {
+        [$response] = $this->wrapDgiiResponseAction->handle(function () use ($xmlPath, $env, $certPath, $certPassword) {
             $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
 
             return $this->cancellationRangeClient->send($token, $xmlPath, $env);

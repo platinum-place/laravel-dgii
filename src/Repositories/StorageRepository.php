@@ -1,6 +1,6 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Support;
+namespace PlatinumPlace\LaravelDgii\Repositories;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 /**
  * Service to handle XML file storage in the configured disk.
  */
-class StorageService
+class StorageRepository
 {
     /** @var Filesystem The filesystem disk instance. */
     protected Filesystem $storage;
@@ -30,7 +30,7 @@ class StorageService
      * @param  string|null  $xmlName  Optional suggested base name for the file.
      * @return string Relative path of the saved file.
      */
-    public function putXml(string $xml, ?string $xmlName = null): string
+    public function save(string $xml, ?string $xmlName = null): string
     {
         $xmlPath = sprintf(
             config('dgii.storage_path').'/%s/%s/%s/%s/%s.xml',
@@ -64,7 +64,7 @@ class StorageService
      * @param  string  $xmlPath  The relative path of the XML file.
      * @return string The absolute path in the server.
      */
-    public function path(string $xmlPath): string
+    public function realPath(string $xmlPath): string
     {
         return $this->storage->path($xmlPath);
     }

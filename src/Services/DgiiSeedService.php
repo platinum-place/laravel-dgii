@@ -15,10 +15,10 @@ class DgiiSeedService
     /**
      * Create a new service instance.
      */
-    public function __construct(
-        protected SeedClient $seedClient,
-        protected ReceiveSeedAction $receiveSeedAction
-    ) {}
+    public function __construct()
+    {
+        //
+    }
 
     /**
      * Request a new authentication seed XML from DGII to begin login.
@@ -30,7 +30,7 @@ class DgiiSeedService
      */
     public function requestXml(?string $env = null): string
     {
-        return $this->seedClient->fetch($env);
+        return app(SeedClient::class)->fetch($env);
     }
 
     /**
@@ -44,6 +44,6 @@ class DgiiSeedService
      */
     public function requestToken(string $signedXml, ?string $env = null): array
     {
-        return $this->receiveSeedAction->handle($signedXml, $env);
+        return app(ReceiveSeedAction::class)->handle($signedXml, $env);
     }
 }

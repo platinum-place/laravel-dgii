@@ -5,16 +5,14 @@ namespace PlatinumPlace\LaravelDgii\Actions\CommercialApproval;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\AuthenticateAction;
+use PlatinumPlace\LaravelDgii\Actions\WrapDgiiResponseAction;
 use PlatinumPlace\LaravelDgii\Clients\CommercialApprovalClient;
-use PlatinumPlace\LaravelDgii\Traits\HasResponse;
 
 /**
  * Action to send a signed Commercial Approval (ARECF) XML to DGII.
  */
 class SendCommercialApprovalAction
 {
-    use HasResponse;
-
     /**
      * Create a new class instance.
      *
@@ -22,6 +20,7 @@ class SendCommercialApprovalAction
      * @param  CommercialApprovalClient  $commercialApprovalClient  Commercial approval client.
      */
     public function __construct(
+        protected WrapDgiiResponseAction $wrapDgiiResponseAction,
         protected AuthenticateAction $authenticateAction,
         protected CommercialApprovalClient $commercialApprovalClient
     ) {
@@ -42,12 +41,13 @@ class SendCommercialApprovalAction
      */
     public function handle(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): array
     {
-        //        return $this->catchResponse(function () use ($xmlPath, $env, $certPath, $certPassword, $token) {
+        //        [$response] = $this->wrapDgiiResponseAction->handle(function () use ($xmlPath, $env, $certPath, $certPassword, $token) {
         if (! $token) {
             $token = $this->authenticateAction->handle($env, $certPath, $certPassword);
         }
 
         return $this->commercialApprovalClient->send($token, $xmlPath, $env);
         //        });
+        //        return $response;
     }
 }
