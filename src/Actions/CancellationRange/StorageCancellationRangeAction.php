@@ -27,6 +27,6 @@ class StorageCancellationRangeAction
      */
     public function handle(string $cancellationRangeXml): string
     {
-        return $this->storageService->putXml($cancellationRangeXml);
+        return $this->storageService->save($cancellationRangeXml);
     }
 }

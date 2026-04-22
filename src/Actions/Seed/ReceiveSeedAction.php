@@ -36,7 +36,7 @@ class ReceiveSeedAction
      */
     public function handle(string $signedXml, ?string $env = null): array
     {
-        $xmlPath = $this->storageService->putXml($signedXml, now()->timestamp.'-semilla');
+        $xmlPath = $this->storageService->save($signedXml, now()->timestamp.'-semilla');
 
         return $this->seedClient->fetchToken($xmlPath, $env);
     }
