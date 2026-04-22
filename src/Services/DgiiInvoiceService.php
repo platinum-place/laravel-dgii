@@ -6,17 +6,14 @@ use Exception;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\GenerateAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\SignAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\StorageAcknowledgmentAction;
-use PlatinumPlace\LaravelDgii\Actions\Invoice\CheckInvoiceStatusAction;
-use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateConsumeInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoicePdfAction;
-use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceQrLinkAction;
-use PlatinumPlace\LaravelDgii\Actions\Invoice\SendInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\SignInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\StorageInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\ValidateCertAction;
-use PlatinumPlace\LaravelDgii\Data\InvoiceData;
-use PlatinumPlace\LaravelDgii\ValueObjects\Invoice\InvoiceXml;
+use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData;
+use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
+use PlatinumPlace\LaravelDgii\Repositories\InvoiceRepository;
 
 /**
  * Service to manage e-CF (Electronic Invoice) lifecycle operations.
@@ -26,56 +23,40 @@ class DgiiInvoiceService
     /**
      * Create a new service instance.
      */
-    public function __construct()
+    public function __construct(
+        protected InvoiceRepository            $invoiceRepository,
+        protected StorageInvoiceAction         $storageInvoiceAction,
+        protected ValidateCertAction           $validateCertAction,
+        protected GenerateInvoiceAction        $generateInvoiceAction,
+        protected SignInvoiceAction            $signInvoiceAction,
+        protected GenerateAcknowledgmentAction $generateAcknowledgmentAction,
+        protected SignAcknowledgmentAction     $signAcknowledgmentAction,
+        protected StorageAcknowledgmentAction  $storageAcknowledgmentAction,
+        protected GenerateInvoicePdfAction     $generateInvoicePdfAction
+    )
     {
-        //
     }
 
     /**
      * Generate the official verification QR link (fiscal stamp) for an e-CF.
      *
-     * @param  string  $xmlPath  Relative path of the stored signed XML file.
-     * @param  string|null  $env  The environment to use.
+     * @param string $xmlPath Relative path of the stored signed XML file.
+     * @param string|null $env The environment to use.
      * @return string The full verification URL for the QR code.
      *
      * @throws Exception
      */
     public function getQrlInk(string $xmlPath, ?string $env = null): string
     {
-        return app(GenerateInvoiceQrLinkAction::class)->handle($xmlPath, $env);
-    }
-
-    /**
-     * Internal method to wrap stored XML objects into an InvoiceData DTO.
-     *
-     * @param  InvoiceXml  $invoiceXml  The main signed invoice XML.
-     * @param  string|null  $env  The environment for QR generation.
-     * @param  InvoiceXml|null  $integralInvoiceXml  The optional integral invoice XML.
-     * @return InvoiceData The populated data transfer object.
-     *
-     * @throws Exception
-     */
-    private function returnStoredInvoiceData(InvoiceXml $invoiceXml, ?string $env = null, ?InvoiceXml $integralInvoiceXml = null): InvoiceData
-    {
-        [$invoiceXmlPath, $integralInvoiceXmlPath] = app(StorageInvoiceAction::class)->handle($invoiceXml, $integralInvoiceXml);
-
-        $qrLink = $this->getQrlInk($invoiceXmlPath, $env);
-
-        return new InvoiceData(
-            $invoiceXml,
-            $invoiceXmlPath,
-            $qrLink,
-            $integralInvoiceXml,
-            $integralInvoiceXmlPath
-        );
+        return $this->invoiceRepository->getQRLink($xmlPath, $env);
     }
 
     /**
      * Store signed XML content into the configured storage and return its data.
      *
-     * @param  string  $xmlContent  Signed main XML content.
-     * @param  string|null  $env  The environment to use.
-     * @param  string|null  $integralXmlContent  Optional signed integral XML content.
+     * @param string $xmlContent Signed main XML content.
+     * @param string|null $env The environment to use.
+     * @param string|null $integralXmlContent Optional signed integral XML content.
      * @return InvoiceData Data object containing stored paths and QR link.
      *
      * @throws Exception
@@ -90,98 +71,125 @@ class DgiiInvoiceService
             $integralInvoiceXml = new InvoiceXml($integralXmlContent);
         }
 
-        return $this->returnStoredInvoiceData($invoiceXml, $env, $integralInvoiceXml);
+        [$invoiceXmlPath, $integralInvoiceXmlPath] = $this->storageInvoiceAction->handle($invoiceXml, $integralInvoiceXml);
+
+        $qrLink = $this->getQrlInk($invoiceXmlPath, $env);
+
+        return new InvoiceData(
+            $invoiceXml,
+            $invoiceXmlPath,
+            $qrLink,
+            $integralInvoiceXml,
+            $integralInvoiceXmlPath
+        );
     }
 
     /**
      * Generate, sign, and store an invoice from raw data.
      *
-     * @param  array  $data  Template data for the invoice.
-     * @param  string|null  $env  The environment to use.
-     * @param  string|null  $certPath  Optional certificate path.
-     * @param  string|null  $certPassword  Optional certificate password.
+     * @param array $data Template data for the invoice.
+     * @param string|null $env The environment to use.
+     * @param string|null $certPath Optional certificate path.
+     * @param string|null $certPassword Optional certificate password.
      * @return InvoiceData Invoice data with stored and signed invoice information.
      *
      * @throws Exception
      */
     public function sign(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
-        app(ValidateCertAction::class)->handle($certPath, $certPassword);
+        $this->validateCertAction->handle($certPath, $certPassword);
 
-        $invoiceXmlContent = app(GenerateInvoiceAction::class)->handle($data);
+        $invoiceXmlContent = $this->generateInvoiceAction->handle($data);
 
-        $invoiceXml = app(SignInvoiceAction::class)->handle($invoiceXmlContent, $certPath, $certPassword);
+        [$invoiceXml, $integralInvoiceXml] = $this->signInvoiceAction->handle($invoiceXmlContent, $data, $certPath, $certPassword);
 
-        $integralInvoiceXml = null;
+        [$invoiceXmlPath, $integralInvoiceXmlPath] = $this->storageInvoiceAction->handle($invoiceXml, $integralInvoiceXml);
 
-        if ($invoiceXml->isConsumeInvoice()) {
-            $integralInvoiceXml = $invoiceXml;
+        $qrLink = $this->getQrlInk($invoiceXmlPath, $env);
 
-            $invoiceXmlContent = app(GenerateConsumeInvoiceAction::class)->handle($invoiceXml, $data);
-
-            $invoiceXml = app(SignInvoiceAction::class)->handle($invoiceXmlContent, $certPath, $certPassword);
-        }
-
-        return $this->returnStoredInvoiceData($invoiceXml, $env, $integralInvoiceXml);
+        return new InvoiceData(
+            $invoiceXml,
+            $invoiceXmlPath,
+            $qrLink,
+            $integralInvoiceXml,
+            $integralInvoiceXmlPath
+        );
     }
 
     /**
-     * Internal orchestration to send the invoice and generate/store the acknowledgment.
+     * Re-submit an existing stored XML file to DGII.
      *
-     * @param  InvoiceData  $invoiceData  The current transaction data.
-     * @param  string|null  $env  The environment to use.
-     * @param  string|null  $certPath  Optional certificate path for acknowledgment signing.
-     * @param  string|null  $certPassword  Optional certificate password.
-     * @param  string|null  $token  Optional authentication token.
-     * @return InvoiceData The updated transaction data with response and acknowledgment.
+     * @param string $xmlPath The relative path of the stored XML.
+     * @param string|null $env The environment to use.
+     * @param string|null $certPath Optional certificate path.
+     * @param string|null $certPassword Optional certificate password.
+     * @return InvoiceData The transaction result with the new DGII response.
      *
      * @throws Exception
      */
-    private function returnInvoiceData(InvoiceData $invoiceData, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): InvoiceData
+    public function submit(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
-        $invoiceReceived = app(SendInvoiceAction::class)->handle($invoiceData, $env, $certPath, $certPassword, $token);
+        $this->validateCertAction->handle($certPath, $certPassword);
 
-        $acknowledgmentXmlContent = app(GenerateAcknowledgmentAction::class)->handle($invoiceData->invoiceXml, $invoiceReceived);
-
-        $signedAcknowledgmentXml = app(SignAcknowledgmentAction::class)->handle($acknowledgmentXmlContent, $certPath, $certPassword);
-
-        $acknowledgmentXmlPath = app(StorageAcknowledgmentAction::class)->handle($signedAcknowledgmentXml);
+        $invoiceReceived = $this->invoiceRepository->send($xmlPath, $env, $certPath, $certPassword);
 
         return new InvoiceData(
-            $invoiceData->invoiceXml,
-            $invoiceData->invoiceXmlPath,
-            $invoiceData->qrLink,
-            $invoiceData->integralInvoiceXml,
-            $invoiceData->integralInvoiceXmlPath,
-            $invoiceReceived,
-            $signedAcknowledgmentXml,
-            $acknowledgmentXmlPath
+            InvoiceXml::fromXmlPath($xmlPath),
+            $xmlPath,
+            invoiceReceived: $invoiceReceived,
         );
     }
 
     /**
      * Send an invoice to DGII. Supports both raw data (array) or already signed XML (string).
      *
-     * @param  string|array  $xmlContent  Raw data for generation or signed XML content.
-     * @param  string|null  $env  The environment to use.
-     * @param  string|null  $certPath  Optional certificate path.
-     * @param  string|null  $certPassword  Optional certificate password.
-     * @param  string|null  $token  Optional existing authentication token.
+     * @param string|array $xmlContent Raw data for generation or signed XML content.
+     * @param string|null $env The environment to use.
+     * @param string|null $certPath Optional certificate path.
+     * @param string|null $certPassword Optional certificate password.
+     * @param string|null $token Optional existing authentication token.
      * @return InvoiceData Complete transaction data including response and acknowledgment.
      *
      * @throws Exception
      */
     public function send(string|array $xmlContent, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): InvoiceData
     {
-        app(ValidateCertAction::class)->handle($certPath, $certPassword);
+        $this->validateCertAction->handle($certPath, $certPassword);
 
         if (is_array($xmlContent)) {
-            $invoiceData = $this->sign($xmlContent, $env, $certPath, $certPassword);
+            $invoiceXmlContent = $this->generateInvoiceAction->handle($xmlContent);
+
+            [$invoiceXml, $integralInvoiceXml] = $this->signInvoiceAction->handle($invoiceXmlContent, $xmlContent, $certPath, $certPassword);
+
+            [$invoiceXmlPath, $integralInvoiceXmlPath] = $this->storageInvoiceAction->handle($invoiceXml, $integralInvoiceXml);
         } else {
-            $invoiceData = $this->storage($xmlContent, $env);
+            $integralInvoiceXml = null;
+
+            $invoiceXml = new InvoiceXml($xmlContent);
+
+            [$invoiceXmlPath, $integralInvoiceXmlPath] = $this->storageInvoiceAction->handle($invoiceXml);
         }
 
-        return $this->returnInvoiceData($invoiceData, $env, $certPath, $certPassword, $token);
+        $invoiceReceived = $this->invoiceRepository->send($invoiceXmlPath, $env, $certPath, $certPassword, $token);
+
+        $acknowledgmentXmlContent = $this->generateAcknowledgmentAction->handle($invoiceXml, $invoiceReceived);
+
+        $signedAcknowledgmentXml = $this->signAcknowledgmentAction->handle($acknowledgmentXmlContent, $certPath, $certPassword);
+
+        $acknowledgmentXmlPath = $this->storageAcknowledgmentAction->handle($signedAcknowledgmentXml);
+
+        $qrLink = $this->getQrlInk($invoiceXmlPath, $env);
+
+        return new InvoiceData(
+            $invoiceXml,
+            $invoiceXmlPath,
+            $qrLink,
+            $integralInvoiceXml,
+            $integralInvoiceXmlPath,
+            $invoiceReceived,
+            $signedAcknowledgmentXml,
+            $acknowledgmentXmlPath
+        );
     }
 
     /**
@@ -198,9 +206,9 @@ class DgiiInvoiceService
      */
     public function checkStatus(string $xmlPath, ?string $trackId = null, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
-        app(ValidateCertAction::class)->handle($certPath, $certPassword);
+        $this->validateCertAction->handle($certPath, $certPassword);
 
-        $invoiceReceived = app(CheckInvoiceStatusAction::class)->handle($xmlPath, $trackId, $env, $certPath, $certPassword);
+        $invoiceReceived = $this->invoiceRepository->getByXml($xmlPath, $trackId, $env, $certPath, $certPassword);
 
         return new InvoiceData(
             InvoiceXml::fromXmlPath($xmlPath),
@@ -221,35 +229,6 @@ class DgiiInvoiceService
      */
     public function generatePdf(string $xmlContent, string $qrLink, ?string $logo = null): string
     {
-        return app(GenerateInvoicePdfAction::class)->handle($xmlContent, $qrLink, $logo);
-    }
-
-    /**
-     * Re-submit an existing stored XML file to DGII.
-     *
-     * @param  string  $xmlPath  The relative path of the stored XML.
-     * @param  string|null  $env  The environment to use.
-     * @param  string|null  $certPath  Optional certificate path.
-     * @param  string|null  $certPassword  Optional certificate password.
-     * @return InvoiceData The transaction result with the new DGII response.
-     *
-     * @throws Exception
-     */
-    public function submit(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
-    {
-        app(ValidateCertAction::class)->handle($certPath, $certPassword);
-
-        $invoiceData = new InvoiceData(
-            InvoiceXml::fromXmlPath($xmlPath),
-            $xmlPath,
-        );
-
-        $invoiceReceived = app(SendInvoiceAction::class)->handle($invoiceData, $env, $certPath, $certPassword);
-
-        return new InvoiceData(
-            InvoiceXml::fromXmlPath($xmlPath),
-            $xmlPath,
-            invoiceReceived: $invoiceReceived,
-        );
+        return $this->generateInvoicePdfAction->handle($xmlContent, $qrLink, $logo);
     }
 }

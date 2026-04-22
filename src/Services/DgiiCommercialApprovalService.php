@@ -8,8 +8,8 @@ use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\CommercialApproval\SendCommercialApprovalAction;
 use PlatinumPlace\LaravelDgii\Actions\CommercialApproval\StorageCommercialApprovalAction;
 use PlatinumPlace\LaravelDgii\Actions\ValidateCertAction;
-use PlatinumPlace\LaravelDgii\Data\CommercialApprovalData;
-use PlatinumPlace\LaravelDgii\ValueObjects\CommercialApproval\CommercialApprovalXml;
+use PlatinumPlace\LaravelDgii\Data\CommercialApproval\CommercialApprovalData;
+use PlatinumPlace\LaravelDgii\Data\CommercialApproval\CommercialApprovalXml;
 
 /**
  * Service to manage Commercial Approvals (ARECF).
@@ -19,10 +19,11 @@ class DgiiCommercialApprovalService
     /**
      * Create a new service instance.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(
+        protected ValidateCertAction $validateCertAction,
+        protected StorageCommercialApprovalAction $storageCommercialApprovalAction,
+        protected SendCommercialApprovalAction $sendCommercialApprovalAction
+    ) {}
 
     /**
      * Handle the commercial approval (ARECF) process for a received e-CF.
@@ -38,13 +39,13 @@ class DgiiCommercialApprovalService
      */
     public function send(string $xmlContent, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null): CommercialApprovalData
     {
-        app(ValidateCertAction::class)->handle($certPath, $certPassword);
+        $this->validateCertAction->handle($certPath, $certPassword);
 
         $commercialApprovalXml = new CommercialApprovalXml($xmlContent);
 
-        $commercialApprovalXmlPath = app(StorageCommercialApprovalAction::class)->handle($commercialApprovalXml);
+        $commercialApprovalXmlPath = $this->storageCommercialApprovalAction->handle($commercialApprovalXml);
 
-        $response = app(SendCommercialApprovalAction::class)->handle($commercialApprovalXmlPath, $env, $certPath, $certPassword, $token);
+        $response = $this->sendCommercialApprovalAction->handle($commercialApprovalXmlPath, $env, $certPath, $certPassword, $token);
 
         return new CommercialApprovalData($commercialApprovalXml, $commercialApprovalXmlPath, $response);
     }

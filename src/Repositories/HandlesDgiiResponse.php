@@ -1,6 +1,6 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Traits;
+namespace PlatinumPlace\LaravelDgii\Repositories;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;

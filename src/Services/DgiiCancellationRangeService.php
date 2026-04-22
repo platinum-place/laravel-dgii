@@ -10,7 +10,7 @@ use PlatinumPlace\LaravelDgii\Actions\CancellationRange\SendCancellationRangeAct
 use PlatinumPlace\LaravelDgii\Actions\CancellationRange\SignCancellationRangeAction;
 use PlatinumPlace\LaravelDgii\Actions\CancellationRange\StorageCancellationRangeAction;
 use PlatinumPlace\LaravelDgii\Actions\ValidateCertAction;
-use PlatinumPlace\LaravelDgii\Data\CancellationRangeData;
+use PlatinumPlace\LaravelDgii\Data\CancellationRange\CancellationRangeData;
 
 /**
  * Service to manage e-CF Sequence Range Cancellations (ANECF).
@@ -20,10 +20,13 @@ class DgiiCancellationRangeService
     /**
      * Create a new service instance.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(
+        protected ValidateCertAction $validateCertAction,
+        protected GenerateCancellationRangeAction $generateCancellationRangeAction,
+        protected SignCancellationRangeAction $signCancellationRangeAction,
+        protected StorageCancellationRangeAction $storageCancellationRangeAction,
+        protected SendCancellationRangeAction $sendCancellationRangeAction
+    ) {}
 
     /**
      * Generate, sign, store, and send a sequence range cancellation (ANECF) request to DGII.
@@ -38,15 +41,15 @@ class DgiiCancellationRangeService
      */
     public function send(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): CancellationRangeData
     {
-        app(ValidateCertAction::class)->handle($certPath, $certPassword);
+        $this->validateCertAction->handle($certPath, $certPassword);
 
-        $cancellationRangeXmlContent = app(GenerateCancellationRangeAction::class)->handle($data);
+        $cancellationRangeXmlContent = $this->generateCancellationRangeAction->handle($data);
 
-        $cancellationRangeXml = app(SignCancellationRangeAction::class)->handle($cancellationRangeXmlContent, $certPath, $certPassword);
+        $cancellationRangeXml = $this->signCancellationRangeAction->handle($cancellationRangeXmlContent, $certPath, $certPassword);
 
-        $cancellationRangeXmlPath = app(StorageCancellationRangeAction::class)->handle($cancellationRangeXml->xmlContent);
+        $cancellationRangeXmlPath = $this->storageCancellationRangeAction->handle($cancellationRangeXml->xmlContent);
 
-        $cancellationRangeReceived = app(SendCancellationRangeAction::class)->handle($cancellationRangeXmlPath, $env, $certPath, $certPassword);
+        $cancellationRangeReceived = $this->sendCancellationRangeAction->handle($cancellationRangeXmlPath, $env, $certPath, $certPassword);
 
         return new CancellationRangeData($cancellationRangeXml, $cancellationRangeXmlPath, $cancellationRangeReceived);
     }
