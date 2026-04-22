@@ -13,14 +13,6 @@ use PlatinumPlace\LaravelDgii\Support\XmlSigner;
  */
 class Xml extends Facade
 {
-    /**
-     * Create a new class instance.
-     */
-    public function __construct()
-    {
-        //
-    }
-
     protected static function getFacadeAccessor()
     {
         return XmlSigner::class;
