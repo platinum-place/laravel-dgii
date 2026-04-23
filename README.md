@@ -18,8 +18,6 @@ Integración elegante con los servicios web de la **Dirección General de Impues
 - **Ciclo Completo e-CF:** Generación, firma, envío y consulta de estado de facturas electrónicas.
 - **Soporte Extendido:** Facturas de crédito fiscal (31), consumo (32), notas de crédito (33), y más.
 - **Documentos Especiales:** Aprobación comercial (ARECF) y Anulación de rangos (ANECF).
-- **Representación Impresa:** Generación de PDF fiscal con código QR dinámico.
-
 ---
 
 ## 📦 Dependencias Core
@@ -27,8 +25,6 @@ Integración elegante con los servicios web de la **Dirección General de Impues
 Este paquete se apoya en soluciones robustas de la comunidad:
 
 - **Firma XML:** `platinum-place/php-dgii-xml-signer`
-- **Generación PDF:** `barryvdh/laravel-dompdf`
-- **Códigos QR:** `simplesoftwareio/simple-qrcode`
 - **HTTP Client:** Guzzle (vía Laravel HTTP Facade)
 
 ---

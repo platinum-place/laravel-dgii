@@ -11,7 +11,6 @@ use PlatinumPlace\LaravelDgii\Services\DgiiInvoiceService;
  * @method static \PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData sign(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null)
  * @method static \PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData send(string|array $xmlContent, ?string $env = null, ?string $certPath = null, ?string $certPassword = null, ?string $token = null)
  * @method static \PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData checkStatus(string $xmlPath, ?string $trackId = null, ?string $env = null, ?string $certPath = null, ?string $certPassword = null)
- * @method static string generatePdf(string $xmlContent, string $qrLink, ?string $logo = null)
  * @method static \PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData submit(string $xmlPath, ?string $env = null, ?string $certPath = null, ?string $certPassword = null)
  *
  * @see DgiiInvoiceService

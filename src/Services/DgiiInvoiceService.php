@@ -6,7 +6,6 @@ use Exception;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\GenerateAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\SignAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgment\StorageAcknowledgmentAction;
-use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoicePdfAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\GenerateInvoiceQrAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\SendInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoice\SignInvoiceAction;
@@ -182,20 +181,5 @@ class DgiiInvoiceService
         app(ValidateCertAction::class)->handle($certPath, $certPassword);
 
         return app(ValidateInvoiceAction::class)->handle($xmlPath, $trackId, $env, $certPath, $certPassword);
-    }
-
-    /**
-     * Generate the PDF representation (Representación Impresa) for an e-CF.
-     *
-     * @param  string  $xmlContent  The signed XML content to include in the PDF.
-     * @param  string  $qrLink  The full verification URL for the QR code.
-     * @param  string|null  $logo  Binary logo content or null.
-     * @return string The raw binary content of the generated PDF.
-     *
-     * @throws Exception
-     */
-    public function generatePdf(string $xmlContent, string $qrLink, ?string $logo = null): string
-    {
-        return app(GenerateInvoicePdfAction::class)->handle($xmlContent, $qrLink, $logo);
     }
 }

@@ -16,7 +16,7 @@ A continuación se detallan los servicios clave y sus responsabilidades:
 1.  **DgiiInvoiceService:** Gestiona todo el ciclo de vida de los e-CF (Facturas Electrónicas).
     - Orquesta la firma digital de facturas.
     - Maneja el envío y la consulta de estatus en la DGII.
-    - Genera representaciones impresas (PDF) y enlaces QR.
+    - Genera enlaces de validación QR.
 
 2.  **DgiiSeedService:** Responsable de la obtención de la "Semilla" (Seed) necesaria para el proceso de autenticación con la DGII.
 

@@ -15,11 +15,9 @@
     "ext-dom": "*",
     "ext-gd": "*",
     "ext-simplexml": "*",
-    "barryvdh/laravel-dompdf": "^3.1",
     "illuminate/http": "^11.0|^12.0",
     "illuminate/support": "^11.0|^12.0",
     "platinum-place/php-dgii-xml-signer": "^1.0",
-    "simplesoftwareio/simple-qrcode": "^4.2",
     "ext-libxml": "*"
   },
   "require-dev": {

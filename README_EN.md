@@ -18,8 +18,6 @@ An elegant Laravel integration with the **General Directorate of Internal Taxes 
 - **Full e-CF Lifecycle:** Generation, signing, submission, and status inquiry for electronic invoices.
 - **Extended Support:** Tax credit (31), consumption (32), credit notes (33), and more.
 - **Special Documents:** Commercial approval (ARECF) and sequence range cancellation (ANECF).
-- **Fiscal Representation:** PDF generation with dynamic QR code.
-
 ---
 
 ## 📦 Core Dependencies
@@ -27,8 +25,6 @@ An elegant Laravel integration with the **General Directorate of Internal Taxes 
 This package relies on robust community solutions:
 
 - **XML Signature:** `platinum-place/php-dgii-xml-signer`
-- **PDF Generation:** `barryvdh/laravel-dompdf`
-- **QR Codes:** `simplesoftwareio/simple-qrcode`
 - **HTTP Client:** Guzzle (via Laravel HTTP Facade)
 
 ---

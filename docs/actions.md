@@ -25,7 +25,6 @@ Las acciones se organizan en sub-namespaces según el área de negocio a la que 
 - `ValidateStandardInvoiceAction`: Consulta el estatus de facturas estándar enviadas.
 - `ValidateConsumeInvoiceAction`: Consulta el estatus de resúmenes de consumo enviados.
 - `StorageInvoiceAction`: Persiste el archivo XML y los datos de respuesta en disco.
-- `GenerateInvoicePdfAction`: Crea la representación impresa (PDF) con código QR.
 
 ### Seed (Semilla)
 - `ReceiveSeedAction`: Gestiona la obtención y procesamiento inicial de la semilla para autenticación.

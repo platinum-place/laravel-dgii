@@ -4,12 +4,11 @@ Este proyecto es un paquete de Laravel diseñado para facilitar la integración 
 
 ## 🚀 Resumen del Proyecto
 
-El paquete automatiza el ciclo de vida de los documentos fiscales electrónicos, incluyendo la firma digital, autenticación automática, envío a los servidores de la DGII, y generación de representaciones impresas (PDF con QR).
+El paquete automatiza el ciclo de vida de los documentos fiscales electrónicos, incluyendo la firma digital, autenticación automática y envío a los servidores de la DGII.
 
 ### Tecnologías Principales
 - **PHP 8.2+** y **Laravel 11/12**.
 - **Firma XML:** `platinum-place/php-dgii-xml-signer`.
-- **PDF & QR:** `barryvdh/laravel-dompdf` y `simplesoftwareio/simple-qrcode`.
 - **HTTP:** Laravel HTTP Client (Guzzle).
 
 ## 🏗️ Arquitectura y Estructura
