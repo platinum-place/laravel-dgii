@@ -74,7 +74,7 @@ readonly class InvoiceXml extends AbstractXml
             return (string) $this->xml->FechaHoraFirma;
         }
 
-        return null;
+        return date('d-m-Y H:i:s');
     }
 
     /**
