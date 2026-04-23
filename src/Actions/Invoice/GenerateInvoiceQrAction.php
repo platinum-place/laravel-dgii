@@ -43,9 +43,6 @@ class GenerateInvoiceQrAction
                 $sequenceNumber,
                 $totalAmount,
                 $securityCode,
-                $releaseDate,
-                $signatureDate,
-                $buyerIdentification,
                 $env
             );
         }

@@ -144,7 +144,7 @@ return [
         'fc' => [
             'send' => 'recepcionfc/api/recepcion/ecf',
             'status' => 'consultarfce/api/Consultas/Consulta',
-            'timbre' => 'ConsultaTimbre',
+            'timbre' => 'ConsultaTimbreFC',
         ],
 
         // Cancellation Range Services (Domain: ecf)
