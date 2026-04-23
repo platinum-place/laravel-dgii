@@ -7,7 +7,7 @@ use PlatinumPlace\LaravelDgii\Data\AbstractXml;
 /**
  * Represents a Commercial Approval XML document (ARECF).
  */
-class CommercialApprovalXml extends AbstractXml
+readonly class CommercialApprovalXml extends AbstractXml
 {
     /**
      * Get the buyer's identification (RNC) involved in the approval from document content.

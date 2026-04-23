@@ -7,7 +7,7 @@ use PlatinumPlace\LaravelDgii\Data\AbstractXml;
 /**
  * Represents an Acknowledgment XML document (Acuse de Recibo).
  */
-class AcknowledgmentXml extends AbstractXml
+readonly class AcknowledgmentXml extends AbstractXml
 {
     /**
      * Get the buyer's identification (RNC) from the document content.

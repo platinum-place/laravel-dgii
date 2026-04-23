@@ -7,7 +7,7 @@ use PlatinumPlace\LaravelDgii\Data\AbstractXml;
 /**
  * Represents a Sequence Range Cancellation XML document (ANECF).
  */
-class CancellationRangeXml extends AbstractXml
+readonly class CancellationRangeXml extends AbstractXml
 {
     /**
      * Get the total number of canceled sequences from the header.
