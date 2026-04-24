@@ -47,3 +47,5 @@ public function sendInvoice(InvoiceData $data): InvoiceReceived
 ```
 
 Los servicios garantizan que el desarrollador no necesite conocer los detalles técnicos de cada paso, permitiendo una integración rápida y segura.
+
+Para más detalles sobre los campos de datos requeridos por estos servicios, consulte la [Guía de Estructuras de Datos](./dgii-data-structures.md).

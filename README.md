@@ -29,6 +29,13 @@ Este paquete se apoya en soluciones robustas de la comunidad:
 
 ---
 
+## 📖 Documentación
+
+Para obtener información detallada sobre la integración y el ecosistema e-CF:
+
+- **Guía de Estructuras de Datos:** [Campos y Estructuras (docs/dgii-data-structures.md)](./docs/dgii-data-structures.md) - Detalla los campos requeridos para cada servicio.
+- **Documentación Oficial DGII:** [Portal e-CF DGII](https://dgii.gov.do/cicloContribuyente/facturacion/comprobantesFiscalesElectronicosE-CF/Paginas/documentacionSobreE-CF.aspx) - Manuales técnicos y especificaciones legales.
+
 ## 🛠️ Instalación
 
 ```bash

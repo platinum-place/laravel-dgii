@@ -2,6 +2,8 @@
 
 Este proyecto es un paquete de Laravel diseñado para facilitar la integración con los servicios web de la **Dirección General de Impuestos Internos (DGII)** de la República Dominicana, específicamente para el manejo de **Comprobantes Fiscales Electrónicos (e-CF)**.
 
+- **Documentación Oficial:** [Portal e-CF DGII](https://dgii.gov.do/cicloContribuyente/facturacion/comprobantesFiscalesElectronicosE-CF/Paginas/documentacionSobreE-CF.aspx)
+
 ## 🚀 Resumen del Proyecto
 
 El paquete automatiza el ciclo de vida de los documentos fiscales electrónicos, incluyendo la firma digital, autenticación automática y envío a los servidores de la DGII.
