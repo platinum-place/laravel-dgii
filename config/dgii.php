@@ -137,14 +137,14 @@ return [
             'status' => 'consultaresultado/api/consultas/estado',
             'trackids' => 'consultatrackids/api/trackids/consulta',
             'check' => 'consultaestado/api/consultas/estado',
-            'timbre' => 'ConsultaTimbre',
+            'qr' => 'ConsultaTimbre',
         ],
 
         // Consumption Invoice Services (Domain: fc)
         'fc' => [
             'send' => 'recepcionfc/api/recepcion/ecf',
             'status' => 'consultarfce/api/Consultas/Consulta',
-            'timbre' => 'ConsultaTimbreFC',
+            'qr' => 'ConsultaTimbreFC',
         ],
 
         // Cancellation Range Services (Domain: ecf)

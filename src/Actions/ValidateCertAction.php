@@ -3,7 +3,7 @@
 namespace PlatinumPlace\LaravelDgii\Actions;
 
 use PlatinumPlace\DgiiXmlSigner\Exception\DgiiXmlSignerException;
-use PlatinumPlace\LaravelDgii\Support\XmlSigner;
+use PlatinumPlace\LaravelDgii\Services\XmlSigner;
 
 /**
  * Action to validate the digital certificate configuration.

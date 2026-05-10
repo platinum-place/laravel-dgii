@@ -38,7 +38,8 @@
   "extra": {
     "laravel": {
       "providers": [
-        "PlatinumPlace\\LaravelDgii\\Providers\\AppServiceProvider"
+        "PlatinumPlace\\LaravelDgii\\Providers\\AppServiceProvider",
+        "PlatinumPlace\\LaravelDgii\\Providers\\HttpMacroServiceProvider"
       ]
     }
   },

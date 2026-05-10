@@ -127,7 +127,7 @@ readonly class InvoiceXml extends AbstractXml
 
         return
             $this->isRfce() ||
-            ($type === (int) config('dgii.rules.fc_type', 32) && $total < (float) config('dgii.rules.fc_limit', 250000));
+            ($type === (int) config('dgii.rules.fc_type') && $total < (float) config('dgii.rules.fc_limit'));
     }
 
     /**

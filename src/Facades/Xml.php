@@ -3,7 +3,7 @@
 namespace PlatinumPlace\LaravelDgii\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use PlatinumPlace\LaravelDgii\Support\XmlSigner;
+use PlatinumPlace\LaravelDgii\Services\XmlSigner;
 
 /**
  * @method static string sign(string $xml, ?string $certPath = null, ?string $certPassword = null)
