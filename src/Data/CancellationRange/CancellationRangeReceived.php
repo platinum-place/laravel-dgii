@@ -4,13 +4,15 @@ namespace PlatinumPlace\LaravelDgii\Data\CancellationRange;
 
 /**
  * Represents the response received after sending a Cancellation Range (ANECF) to DGII.
+ *
+ * This class wraps the raw response array to provide structured access to status and processing results.
  */
 readonly class CancellationRangeReceived
 {
     /**
-     * Create a new class instance.
+     * Create a new CancellationRangeReceived instance.
      *
-     * @param  array  $response  The HTTP response data from DGII.
+     * @param  array  $response  The raw HTTP response data from DGII.
      */
     public function __construct(
         public array $response,
@@ -25,6 +27,7 @@ readonly class CancellationRangeReceived
      */
     public function getStatus(): ?string
     {
+        // Extract the 'nombre' field which typically contains the status
         return $this->response['nombre'] ?? null;
     }
 
@@ -35,6 +38,7 @@ readonly class CancellationRangeReceived
      */
     public function notReceived(): bool
     {
+        // If status is empty, it means the document was not properly received or processed
         return empty($this->getStatus());
     }
 }

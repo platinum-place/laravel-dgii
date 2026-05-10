@@ -6,6 +6,9 @@ use PlatinumPlace\LaravelDgii\Data\AbstractXml;
 
 /**
  * Represents an Electronic Fiscal Receipt XML document (e-CF).
+ *
+ * This class provides extensive methods to extract header data, items,
+ * and security details from any valid e-CF XML document.
  */
 readonly class InvoiceXml extends AbstractXml
 {
@@ -18,14 +21,18 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function withoutSignature(): ?string
     {
+        // Clone the original XML object to avoid modifying the current state
         $xml = clone $this->xml;
 
+        // Register the XML Digital Signature namespace
         $xml->registerXPathNamespace('ds', 'http://www.w3.org/2000/09/xmldsig#');
 
+        // Locate and remove all Signature elements
         foreach ($xml->xpath('//ds:Signature') as $signature) {
             unset($signature[0]);
         }
 
+        // Return the resulting XML as a string
         return $xml->asXML();
     }
 
@@ -36,6 +43,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getSequenceNumber(): ?string
     {
+        // Extract the e-NCF from the identification section (IdDoc)
         if (! empty($this->xml->Encabezado?->IdDoc)) {
             return (string) $this->xml->Encabezado?->IdDoc?->eNCF;
         }
@@ -52,10 +60,12 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getSecurityCode(): ?string
     {
+        // Check if explicitly defined (typical in RFCE)
         if (! empty($this->xml->Encabezado?->CodigoSeguridadeCF)) {
             return (string) $this->xml->Encabezado?->CodigoSeguridadeCF;
         }
 
+        // Derive from the digital signature value if available
         if (! empty($this->xml->Signature?->SignatureValue)) {
             return substr((string) $this->xml->Signature?->SignatureValue, 0, 6);
         }
@@ -70,10 +80,12 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getSignatureDate(): ?string
     {
+        // Check if the signature date is present in the XML
         if (! empty($this->xml->FechaHoraFirma)) {
             return (string) $this->xml->FechaHoraFirma;
         }
 
+        // Fallback to current date if not found
         return date('d-m-Y H:i:s');
     }
 
@@ -84,6 +96,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getInvoiceType(): ?string
     {
+        // Extract the TipoeCF field from the IdDoc section
         if (! empty($this->xml->Encabezado?->IdDoc?->TipoeCF)) {
             return (string) $this->xml->Encabezado?->IdDoc?->TipoeCF;
         }
@@ -98,6 +111,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getTotalAmount(): ?string
     {
+        // Extract the total amount from the Totales section
         if (! empty($this->xml->Encabezado?->Totales?->MontoTotal)) {
             return (string) $this->xml->Encabezado?->Totales?->MontoTotal;
         }
@@ -112,6 +126,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function isRfce(): bool
     {
+        // RFCEs are identified by the presence of a specific security code field in the header
         return ! empty($this->xml->Encabezado?->CodigoSeguridadeCF);
     }
 
@@ -122,9 +137,11 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function isConsumeInvoice(): bool
     {
+        // Get technical parameters from the document and config
         $type = (int) $this->getInvoiceType();
         $total = (float) $this->getTotalAmount();
 
+        // Check against the consumption invoice type and amount threshold
         return
             $this->isRfce() ||
             ($type === (int) config('dgii.rules.fc_type') && $total < (float) config('dgii.rules.fc_limit'));
@@ -137,6 +154,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getSenderIdentification(): ?string
     {
+        // Extract the sender's RNC from the Emisor section
         if (! empty($this->xml->Encabezado?->Emisor->RNCEmisor)) {
             return (string) $this->xml->Encabezado?->Emisor->RNCEmisor;
         }
@@ -151,6 +169,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getReleaseDate(): ?string
     {
+        // Extract the emission date from the Emisor section
         if (! empty($this->xml->Encabezado?->Emisor?->FechaEmision)) {
             return (string) $this->xml->Encabezado?->Emisor?->FechaEmision;
         }
@@ -165,10 +184,12 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getBuyerIdentification(): ?string
     {
+        // Try to extract foreign identifier first
         if (! empty($this->xml->Encabezado?->Comprador?->IdentificadorExtranjero)) {
             return (string) $this->xml->Encabezado?->Comprador?->IdentificadorExtranjero;
         }
 
+        // Fallback to local RNC
         if (! empty($this->xml->Encabezado?->Comprador?->RNCComprador)) {
             return (string) $this->xml->Encabezado?->Comprador?->RNCComprador;
         }
@@ -183,6 +204,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getXmlName(): ?string
     {
+        // Combine sender RNC and sequence number to form the filename
         if (! empty($this->xml->Encabezado)) {
             return $this->getSenderIdentification().$this->getSequenceNumber();
         }
@@ -197,6 +219,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getSequenceDueDate(): ?string
     {
+        // Extract the sequence expiration date from the IdDoc section
         if (! empty($this->xml->Encabezado?->IdDoc?->FechaVencimientoSecuencia)) {
             return (string) $this->xml->Encabezado?->IdDoc?->FechaVencimientoSecuencia;
         }
@@ -211,6 +234,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getModifiedSequenceNumber(): ?string
     {
+        // Extract the referenced e-NCF for modification notes
         if (! empty($this->xml->Encabezado?->IdDoc?->eNCFModificado)) {
             return (string) $this->xml->Encabezado?->IdDoc?->eNCFModificado;
         }
@@ -225,6 +249,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getModificationCode(): ?string
     {
+        // Extract the modification reason code
         if (! empty($this->xml->Encabezado?->IdDoc?->CodigoModificacion)) {
             return (string) $this->xml->Encabezado?->IdDoc?->CodigoModificacion;
         }
@@ -239,6 +264,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getObservations(): ?string
     {
+        // Extract additional buyer info/observations
         if (! empty($this->xml->Encabezado?->Comprador?->InformacionAdicionalComprador)) {
             return (string) $this->xml->Encabezado?->Comprador?->InformacionAdicionalComprador;
         }
@@ -255,7 +281,9 @@ readonly class InvoiceXml extends AbstractXml
     {
         $lines = [];
 
+        // Check if there are line items in the document
         if (! empty($this->xml->DetallesItems?->Item)) {
+            // Iterate through each item and extract details
             foreach ($this->xml->DetallesItems?->Item as $item) {
                 $lines[] = [
                     'NumeroLinea' => (int) $item->NumeroLinea,
@@ -279,6 +307,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getBuyerCorporateName(): ?string
     {
+        // Extract the buyer's corporate name
         if (! empty($this->xml->Encabezado?->Comprador?->RazonSocialComprador)) {
             return (string) $this->xml->Encabezado?->Comprador?->RazonSocialComprador;
         }
@@ -293,6 +322,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getBuyerAddress(): ?string
     {
+        // Extract the buyer's address
         if (! empty($this->xml->Encabezado?->Comprador?->DireccionComprador)) {
             return (string) $this->xml->Encabezado?->Comprador?->DireccionComprador;
         }
@@ -307,6 +337,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function isBuyerForeigner(): bool
     {
+        // Presence of the foreign identifier field indicates a foreigner
         return ! empty($this->xml->Encabezado?->Comprador?->IdentificadorExtranjero);
     }
 
@@ -317,6 +348,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getSenderCorporateName(): ?string
     {
+        // Extract the sender's corporate name
         if (! empty($this->xml->Encabezado?->Emisor->RazonSocialEmisor)) {
             return (string) $this->xml->Encabezado?->Emisor->RazonSocialEmisor;
         }
@@ -331,6 +363,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getSenderAddress(): ?string
     {
+        // Extract the sender's address
         if (! empty($this->xml->Encabezado?->Emisor->DireccionEmisor)) {
             return (string) $this->xml->Encabezado?->Emisor->DireccionEmisor;
         }
@@ -345,6 +378,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getTotalTaxes(): ?float
     {
+        // Extract the total tax amount from the totals section
         if (! empty($this->xml->Encabezado?->Totales?->TotalITBIS)) {
             return (float) $this->xml->Encabezado?->Totales?->TotalITBIS;
         }
@@ -359,6 +393,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getTotalAmountTaxed(): ?float
     {
+        // Extract the total taxed amount from the totals section
         if (! empty($this->xml->Encabezado?->Totales?->MontoGravadoTotal)) {
             return (float) $this->xml->Encabezado?->Totales?->MontoGravadoTotal;
         }
@@ -373,6 +408,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getTotalExempt(): ?float
     {
+        // Extract the total exempt amount from the totals section
         if (! empty($this->xml->Encabezado?->Totales?->MontoExento)) {
             return (float) $this->xml->Encabezado?->Totales?->MontoExento;
         }

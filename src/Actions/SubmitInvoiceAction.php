@@ -4,85 +4,68 @@ namespace PlatinumPlace\LaravelDgii\Actions;
 
 use Illuminate\Http\Client\ConnectionException;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData;
-use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\Repositories\DgiiConsumeInvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\DgiiInvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 use PlatinumPlace\LaravelDgii\Services\DgiiAuthenticator;
-use PlatinumPlace\LaravelDgii\Services\DgiiInvoiceXmlParser;
-use PlatinumPlace\LaravelDgii\Services\DgiiQrResolver;
 use PlatinumPlace\LaravelDgii\Services\XmlSigner;
+use PlatinumPlace\LaravelDgii\Traits\InteractsWithInvoice;
 
+/**
+ * Class SubmitInvoiceAction
+ *
+ * This is the primary orchestrator for the entire electronic invoicing lifecycle.
+ * it coordinates parsing, signing, storage, authentication, DGII submission,
+ * and acknowledgment processing for a new invoice.
+ */
 class SubmitInvoiceAction
 {
+    use InteractsWithInvoice;
+
     /**
-     * Create a new validate certificate action instance.
+     * Create a new submit invoice action instance.
      */
     public function __construct(
-        protected ValidateCertAction $validateCert,
-        protected DgiiInvoiceXmlParser $xmlParser,
         protected XmlSigner $xmlSigner,
+        protected SignInvoiceAction $signInvoice,
         protected StorageRepository $storage,
         protected DgiiAuthenticator $authenticator,
         protected DgiiInvoiceRepository $invoiceRepository,
         protected DgiiConsumeInvoiceRepository $consumeRepository,
-        protected DgiiQrResolver $qrResolver,
         protected ProcessAcknowledgmentAction $processAcknowledgment,
     ) {
         //
     }
 
     /**
+     * Handle the full invoice submission lifecycle.
+     *
+     * Execution Flow:
+     * 1. Sign: Transform raw data into a signed and stored XML using SignInvoiceAction.
+     * 2. Authenticate: Obtain a security token from DGII.
+     * 3. Submit: Send the signed invoice file to the appropriate DGII endpoint.
+     * 4. Acknowledgment: Process the DGII's response to generate a signed acknowledgment XML.
+     *
      * @throws ConnectionException
      */
     public function handle(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
-        $this->validateCert->handle($certPath, $certPassword);
+        $invoiceData = $this->signInvoice->handle($data, $env, $certPath, $certPassword);
 
-        $invoiceXml = $this->xmlParser->makeInvoice($data);
+        $filePath = $this->storage->realPath($invoiceData->path);
 
-        $invoiceSigned = $this->xmlSigner->sign($invoiceXml, $certPath, $certPassword);
+        $token = $this->authenticateAndGetToken($env, $certPath, $certPassword);
 
-        $invoiceObject = new InvoiceXml($invoiceSigned);
+        $response = $this->sendInvoiceToDgii($invoiceData->xml, $filePath, $token, $env);
 
-        $invoicePath = $this->storage->save($invoiceSigned);
-
-        if ($invoiceObject->isConsumeInvoice()) {
-            $integralXml = $invoiceXml;
-
-            $integralSigned = $invoiceSigned;
-
-            $integralObject = $invoiceObject;
-
-            $integralPath = $invoicePath;
-
-            $invoiceXml = $this->xmlParser->makeConsumeInvoice($integralObject, $data);
-
-            $invoiceSigned = $this->xmlSigner->sign($invoiceXml, $certPath, $certPassword);
-
-            $invoiceObject = new InvoiceXml($invoiceSigned);
-
-            $invoicePath = $this->storage->save($invoiceSigned);
-        }
-
-        $filePath = $this->storage->realPath($invoicePath);
-
-        $token = $this->authenticator->getToken($env, $certPath, $certPassword);
-
-        $response = $invoiceObject->isConsumeInvoice() ?
-            $this->consumeRepository->send($token, $filePath, $env) :
-            $this->invoiceRepository->send($token, $filePath, $env);
-
-        $qrLink = $this->qrResolver->getInvoiceQrLink($invoiceObject, $env);
-
-        $acknowledgmentObject = $this->processAcknowledgment->handle($invoiceObject, $response, $certPath, $certPassword);
+        $acknowledgmentObject = $this->processAcknowledgment->handle($invoiceData->xml, $response, $certPath, $certPassword);
 
         return new InvoiceData(
-            $invoiceObject,
-            $invoicePath,
-            $qrLink,
-            $integralObject ?? null,
-            $integralPath ?? null,
+            $invoiceData->xml,
+            $invoiceData->path,
+            $invoiceData->qrLink,
+            $invoiceData->integralXml,
+            $invoiceData->integralPath,
             $response,
             $acknowledgmentObject,
         );

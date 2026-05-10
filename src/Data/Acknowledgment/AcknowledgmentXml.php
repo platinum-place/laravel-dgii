@@ -16,7 +16,9 @@ readonly class AcknowledgmentXml extends AbstractXml
      */
     public function getBuyerIdentification(): ?string
     {
+        // Check if the buyer RNC exists in the acknowledgment details
         if (! empty($this->xmlSigner?->DetalleAcusedeRecibo?->RNCComprador)) {
+            // Return the value as a string
             return (string) $this->xmlSigner?->DetalleAcusedeRecibo?->RNCComprador;
         }
 
@@ -30,7 +32,9 @@ readonly class AcknowledgmentXml extends AbstractXml
      */
     public function getSequenceNumber(): ?string
     {
+        // Check if the sequence number exists in the acknowledgment details
         if (! empty($this->xmlSigner?->DetalleAcusedeRecibo?->eNCF)) {
+            // Return the value as a string
             return (string) $this->xmlSigner?->DetalleAcusedeRecibo?->eNCF;
         }
 
@@ -46,7 +50,9 @@ readonly class AcknowledgmentXml extends AbstractXml
      */
     public function getXmlName(): ?string
     {
+        // Check if the detail section exists to build the name
         if (! empty($this->xmlSigner?->DetalleAcusedeRecibo)) {
+            // Combine identification and sequence number
             return $this->getBuyerIdentification().$this->getSequenceNumber();
         }
 

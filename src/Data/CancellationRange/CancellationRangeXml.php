@@ -6,6 +6,8 @@ use PlatinumPlace\LaravelDgii\Data\AbstractXml;
 
 /**
  * Represents a Sequence Range Cancellation XML document (ANECF).
+ *
+ * This class provides structured access to the header and details of canceled e-CF sequences.
  */
 readonly class CancellationRangeXml extends AbstractXml
 {
@@ -16,7 +18,9 @@ readonly class CancellationRangeXml extends AbstractXml
      */
     public function getTotal(): ?int
     {
+        // Check if the total count exists in the XML header
         if (! empty($this->xml?->Encabezado?->CantidadeNCFAnulados)) {
+            // Return the value as an integer
             return (int) $this->xml?->Encabezado?->CantidadeNCFAnulados;
         }
 
@@ -30,7 +34,9 @@ readonly class CancellationRangeXml extends AbstractXml
      */
     public function getDate(): ?string
     {
+        // Check if the cancellation date exists in the XML header
         if (! empty($this->xml?->Encabezado?->FechaHoraAnulacioneNCF)) {
+            // Return the value as a string
             return (string) $this->xml?->Encabezado?->FechaHoraAnulacioneNCF;
         }
 
@@ -46,9 +52,12 @@ readonly class CancellationRangeXml extends AbstractXml
     {
         $details = [];
 
+        // Check if there are any cancellation details in the XML
         if (! empty($this->xml?->DetalleAnulacion?->Anulacion)) {
+            // Iterate through each cancellation record
             foreach ($this->xml?->DetalleAnulacion?->Anulacion as $anulacion) {
                 $sequences = [];
+                // Extract the range of sequences for this record
                 if (! empty($anulacion->TablaRangoSecuenciasAnuladaseNCF?->Secuencias)) {
                     foreach ($anulacion->TablaRangoSecuenciasAnuladaseNCF?->Secuencias as $seq) {
                         $sequences[] = [
@@ -58,6 +67,7 @@ readonly class CancellationRangeXml extends AbstractXml
                     }
                 }
 
+                // Build the detail entry
                 $details[] = [
                     'NoLinea' => (int) $anulacion->NoLinea,
                     'TipoeCF' => (string) $anulacion->TipoeCF,

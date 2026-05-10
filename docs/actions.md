@@ -25,7 +25,7 @@ A continuación se detallan las acciones principales disponibles en `src/Actions
 - `ProcessAcknowledgmentAction`: Maneja la lógica para generar y procesar acuses de recibo.
 
 ### Utilidades
-- `ValidateCertAction`: Verifica la validez y existencia del certificado digital configurado.
+- `ValidateInvoiceStatusAction`: Consulta el estatus de un e-CF enviado previamente.
 
 ## Beneficios de la Nueva Estructura
 
@@ -38,11 +38,11 @@ A continuación se detallan las acciones principales disponibles en `src/Actions
 Si deseas usar una acción de forma independiente al servicio principal:
 
 ```php
-use PlatinumPlace\LaravelDgii\Actions\ValidateCertAction;
+use PlatinumPlace\LaravelDgii\Actions\SignInvoiceAction;
 
-public function checkCertificate(ValidateCertAction $validateCert)
+public function sign(SignInvoiceAction $signInvoice, InvoiceXml $invoice)
 {
-    $isValid = $validateCert->handle();
+    $signedXml = $signInvoice->handle($invoice);
     // ...
 }
 ```

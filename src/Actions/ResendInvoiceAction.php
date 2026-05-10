@@ -9,18 +9,25 @@ use PlatinumPlace\LaravelDgii\Repositories\DgiiConsumeInvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\DgiiInvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 use PlatinumPlace\LaravelDgii\Services\DgiiAuthenticator;
-use PlatinumPlace\LaravelDgii\Services\DgiiInvoiceXmlParser;
 use PlatinumPlace\LaravelDgii\Services\DgiiQrResolver;
 use PlatinumPlace\LaravelDgii\Services\XmlSigner;
+use PlatinumPlace\LaravelDgii\Traits\InteractsWithInvoice;
 
+/**
+ * Class ResendInvoiceAction
+ *
+ * This action handles the re-submission of a previously signed and stored invoice
+ * to the DGII. It is useful for retrying failed submissions or sending
+ * documents that were signed offline.
+ */
 class ResendInvoiceAction
 {
+    use InteractsWithInvoice;
+
     /**
-     * Create a new validate certificate action instance.
+     * Create a new resend invoice action instance.
      */
     public function __construct(
-        protected ValidateCertAction $validateCert,
-        protected DgiiInvoiceXmlParser $xmlParser,
         protected XmlSigner $xmlSigner,
         protected StorageRepository $storage,
         protected DgiiAuthenticator $authenticator,
@@ -33,36 +40,39 @@ class ResendInvoiceAction
     }
 
     /**
+     * Handle the invoice re-submission process.
+     *
+     * Execution Flow:
+     * 1. Retrieve: Fetch the signed XML content from storage using the provided path.
+     * 2. Authenticate: Obtain a valid authentication token from the DGII.
+     * 3. Submit: Send the signed invoice XML to the appropriate DGII endpoint.
+     * 4. QR Resolver: Generate the URL for the invoice's QR code.
+     * 5. Acknowledgment: Process and store the receipt acknowledgment from the DGII.
+     *
      * @throws ConnectionException
      */
     public function handle(string $path, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
-        $this->validateCert->handle($certPath, $certPassword);
-
         $signed = $this->storage->get($path);
 
         $object = new InvoiceXml($signed);
 
         $filePath = $this->storage->realPath($path);
 
-        $token = $this->authenticator->getToken($env, $certPath, $certPassword);
+        $token = $this->authenticateAndGetToken($env, $certPath, $certPassword);
 
-        $response = $object->isConsumeInvoice() ?
-            $this->consumeRepository->send($token, $filePath, $env) :
-            $this->invoiceRepository->send($token, $filePath, $env);
+        $response = $this->sendInvoiceToDgii($object, $filePath, $token, $env);
 
         $qrLink = $this->qrResolver->getInvoiceQrLink($object, $env);
 
         $acknowledgmentObject = $this->processAcknowledgment->handle($object, $response, $certPath, $certPassword);
 
         return new InvoiceData(
-            $object,
-            $path,
-            $qrLink,
-            null,
-            null,
-            $response,
-            $acknowledgmentObject,
+            xml: $object,
+            path: $path,
+            qrLink: $qrLink,
+            response: $response,
+            acknowledgment: $acknowledgmentObject,
         );
     }
 }

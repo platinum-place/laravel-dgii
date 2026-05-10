@@ -10,10 +10,17 @@ use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 use PlatinumPlace\LaravelDgii\Services\AcknowledgmentXmlParse;
 use PlatinumPlace\LaravelDgii\Services\XmlSigner;
 
+/**
+ * Class ProcessAcknowledgmentAction
+ *
+ * This action is responsible for generating, signing, and storing the
+ * Acknowledgment (Acuse de Recibo) XML based on the response received
+ * from the DGII after an invoice submission.
+ */
 class ProcessAcknowledgmentAction
 {
     /**
-     * Create a new validate certificate action instance.
+     * Create a new process acknowledgment action instance.
      */
     public function __construct(
         protected AcknowledgmentXmlParse $xmlParser,
@@ -23,6 +30,14 @@ class ProcessAcknowledgmentAction
         //
     }
 
+    /**
+     * Handle the acknowledgment process.
+     *
+     * Execution Flow:
+     * 1. Parse: Generate the acknowledgment XML structure from the original invoice and the DGII response.
+     * 2. Sign: Apply the digital signature to the generated XML.
+     * 3. Store: Save the signed acknowledgment XML to the configured storage.
+     */
     public function handle(InvoiceXml $invoiceXml, InvoiceReceived $invoiceReceived, ?string $certPath = null, ?string $certPassword = null): AcknowledgmentData
     {
         $xml = $this->xmlParser->make($invoiceXml, $invoiceReceived);
