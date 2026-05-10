@@ -6,7 +6,7 @@
 
 Integración elegante con los servicios web de la **Dirección General de Impuestos Internos (DGII)** para el manejo de **Comprobantes Fiscales Electrónicos (e-CF)** en Laravel.
 
-> [Read in English 🇺🇸](./README_EN.md)
+> [Read in English 🇺🇸](./README_EN.md) | **[Guía de Migración v1 a v2](./docs/migration-v2.md)**
 
 ---
 
@@ -31,10 +31,15 @@ Este paquete se apoya en soluciones robustas de la comunidad:
 
 ## 📖 Documentación
 
-Para obtener información detallada sobre la integración y el ecosistema e-CF:
+Índice completo de recursos para dominar la integración con la DGII:
 
-- **Guía de Estructuras de Datos:** [Campos y Estructuras (docs/dgii-data-structures.md)](./docs/dgii-data-structures.md) - Detalla los campos requeridos para cada servicio.
-- **Documentación Oficial DGII:** [Portal e-CF DGII](https://dgii.gov.do/cicloContribuyente/facturacion/comprobantesFiscalesElectronicosE-CF/Paginas/documentacionSobreE-CF.aspx) - Manuales técnicos y especificaciones legales.
+- **[Guía de Migración (v1 a v2.0)](./docs/migration-v2.md)** - **Lectura obligatoria para usuarios existentes.**
+- [Arquitectura del Sistema](./docs/architecture.md) - Entiende las capas de Repositorios, Datos y Acciones.
+- [Estructuras de Datos (e-CF)](./docs/dgii-data-structures.md) - Detalle de campos para cada tipo de documento.
+- [Servicios y Métodos](./docs/services.md) - Guía del `DgiiService` y monitoreo.
+- [Catálogo de Acciones](./docs/actions.md) - Lista de acciones atómicas disponibles.
+- [Convenciones del Proyecto](./docs/conventions.md) - Estándares de código e idioma.
+- [Documentación Oficial DGII](https://dgii.gov.do/cicloContribuyente/facturacion/comprobantesFiscalesElectronicosE-CF/Paginas/documentacionSobreE-CF.aspx) - Manuales legales y técnicos.
 
 ## 🛠️ Instalación
 
@@ -56,27 +61,28 @@ DGII_API_KEY=tu_api_key
 
 ## 📖 Uso rápido (vía Facades)
 
-El paquete está diseñado para ser usado mediante Facades, ocultando la complejidad de las Actions internas.
+El paquete utiliza un único Facade `Dgii` para todas las operaciones principales.
 
 ### Enviar una Factura (e-CF)
 ```php
-use PlatinumPlace\LaravelDgii\Facades\DgiiInvoice;
+use PlatinumPlace\LaravelDgii\Facades\Dgii;
 
 // Los datos siguen la estructura oficial de la DGII
 $invoiceData = [...]; 
 
 // Firma, almacena y envía en un solo paso
-$result = DgiiInvoice::send($invoiceData);
+$result = Dgii::submitInvoice($invoiceData);
 
-echo $result->invoiceReceived->getTrackId();
+// El resultado es un objeto InvoiceData con toda la información del ciclo de vida
+echo $result->response->getTrackId();
 echo $result->qrLink;
 ```
 
 ### Anulación de Rango (ANECF)
 ```php
-use PlatinumPlace\LaravelDgii\Facades\DgiiCancellationRange;
+use PlatinumPlace\LaravelDgii\Facades\Dgii;
 
-$response = DgiiCancellationRange::send($data);
+$response = Dgii::sendCancellationRange($data);
 ```
 
 ### Consultar Estado de Servicios

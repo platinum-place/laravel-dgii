@@ -5,6 +5,26 @@ All notable changes to `laravel-dgii` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-05-10
+
+### Added
+- New unified architecture centered on the `Dgii` facade and `DgiiService`.
+- Repository layer (`Repositories/`) replacing the old specialized clients.
+- Centralized data structures in the `Data/` namespace, unifying DTOs, XML objects, and Responses.
+- Support for maintenance windows and environment status checks via `DgiiService`.
+- Improved response wrapping and error handling via `DgiiResponseWrapper`.
+
+### Changed
+- **BREAKING CHANGE:** Consolidated all service facades (`DgiiInvoice`, `DgiiCancellationRange`, etc.) into a single `Dgii` facade.
+- **BREAKING CHANGE:** Renamed service methods to be more consistent (e.g., `DgiiInvoice::send()` is now `Dgii::submitInvoice()`).
+- **BREAKING CHANGE:** Flattened the `Actions/` directory structure, removing sub-namespaces.
+- **BREAKING CHANGE:** The `Clients/` namespace has been removed in favor of `Repositories/`.
+- Updated all internal logic to use the new `InvoiceData` lifecycle DTO.
+
+### Removed
+- Specialized facades: `DgiiInvoice`, `DgiiSeed`, `DgiiCancellationRange`, `DgiiCommercialApproval`.
+- Specialized clients from the `Clients/` namespace.
+
 ## [1.3.1] - 2026-04-24
 
 ### Added

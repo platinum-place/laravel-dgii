@@ -1,11 +1,11 @@
 # Estructuras de Datos DGII (Data Structures)
 
-Esta guía detalla la estructura de los arrays de datos esperados por los servicios de este paquete para generar los documentos XML requeridos por la DGII. Las estructuras aquí descritas son una representación directa de las [Especificaciones Técnicas de la DGII](https://dgii.gov.do/cicloContribuyente/facturacion/comprobantesFiscalesElectronicosE-CF/Paginas/documentacionSobreE-CF.aspx).
+Esta guía detalla la estructura de los arrays de datos esperados por los servicios de este paquete para generar los documentos XML requeridos por la DGII.
 
 ---
 
 ## 1. Facturas Electrónicas (e-CF)
-Utilizado por `DgiiInvoice::send()`. Soporta tipos 31, 32, 33, 34, 41, 43, 44, 45, 46 y 47.
+Utilizado por `Dgii::submitInvoice()`. Soporta tipos 31, 32, 33, 34, 41, 43, 44, 45, 46 y 47.
 
 ### Encabezado (`IdDoc`)
 | Campo | Descripción |
@@ -45,7 +45,7 @@ Un array de items, cada uno con:
 ---
 
 ## 2. Anulación de Rangos (ANECF)
-Utilizado por `DgiiCancellationRange::send()`.
+Utilizado por `Dgii::sendCancellationRange()`.
 
 | Campo | Descripción |
 | :--- | :--- |
@@ -56,7 +56,7 @@ Utilizado por `DgiiCancellationRange::send()`.
 ---
 
 ## 3. Aprobación Comercial (ARECF / ACECF)
-Utilizado por `DgiiCommercialApproval::send()`.
+Utilizado por `Dgii::sendCommercialApproval()`.
 
 ### Acuse de Recibo (ARECF)
 | Campo | Descripción |

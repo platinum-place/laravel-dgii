@@ -13,29 +13,27 @@ El paquete automatiza el ciclo de vida de los documentos fiscales electrónicos,
 - **Firma XML:** `platinum-place/php-dgii-xml-signer`.
 - **HTTP:** Laravel HTTP Client (Guzzle).
 
-## 🏗️ Arquitectura y Estructura
+## 🏗️ Arquitectura y Estructura (v2.0)
 
-El paquete sigue una arquitectura orientada a servicios y acciones:
+El paquete sigue una arquitectura orientada a servicios y acciones altamente desacoplada:
 
-- **Support (`src/Support/`):** Utilidades técnicas (XmlSigner para firmas, StorageService para manejo de archivos).
-- **Abstracts (`src/Abstracts/`):** Contiene `AbstractXml`, la clase base que unifica la validación y el acceso estructurado a todos los documentos XML.
-- **Services (`src/Services/`):** Fachadas de alto nivel para el usuario final (`DgiiInvoiceService`, `DgiiSeedService`, `DgiiCancellationRangeService`, `DgiiCommercialApprovalService`).
-- **Actions (`src/Actions/`):** Orquestadores de lógica de negocio aislada. Cada acción realiza una tarea atómica y completa (ej: `SignInvoiceAction`, `SendCancellationRangeAction`). Incluye sub-namespaces para `Invoice`, `CancellationRange`, `CommercialApproval`, `Acknowledgment` y `Seed`.
-- **Clients (`src/Clients/`):** Clientes especializados (`InvoiceClient`, `SeedClient`, `CancellationRangeClient`, `CommercialApprovalClient`, `ConsumeInvoiceClient`) que encapsulan las peticiones HTTP a los endpoints de la DGII.
-- **Value Objects (`src/ValueObjects/`):** Objetos inmutables que envuelven los XML (`InvoiceXml`, `AcknowledgmentXml`, `CancellationRangeXml`, `CommercialApprovalXml`) o agrupan datos de respuesta (`InvoiceReceived`, `CancellationRangeReceived`).
-- **Data Transfer Objects (`src/Data/`):** `InvoiceData`, `CancellationRangeData` y `CommercialApprovalData` transportan el estado completo de una transacción entre las capas del sistema.
-- **Templates (`resources/views/`):** Plantillas Blade para generar los diferentes tipos de XML requeridos por la DGII.
+- **Data (`src/Data/`):** Contiene el núcleo de datos del paquete. Unifica DTOs (`InvoiceData`), representaciones XML (`AbstractXml`, `InvoiceXml`) y objetos de respuesta (`InvoiceReceived`).
+- **Repositories (`src/Repositories/`):** Capa de abstracción para persistencia y comunicación externa. Incluye `DgiiInvoiceRepository` para la API de la DGII y `StorageRepository` para el sistema de archivos.
+- **Services (`src/Services/`):** El orquestador principal es `DgiiService` (accedido vía el facade `Dgii`). Coordina el flujo de trabajo entre acciones y repositorios.
+- **Actions (`src/Actions/`):** Lógica de negocio atómica y aplanada. Cada clase realiza una única tarea técnica (ej: `SignInvoiceAction`, `SubmitInvoiceAction`, `StorageInvoiceAction`).
+- **Providers (`src/Providers/`):** Configuración del contenedor de Laravel y macros de HTTP para la integración con la DGII.
+- **Templates (`resources/views/`):** Plantillas Blade para la generación de XML dinámico.
 
 ## 🛠️ Comandos de Desarrollo
 
-### Instalación (para usuarios)
+### Instalación (v2.0)
 ```bash
 composer require platinum-place/laravel-dgii
 php artisan vendor:publish --tag=dgii-config
 ```
 
 ### Ejecución de Pruebas y Estilo
-El proyecto utiliza PHPUnit para pruebas y Laravel Pint para mantener el estilo de código. **Es obligatorio ejecutar Pint antes de subir cambios.**
+El proyecto utiliza PHPUnit para pruebas y Laravel Pint para el estilo.
 
 ```bash
 # Ejecutar Pint para corregir estilo
@@ -43,17 +41,16 @@ El proyecto utiliza PHPUnit para pruebas y Laravel Pint para mantener el estilo 
 
 # Ejecutar pruebas
 composer test
-# O directamente
-./vendor/bin/phpunit
 ```
 
 ## 📝 Convenciones de Desarrollo
 
-1.  **Actions:** Se prefiere el uso de Actions inyectadas por el contenedor de Laravel (`app(Action::class)->handle()`) para mantener la lógica de negocio aislada y reutilizable.
-2.  **Manejo de XML:** Nunca manipules el XML como string crudo si existe un Value Object disponible. Todos deben heredar de `AbstractXml` para garantizar validación consistente.
-3.  **DocBlocks:** Todo el código fuente debe estar documentado utilizando DocBlocks en **Inglés** para mantener estándares de industria, mientras que los archivos de documentación (.md) se mantienen en **Español**.
-4.  **Almacenamiento:** Siempre utiliza `StorageService` para interactuar con el disco configurado. Los archivos se organizan automáticamente por `Año/Mes/Día/UUID`.
-5.  **Autenticación:** El flujo de obtención de tokens (Semilla -> Firma -> Validación) se gestiona automáticamente a través de `AuthenticateAction`, incluyendo un sistema de caché con margen de seguridad (buffer).
+1.  **Facade Unificado:** Siempre prefiere el uso de `Dgii::metodo()` para interactuar con el paquete.
+2.  **Manejo de Datos:** Utiliza exclusivamente los objetos en `src/Data` para transportar información. Nunca manipules XML como strings crudos fuera de las capas de bajo nivel.
+3.  **DocBlocks:** Todo el código fuente debe estar documentado en **Inglés**.
+4.  **Documentación:** Los archivos `.md` y guías de usuario se mantienen en **Español**.
+5.  **Actions:** Mantén las acciones atómicas. Si una acción necesita hacer "demasiado", divídela en acciones más pequeñas o delega la orquestación al `DgiiService`.
+6.  **Almacenamiento:** Utiliza `StorageRepository` para garantizar la organización automática por fecha y UUID.
 
 ## ⚙️ Configuración Clave (`config/dgii.php`)
 

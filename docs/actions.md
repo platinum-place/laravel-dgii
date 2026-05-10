@@ -1,48 +1,48 @@
 # Acciones (Actions)
 
-Las Acciones representan la lógica de negocio atómica y reutilizable del paquete. Cada acción tiene una única responsabilidad (SRP), lo que facilita su mantenimiento, testing e inyección en diferentes partes del sistema.
+Las Acciones representan la lógica de negocio atómica y reutilizable del paquete. En la versión 2.0, la estructura de directorios se ha aplanado para facilitar el acceso y la inyección de dependencias.
 
 ## Características de las Acciones
 
-- **Responsabilidad Única:** Cada acción realiza una tarea puntual. Por ejemplo, `SignInvoiceAction` solo firma un XML y no se encarga de enviarlo.
-- **Inyección por Contenedor:** Son instanciadas y resueltas automáticamente por el contenedor de dependencias de Laravel.
-- **Método handle():** Todas las acciones exponen un método principal (usualmente llamado `handle()`) que ejecuta su lógica.
+- **Responsabilidad Única:** Cada acción realiza una tarea puntual (ej. `SignInvoiceAction` solo firma).
+- **Inyección por Contenedor:** Son instanciadas automáticamente por Laravel.
+- **Interoperabilidad:** Todas trabajan con objetos del namespace `Data` para garantizar la consistencia de los datos.
 
-## Clasificación de Acciones
+## Lista de Acciones Disponibles
 
-Las acciones se organizan en sub-namespaces según el área de negocio a la que pertenecen:
+A continuación se detallan las acciones principales disponibles en `src/Actions/`:
 
-### Generales (General)
-- `AuthenticateAction`: Gestiona la autenticación con la DGII y el almacenamiento en caché de tokens.
-- `ValidateCertAction`: Valida que el certificado digital exista y la contraseña sea correcta.
+### Facturación (Invoice)
+- `SignInvoiceAction`: Genera el XML desde un array de datos y realiza la firma digital.
+- `SubmitInvoiceAction`: Gestiona la autenticación y el envío del XML firmado a la DGII.
+- `ValidateInvoiceStatusAction`: Consulta el estatus de procesamiento de un documento usando su `trackId`.
+- `ResendInvoiceAction`: Toma un archivo XML ya firmado y lo envía nuevamente a la DGII.
+- `StorageInvoiceAction`: Persiste los archivos XML y las respuestas de la DGII en el repositorio de almacenamiento.
 
-### Invoice (Facturación)
-- `SignInvoiceAction`: Realiza la firma digital del XML de la factura.
-- `SendInvoiceAction`: Orquestador que delega el envío a `SendStandardInvoiceAction` o `SendConsumeInvoiceAction`.
-- `SendStandardInvoiceAction`: Envía facturas electrónicas estándar a la DGII.
-- `SendConsumeInvoiceAction`: Envía resúmenes de facturas de consumo (RFCE) a la DGII.
-- `ValidateInvoiceAction`: Orquestador que delega la validación de estatus a `ValidateStandardInvoiceAction` o `ValidateConsumeInvoiceAction`.
-- `ValidateStandardInvoiceAction`: Consulta el estatus de facturas estándar enviadas.
-- `ValidateConsumeInvoiceAction`: Consulta el estatus de resúmenes de consumo enviados.
-- `StorageInvoiceAction`: Persiste el archivo XML y los datos de respuesta en disco.
+### Otros Documentos
+- `SubmitCancellationRangeAction`: Procesa el envío de solicitudes de anulación de rangos (ANECF).
+- `SubmitCommercialApprovalAction`: Procesa el envío de aprobaciones comerciales (ARECF/ACECF).
+- `ProcessAcknowledgmentAction`: Maneja la lógica para generar y procesar acuses de recibo.
 
-### Seed (Semilla)
-- `ReceiveSeedAction`: Gestiona la obtención y procesamiento inicial de la semilla para autenticación.
+### Utilidades
+- `ValidateCertAction`: Verifica la validez y existencia del certificado digital configurado.
 
-### Acknowledgment (Aceptación/Acuse)
-- `GenerateAcknowledgmentAction`: Crea el XML de acuse de recibo requerido por la DGII.
-- `SignAcknowledgmentAction`: Firma digitalmente el acuse de recibo.
+## Beneficios de la Nueva Estructura
 
-### Cancellation Range (Anulaciones)
-- `GenerateCancellationRangeAction`: Crea el XML de solicitud de anulación.
-- `SendCancellationRangeAction`: Envía la solicitud a los servidores de la DGII.
+1.  **Descubribilidad:** Al estar todas las acciones en un solo nivel, es más fácil identificar qué herramientas ofrece el paquete.
+2.  **Mantenibilidad:** Menos niveles de directorios reducen la complejidad de los namespaces y las importaciones.
+3.  **Flexibilidad:** Puedes inyectar cualquier acción directamente en tus propios controladores o comandos de Artisan si necesitas un comportamiento personalizado fuera de `DgiiService`.
 
-### Commercial Approval (Aprobación Comercial)
-- `SendCommercialApprovalAction`: Envía la aprobación comercial de un e-CF recibido.
+## Ejemplo de Uso Manual
 
-## Beneficios del uso de Actions
+Si deseas usar una acción de forma independiente al servicio principal:
 
-1.  **Reutilización:** Una misma acción (ej. `AuthenticateAction`) puede ser utilizada por múltiples servicios.
-2.  **Mantenibilidad:** Si cambian los requisitos de firma de la DGII, solo es necesario modificar `SignInvoiceAction`.
-3.  **Testabilidad:** Es extremadamente sencillo escribir pruebas unitarias para cada acción de forma aislada.
-4.  **Desacoplamiento:** Los servicios no necesitan saber *cómo* se firma una factura, solo llaman a la acción encargada de hacerlo.
+```php
+use PlatinumPlace\LaravelDgii\Actions\ValidateCertAction;
+
+public function checkCertificate(ValidateCertAction $validateCert)
+{
+    $isValid = $validateCert->handle();
+    // ...
+}
+```

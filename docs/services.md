@@ -1,51 +1,47 @@
 # Servicios (Services)
 
-Los Servicios en este paquete son orquestadores de alto nivel. Su función principal es agrupar lógica de negocio compleja que requiere la interacción de múltiples capas del sistema (Acciones, Clientes, Storage) y presentar una interfaz sencilla y unificada para el usuario final.
+En la versión 2.0, el paquete ha consolidado sus servicios en una estructura más eficiente centrada en `DgiiService`. Este servicio actúa como el único punto de entrada para orquestar la lógica de negocio compleja.
 
-## Características de los Servicios
+## Características de DgiiService
 
-- **Orquestación:** No realizan lógica atómica por sí mismos, sino que delegan en `Actions`.
-- **Inyección de Dependencias:** Utilizan el contenedor de servicios de Laravel para recibir las acciones necesarias en su constructor.
-- **Flujos de Trabajo (Workflows):** Un solo método de un servicio puede involucrar validación automática del certificado, autenticación, firma de documentos, envío a la DGII y persistencia en disco.
-- **Validación Preventiva:** Los servicios validan el certificado digital antes de intentar cualquier operación de firma o comunicación, lo que permite fallar temprano con errores claros en lugar de errores crípticos de red o firma.
+- **Punto de Entrada Unificado:** A través del facade `Dgii`, se tiene acceso a todas las funcionalidades del servicio.
+- **Orquestación de Acciones:** Delega tareas específicas a las `Actions` (firma, envío, validación, almacenamiento).
+- **Gestión Automática de Autenticación:** Se encarga de manejar el flujo de Semilla -> Firma -> Token de forma transparente para el desarrollador.
+- **Monitoreo de Infraestructura:** Incluye nuevos métodos para verificar el estado de los servidores de la DGII y ventanas de mantenimiento.
 
-## Principales Servicios Disponibles
+## Métodos Principales
 
-A continuación se detallan los servicios clave y sus responsabilidades:
+### Facturación Electrónica (e-CF)
+- `submitInvoice(array $data)`: Procesa el ciclo completo de una factura (Generación XML, Firma, Envío y Almacenamiento). Retorna un objeto `InvoiceData`.
+- `validateInvoiceStatus(string $path, ?string $trackId)`: Consulta el estado de procesamiento de una factura previamente enviada.
+- `resendInvoice(string $path)`: Permite reenviar un XML ya firmado y almacenado.
 
-1.  **DgiiInvoiceService:** Gestiona todo el ciclo de vida de los e-CF (Facturas Electrónicas).
-    - Orquesta la firma digital de facturas.
-    - Maneja el envío y la consulta de estatus en la DGII.
-    - Genera enlaces de validación QR.
+### Documentos Especiales
+- `sendCancellationRange(array $data)`: Gestiona la anulación de rangos de comprobantes (ANECF).
+- `sendCommercialApproval(string $signedXml)`: Envía la aprobación comercial de documentos recibidos (ARECF/ACECF).
 
-2.  **DgiiSeedService:** Responsable de la obtención de la "Semilla" (Seed) necesaria para el proceso de autenticación con la DGII.
+### Utilidades y Monitoreo
+- `requestSeed()`: Obtiene una nueva semilla de autenticación.
+- `getServiceStatus()`: Verifica si los servicios web de la DGII están activos.
+- `getMaintenanceWindows()`: Consulta las próximas paradas programadas de la DGII.
+- `getEnvironmentStatus()`: Obtiene un resumen detallado del estado de los diferentes entornos (Test, Certificación, Producción).
 
-3.  **DgiiCancellationRangeService:** Gestiona las anulaciones de rangos de comprobantes fiscales electrónicos.
+## Ejemplo de Flujo Interno
 
-4.  **DgiiCommercialApprovalService:** Maneja la aprobación comercial de documentos recibidos.
-
-5.  **DgiiService:** Servicio base que proporciona funcionalidades transversales, como la autenticación automática y la obtención de tokens válidos para interactuar con los servicios web de la DGII.
-
-## Ejemplo de Implementación
-
-Internamente, un servicio se ve así:
+Cuando llamas a `Dgii::submitInvoice()`, el servicio realiza lo siguiente internamente:
 
 ```php
-public function sendInvoice(InvoiceData $data): InvoiceReceived
+public function submitInvoice(array $data): InvoiceData
 {
-    // 1. Firmar el XML
-    $signedXml = $this->signInvoiceAction->handle($data);
+    // 1. Firma el XML y genera el objeto InvoiceData inicial
+    $invoiceData = $this->signInvoice->handle($data);
     
-    // 2. Enviar a la DGII
-    $response = $this->sendInvoiceAction->handle($signedXml);
+    // 2. Envía el XML firmado a la DGII (maneja auth automáticamente)
+    $response = $this->submitInvoiceAction->handle($invoiceData);
     
-    // 3. Persistir en disco
-    $this->storageInvoiceAction->handle($signedXml, $response);
-
-    return $response;
+    // 3. Persiste el XML y la respuesta en el almacenamiento configurado
+    return $this->storageInvoice->handle($invoiceData, $response);
 }
 ```
 
-Los servicios garantizan que el desarrollador no necesite conocer los detalles técnicos de cada paso, permitiendo una integración rápida y segura.
-
-Para más detalles sobre los campos de datos requeridos por estos servicios, consulte la [Guía de Estructuras de Datos](./dgii-data-structures.md).
+Esta abstracción permite que la implementación en tu aplicación sea de una sola línea, manteniendo todo el poder de la arquitectura orientada a acciones.
