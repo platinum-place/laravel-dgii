@@ -26,6 +26,7 @@ A continuación se detallan las acciones principales disponibles en `src/Actions
 - `ProcessAcknowledgmentAction`: Maneja la lógica para generar y procesar acuses de recibo.
 
 ### Utilidades
+- `ReceiveSeedAction`: Gestiona la recepción de una semilla firmada y su intercambio por un token.
 - `ValidateInvoiceStatusAction`: Consulta el estatus de un e-CF enviado previamente.
 
 ## Beneficios de la Nueva Estructura

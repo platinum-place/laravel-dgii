@@ -22,6 +22,7 @@ En la versión 2.0, el paquete ha consolidado sus servicios en una estructura m�
 - `sendCommercialApproval(string $token, string $signedXml)`: Envía la aprobación comercial de documentos recibidos (ARECF/ACECF). Requiere un token de autenticación.
 
 ### Utilidades y Monitoreo
+- `receiveSeed(string $signedXml)`: Intercambia una semilla ya firmada por un token de acceso.
 - `requestSeed()`: Obtiene una nueva semilla de autenticación.
 - `getServiceStatus()`: Verifica si los servicios web de la DGII están activos.
 - `getMaintenanceWindows()`: Consulta las próximas paradas programadas de la DGII.

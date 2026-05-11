@@ -11,7 +11,7 @@ use PlatinumPlace\LaravelDgii\Services\XmlSigner;
  *
  * @see XmlSigner
  */
-class Xml extends Facade
+class DgiiXml extends Facade
 {
     protected static function getFacadeAccessor()
     {

@@ -5,6 +5,7 @@ namespace PlatinumPlace\LaravelDgii\Services;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use PlatinumPlace\LaravelDgii\Actions\ReceiveInvoiceAction;
+use PlatinumPlace\LaravelDgii\Actions\ReceiveSeedAction;
 use PlatinumPlace\LaravelDgii\Actions\SendInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\SignInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\StorageInvoiceAction;
@@ -36,6 +37,7 @@ class DgiiService
      * @param  StorageInvoiceAction  $storageInvoice  Manages the local persistence of signed XML documents.
      * @param  SignInvoiceAction  $signInvoice  Handles the digital signature process for XML content.
      * @param  ReceiveInvoiceAction  $receiveInvoice  Handles the submission of a signed invoice.
+     * @param  ReceiveSeedAction  $receiveSeed  Handles exchanging a signed seed for a token.
      * @param  DgiiRepository  $repository  Interface for direct communication with DGII SOAP/REST services.
      */
     public function __construct(
@@ -47,6 +49,7 @@ class DgiiService
         protected StorageInvoiceAction $storageInvoice,
         protected SignInvoiceAction $signInvoice,
         protected ReceiveInvoiceAction $receiveInvoice,
+        protected ReceiveSeedAction $receiveSeed,
         protected DgiiRepository $repository,
     ) {
         //
@@ -188,6 +191,21 @@ class DgiiService
     public function receiveInvoice(string $token, string $signed, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
         return $this->receiveInvoice->handle($token, $signed, $env, $certPath, $certPassword);
+    }
+
+    /**
+     * Exchange a signed seed XML for an authentication token.
+     *
+     * @param  string  $xml  The signed seed XML content.
+     * @param  string|null  $env  The target environment.
+     * @return array The authentication response (contains access_token and expires_in).
+     *
+     * @throws RequestException
+     * @throws ConnectionException
+     */
+    public function receiveSeed(string $xml, ?string $env = null): array
+    {
+        return $this->receiveSeed->handle($xml, $env);
     }
 
     /**
