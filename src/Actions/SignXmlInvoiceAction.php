@@ -46,6 +46,8 @@ class SignXmlInvoiceAction
     {
         $this->xmlSigner->validateCertificate($certPath, $certPassword);
 
+        $xml = preg_replace('/<FechaHoraFirma>.*?<\/FechaHoraFirma>/', '<FechaHoraFirma>'.date('d-m-Y H:i:s').'</FechaHoraFirma>', $xml);
+
         $signed = $this->xmlSigner->sign($xml, $certPath, $certPassword);
 
         $object = new InvoiceXml($signed);

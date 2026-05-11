@@ -5,6 +5,11 @@ All notable changes to `laravel-dgii` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.12] - 2026-05-11
+
+### Fixed
+- Automatically update `FechaHoraFirma` in `SignXmlInvoiceAction` before signing to ensure time consistency.
+
 ## [2.0.11] - 2026-05-11
 
 ### Added
