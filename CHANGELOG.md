@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - New unified architecture centered on the `Dgii` facade and `DgiiService`.
+- Specialized facade `DgiiXml` for direct XML signing and certificate validation.
 - Repository layer (`Repositories/`) replacing the old specialized clients.
 - Centralized data structures in the `Data/` namespace, unifying DTOs, XML objects, and Responses.
 - Support for maintenance windows and environment status checks via `DgiiService`.

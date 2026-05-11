@@ -92,6 +92,18 @@ use PlatinumPlace\LaravelDgii\Facades\Dgii;
 $status = Dgii::getServiceStatus();
 ```
 
+### Manual XML Signing (Optional)
+If you need to sign an XML manually or validate a certificate:
+```php
+use PlatinumPlace\LaravelDgii\Facades\DgiiXml;
+
+// Sign an XML
+$signedXml = DgiiXml::sign($rawXml);
+
+// Validate configured certificate
+$info = DgiiXml::validateCertificate();
+```
+
 ---
 
 ## 🙋‍♂️ Support and Consulting

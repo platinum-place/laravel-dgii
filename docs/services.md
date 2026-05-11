@@ -42,8 +42,18 @@ public function submitInvoice(array $data): InvoiceData
     $response = $this->submitInvoiceAction->handle($invoiceData);
     
     // 3. Persiste el XML y la respuesta en el almacenamiento configurado
-    return $this->storageInvoice->handle($invoiceData, $response);
-}
-```
+    return $this->storageInvoice->handle($invoiceData);
+    }
+    ```
+
+    ## Firma Digital (DgiiXml)
+
+    Para casos donde se requiera interacción directa con el motor de firma sin pasar por el flujo de negocio de `DgiiService`, se proporciona el facade `DgiiXml`. Este facade es un wrapper sobre `XmlSigner`.
+
+    ### Métodos Disponibles
+
+    - `sign(string $xml, ?string $certPath = null, ?string $certPassword = null)`: Aplica una firma digital a un string XML. Si no se provee el certificado, utiliza el configurado en `dgii.php`.
+    - `validateCertificate(?string $certPath = null, ?string $certPassword = null)`: Valida la integridad de un certificado digital y devuelve información sobre su validez y emisor.
+
 
 Esta abstracción permite que la implementación en tu aplicación sea de una sola línea, manteniendo todo el poder de la arquitectura orientada a acciones.
