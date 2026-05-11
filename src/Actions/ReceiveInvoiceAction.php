@@ -5,10 +5,9 @@ namespace PlatinumPlace\LaravelDgii\Actions;
 use Illuminate\Http\Client\ConnectionException;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
-use PlatinumPlace\LaravelDgii\Repositories\DgiiConsumeInvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\DgiiInvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
-use PlatinumPlace\LaravelDgii\Traits\InteractsWithInvoice;
+use PlatinumPlace\LaravelDgii\Services\DgiiQrResolver;
 
 /**
  * Class ReceiveInvoiceAction
@@ -18,17 +17,16 @@ use PlatinumPlace\LaravelDgii\Traits\InteractsWithInvoice;
  */
 class ReceiveInvoiceAction
 {
-    use InteractsWithInvoice;
-
     /**
      * Create a new receive invoice action instance.
      */
     public function __construct(
-        protected StorageRepository $storage,
-        protected DgiiInvoiceRepository $invoiceRepository,
-        protected DgiiConsumeInvoiceRepository $consumeRepository,
+        protected StorageRepository           $storage,
+        protected DgiiInvoiceRepository       $repository,
+        protected DgiiQrResolver              $qrResolver,
         protected ProcessAcknowledgmentAction $processAcknowledgment,
-    ) {
+    )
+    {
         //
     }
 
@@ -43,13 +41,16 @@ class ReceiveInvoiceAction
 
         $filePath = $this->storage->realPath($path);
 
-        $response = $this->sendInvoice($object, $filePath, $token, $env);
+        $response = $this->repository->send($token, $filePath, $env);
+
+        $qrLink = $this->qrResolver->getInvoiceQrLink($object, $env);
 
         $acknowledgmentObject = $this->processAcknowledgment->handle($object, $response, $certPath, $certPassword);
 
         return new InvoiceData(
-            xml: $object,
-            path: $path,
+            $object,
+            $path,
+            $qrLink,
             response: $response,
             acknowledgment: $acknowledgmentObject,
         );
