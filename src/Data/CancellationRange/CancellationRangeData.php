@@ -17,8 +17,8 @@ readonly class CancellationRangeData
      * @param  CancellationRangeResponse  $response  The response received from DGII after submission.
      */
     public function __construct(
-        public CancellationRangeXml      $xml,
-        public string                    $path,
+        public CancellationRangeXml $xml,
+        public string $path,
         public CancellationRangeResponse $response,
     ) {
         //

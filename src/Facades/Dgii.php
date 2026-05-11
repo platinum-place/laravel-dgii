@@ -13,6 +13,7 @@ use PlatinumPlace\LaravelDgii\Services\DgiiService;
  * @method static \PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData sendInvoice(string $path, ?string $env = null, ?string $certPath = null, ?string $certPassword = null)
  * @method static \PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData storageInvoice(string $signed, ?string $env = null)
  * @method static \PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData signInvoice(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null)
+ * @method static \PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData signXmlInvoice(string $xml, ?string $env = null, ?string $certPath = null, ?string $certPassword = null)
  * @method static \PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData receiveInvoice(string $token, string $signed, ?string $env = null, ?string $certPath = null, ?string $certPassword = null)
  * @method static array receiveSeed(string $xml, ?string $env = null)
  * @method static string requestSeed(?string $env = null)

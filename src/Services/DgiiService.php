@@ -8,6 +8,7 @@ use PlatinumPlace\LaravelDgii\Actions\ReceiveInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\ReceiveSeedAction;
 use PlatinumPlace\LaravelDgii\Actions\SendInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\SignInvoiceAction;
+use PlatinumPlace\LaravelDgii\Actions\SignXmlInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\StorageInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\SubmitCancellationRangeAction;
 use PlatinumPlace\LaravelDgii\Actions\SubmitCommercialApprovalAction;
@@ -36,6 +37,7 @@ class DgiiService
      * @param  SendInvoiceAction  $sendInvoice  Handles submitting an invoice that was previously stored.
      * @param  StorageInvoiceAction  $storageInvoice  Manages the local persistence of signed XML documents.
      * @param  SignInvoiceAction  $signInvoice  Handles the digital signature process for XML content.
+     * @param  SignXmlInvoiceAction  $signXmlInvoice  Handles the digital signature process for raw XML content.
      * @param  ReceiveInvoiceAction  $receiveInvoice  Handles the submission of a signed invoice.
      * @param  ReceiveSeedAction  $receiveSeed  Handles exchanging a signed seed for a token.
      * @param  DgiiRepository  $repository  Interface for direct communication with DGII SOAP/REST services.
@@ -48,6 +50,7 @@ class DgiiService
         protected SendInvoiceAction $sendInvoice,
         protected StorageInvoiceAction $storageInvoice,
         protected SignInvoiceAction $signInvoice,
+        protected SignXmlInvoiceAction $signXmlInvoice,
         protected ReceiveInvoiceAction $receiveInvoice,
         protected ReceiveSeedAction $receiveSeed,
         protected DgiiRepository $repository,
@@ -175,6 +178,22 @@ class DgiiService
     public function signInvoice(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
         return $this->signInvoice->handle($data, $env, $certPath, $certPassword);
+    }
+
+    /**
+     * Sign an already generated XML invoice.
+     *
+     * Flow: Input XML -> Sign XML -> Return signed data.
+     *
+     * @param  string  $xml  Raw XML content.
+     * @param  string|null  $env  Environment context.
+     * @param  string|null  $certPath  Custom path to the certificate.
+     * @param  string|null  $certPassword  Certificate password.
+     * @return InvoiceData Data object containing the signed XML and its path.
+     */
+    public function signXmlInvoice(string $xml, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
+    {
+        return $this->signXmlInvoice->handle($xml, $env, $certPath, $certPassword);
     }
 
     /**

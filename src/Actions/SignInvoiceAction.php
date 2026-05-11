@@ -50,7 +50,7 @@ class SignInvoiceAction
 
         $invoiceObject = new InvoiceXml($invoiceSigned);
 
-        $invoicePath = $this->storage->save($invoiceSigned,$invoiceObject->getXmlName());
+        $invoicePath = $this->storage->save($invoiceSigned, $invoiceObject->getXmlName());
 
         if ($invoiceObject->isConsumeInvoice()) {
             $integralXml = $invoiceXml;
@@ -67,7 +67,7 @@ class SignInvoiceAction
 
             $invoiceObject = new InvoiceXml($invoiceSigned);
 
-            $invoicePath = $this->storage->save($invoiceSigned,$invoiceObject->getXmlName());
+            $invoicePath = $this->storage->save($invoiceSigned, $invoiceObject->getXmlName());
         }
 
         $qrLink = $this->qrResolver->getInvoiceQrLink($invoiceObject, $env);

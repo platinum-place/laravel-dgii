@@ -5,7 +5,13 @@ All notable changes to `laravel-dgii` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.10] - 2026-05-10
+## [2.0.11] - 2026-05-11
+
+### Added
+- New `SignXmlInvoiceAction` to allow signing raw XML invoice content directly.
+- Added `signXmlInvoice` method to `DgiiService` and `Dgii` facade.
+- Registered the new action in the package documentation.
+
 
 ### Fixed
 - Corrected the token key in `DgiiAuthenticator` from `access_token` to `token` to match the DGII API response.

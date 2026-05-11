@@ -14,6 +14,7 @@ A continuación se detallan las acciones principales disponibles en `src/Actions
 
 ### Facturación (Invoice)
 - `SignInvoiceAction`: Genera el XML desde un array de datos y realiza la firma digital.
+- `SignXmlInvoiceAction`: Realiza la firma digital de un XML ya generado externamente.
 - `SubmitInvoiceAction`: Gestiona la autenticación y el envío del XML firmado a la DGII.
 - `ReceiveInvoiceAction`: Gestiona el envío a la DGII de un XML ya firmado previamente.
 - `ValidateInvoiceStatusAction`: Consulta el estatus de procesamiento de un documento usando su `trackId`.

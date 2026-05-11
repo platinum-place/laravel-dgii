@@ -46,7 +46,7 @@ class ProcessAcknowledgmentAction
 
         $object = new AcknowledgmentXml($signed);
 
-        $path = $this->storage->save($signed,$object->getXmlName());
+        $path = $this->storage->save($signed, $object->getXmlName());
 
         return new AcknowledgmentData($object, $path);
     }

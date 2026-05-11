@@ -21,12 +21,11 @@ class ReceiveInvoiceAction
      * Create a new receive invoice action instance.
      */
     public function __construct(
-        protected StorageRepository           $storage,
-        protected DgiiInvoiceRepository       $repository,
-        protected DgiiQrResolver              $qrResolver,
+        protected StorageRepository $storage,
+        protected DgiiInvoiceRepository $repository,
+        protected DgiiQrResolver $qrResolver,
         protected ProcessAcknowledgmentAction $processAcknowledgment,
-    )
-    {
+    ) {
         //
     }
 
@@ -37,7 +36,7 @@ class ReceiveInvoiceAction
     {
         $object = new InvoiceXml($signed);
 
-        $path = $this->storage->save($signed,$object->getXmlName());
+        $path = $this->storage->save($signed, $object->getXmlName());
 
         $filePath = $this->storage->realPath($path);
 
