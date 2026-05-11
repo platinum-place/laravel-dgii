@@ -6,7 +6,7 @@
 
 Integración elegante con los servicios web de la **Dirección General de Impuestos Internos (DGII)** para el manejo de **Comprobantes Fiscales Electrónicos (e-CF)** en Laravel.
 
-> [Read in English 🇺🇸](./README_EN.md) | **[Guía de Migración v1 a v2](./docs/migration-v2.md)**
+> [Read in English 🇺🇸](./README_EN.md) | **[Guía de Migración v1 a v2](./docs/usage/migration-v2.md)**
 
 ---
 
@@ -33,12 +33,13 @@ Este paquete se apoya en soluciones robustas de la comunidad:
 
 Índice completo de recursos para dominar la integración con la DGII:
 
-- **[Guía de Migración (v1 a v2.0)](./docs/migration-v2.md)** - **Lectura obligatoria para usuarios existentes.**
-- [Arquitectura del Sistema](./docs/architecture.md) - Entiende las capas de Repositorios, Datos y Acciones.
-- [Estructuras de Datos (e-CF)](./docs/dgii-data-structures.md) - Detalle de campos para cada tipo de documento.
-- [Servicios y Métodos](./docs/services.md) - Guía del `DgiiService` y monitoreo.
-- [Catálogo de Acciones](./docs/actions.md) - Lista de acciones atómicas disponibles.
-- [Convenciones del Proyecto](./docs/conventions.md) - Estándares de código e idioma.
+- **[Primeros Pasos](./docs/usage/getting-started.md)** - Guía rápida de instalación y configuración.
+- **[Guía de Migración (v1 a v2.0)](./docs/usage/migration-v2.md)** - **Lectura obligatoria para usuarios existentes.**
+- [Estructuras de Datos (e-CF)](./docs/usage/data-structures.md) - Detalle de campos para cada tipo de documento.
+- [Arquitectura del Sistema](./docs/internals/architecture.md) - Entiende las capas de Repositorios, Datos y Acciones.
+- [Servicios y Métodos](./docs/internals/services.md) - Guía del `DgiiService` y monitoreo.
+- [Catálogo de Acciones](./docs/internals/actions.md) - Lista de acciones atómicas disponibles.
+- [Convenciones del Proyecto](./docs/internals/conventions.md) - Estándares de código e idioma.
 - [Documentación Oficial DGII](https://dgii.gov.do/cicloContribuyente/facturacion/comprobantesFiscalesElectronicosE-CF/Paginas/documentacionSobreE-CF.aspx) - Manuales legales y técnicos.
 
 ## 🛠️ Instalación

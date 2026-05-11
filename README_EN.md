@@ -6,7 +6,7 @@
 
 An elegant Laravel integration with the **General Directorate of Internal Taxes (DGII)** web services for managing **Electronic Fiscal Receipts (e-CF)**.
 
-> [Leer en Español 🇪🇸](./README.md) | **[Migration Guide v1 to v2](./docs/migration-v2.md)**
+> [Leer en Español 🇪🇸](./README.md) | **[Migration Guide v1 to v2](./docs/usage/migration-v2.md)**
 
 ---
 
@@ -33,12 +33,13 @@ This package relies on robust community solutions:
 
 Complete index of resources to master the DGII integration:
 
-- **[Migration Guide (v1 to v2.0)](./docs/migration-v2.md)** - **Required reading for existing users.**
-- [System Architecture](./docs/architecture.md) - Understand the Repositories, Data, and Actions layers.
-- [Data Structures (e-CF)](./docs/dgii-data-structures.md) - Field details for each document type.
-- [Services and Methods](./docs/services.md) - Guide to `DgiiService` and monitoring.
-- [Actions Catalog](./docs/actions.md) - List of available atomic actions.
-- [Project Conventions](./docs/conventions.md) - Code and language standards.
+- **[Getting Started](./docs/usage/getting-started.md)** - Quick installation and configuration guide.
+- **[Migration Guide (v1 to v2.0)](./docs/usage/migration-v2.md)** - **Required reading for existing users.**
+- [Data Structures (e-CF)](./docs/usage/data-structures.md) - Field details for each document type.
+- [System Architecture](./docs/internals/architecture.md) - Understand the Repositories, Data, and Actions layers.
+- [Services and Methods](./docs/internals/services.md) - Guide to `DgiiService` and monitoring.
+- [Actions Catalog](./docs/internals/actions.md) - List of available atomic actions.
+- [Project Conventions](./docs/internals/conventions.md) - Code and language standards.
 - [Official DGII Documentation](https://dgii.gov.do/cicloContribuyente/facturacion/comprobantesFiscalesElectronicosE-CF/Paginas/documentacionSobreE-CF.aspx) - Legal and technical manuals.
 
 ## 🛠️ Installation

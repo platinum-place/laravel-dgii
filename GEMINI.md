@@ -15,8 +15,12 @@ El paquete automatiza el ciclo de vida de los documentos fiscales electrónicos,
 
 ## 🏗️ Arquitectura y Estructura (v2.0)
 
-El paquete sigue una arquitectura orientada a servicios y acciones altamente desacoplada:
+El paquete sigue una arquitectura orientada a servicios y acciones altamente desacoplada. Para más detalles técnicos, consulta:
+- **[Arquitectura del Sistema](./docs/internals/architecture.md)**
+- **[Catálogo de Acciones](./docs/internals/actions.md)**
+- **[Servicios y Métodos](./docs/internals/services.md)**
 
+Estructura de directorios principal:
 - **Data (`src/Data/`):** Contiene el núcleo de datos del paquete. Unifica DTOs (`InvoiceData`), representaciones XML (`AbstractXml`, `InvoiceXml`) y objetos de respuesta (`InvoiceResponse`).
 - **Repositories (`src/Repositories/`):** Capa de abstracción para persistencia y comunicación externa. Incluye `DgiiInvoiceRepository` para la API de la DGII y `StorageRepository` para el sistema de archivos.
 - **Services (`src/Services/`):** El orquestador principal es `DgiiService` (accedido vía el facade `Dgii`). Coordina el flujo de trabajo entre acciones y repositorios.
@@ -45,12 +49,20 @@ composer test
 
 ## 📝 Convenciones de Desarrollo
 
+Consulta la guía completa en **[Convenciones del Proyecto](./docs/internals/conventions.md)**.
+
+Resumen:
 1.  **Facade Unificado:** Siempre prefiere el uso de `Dgii::metodo()` para interactuar con el paquete.
 2.  **Manejo de Datos:** Utiliza exclusivamente los objetos en `src/Data` para transportar información. Nunca manipules XML como strings crudos fuera de las capas de bajo nivel.
 3.  **DocBlocks:** Todo el código fuente debe estar documentado en **Inglés**.
 4.  **Documentación:** Los archivos `.md` y guías de usuario se mantienen en **Español**.
 5.  **Actions:** Mantén las acciones atómicas. Si una acción necesita hacer "demasiado", divídela en acciones más pequeñas o delega la orquestación al `DgiiService`.
 6.  **Almacenamiento:** Utiliza `StorageRepository` para garantizar la organización automática por fecha y UUID.
+
+## ⚙️ Referencia Técnica DGII
+
+Para consultas sobre la normativa oficial y formatos XML de la DGII, utiliza la carpeta:
+- **[Referencia DGII](./docs/reference/dgii/)** (Contiene manuales oficiales y guía para agentes IA).
 
 ## ⚙️ Configuración Clave (`config/dgii.php`)
 
