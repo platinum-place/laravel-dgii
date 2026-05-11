@@ -56,7 +56,7 @@ class SubmitInvoiceAction
 
         $token = $this->authenticateAndGetToken($env, $certPath, $certPassword);
 
-        $response = $this->sendInvoiceToDgii($invoiceData->xml, $filePath, $token, $env);
+        $response = $this->sendInvoice($invoiceData->xml, $filePath, $token, $env);
 
         $acknowledgmentObject = $this->processAcknowledgment->handle($invoiceData->xml, $response, $certPath, $certPassword);
 

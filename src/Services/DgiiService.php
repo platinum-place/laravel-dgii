@@ -4,7 +4,8 @@ namespace PlatinumPlace\LaravelDgii\Services;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
-use PlatinumPlace\LaravelDgii\Actions\ResendInvoiceAction;
+use PlatinumPlace\LaravelDgii\Actions\ReceiveInvoiceAction;
+use PlatinumPlace\LaravelDgii\Actions\SendInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\SignInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\StorageInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\SubmitCancellationRangeAction;
@@ -31,9 +32,10 @@ class DgiiService
      * @param  SubmitCommercialApprovalAction  $submitCommercialApproval  Orchestrates the submission of commercial approvals.
      * @param  SubmitInvoiceAction  $submitInvoice  Orchestrates the full flow of submitting an invoice (sign -> send -> response).
      * @param  ValidateInvoiceStatusAction  $validateInvoiceStatus  Checks the processing status of a submitted invoice at DGII.
-     * @param  ResendInvoiceAction  $resendInvoice  Handles resubmitting an invoice that was previously stored.
+     * @param  SendInvoiceAction  $sendInvoice  Handles submitting an invoice that was previously stored.
      * @param  StorageInvoiceAction  $storageInvoice  Manages the local persistence of signed XML documents.
      * @param  SignInvoiceAction  $signInvoice  Handles the digital signature process for XML content.
+     * @param  ReceiveInvoiceAction  $receiveInvoice  Handles the submission of a signed invoice.
      * @param  DgiiRepository  $repository  Interface for direct communication with DGII SOAP/REST services.
      */
     public function __construct(
@@ -41,9 +43,10 @@ class DgiiService
         protected SubmitCommercialApprovalAction $submitCommercialApproval,
         protected SubmitInvoiceAction $submitInvoice,
         protected ValidateInvoiceStatusAction $validateInvoiceStatus,
-        protected ResendInvoiceAction $resendInvoice,
+        protected SendInvoiceAction $sendInvoice,
         protected StorageInvoiceAction $storageInvoice,
         protected SignInvoiceAction $signInvoice,
+        protected ReceiveInvoiceAction $receiveInvoice,
         protected DgiiRepository $repository,
     ) {
         //
@@ -73,6 +76,7 @@ class DgiiService
      *
      * Flow: Signed AECF XML -> Submit to DGII -> Return approval status data.
      *
+     * @param  string  $token  The security token from DGII.
      * @param  string  $signed  The already signed AECF XML content.
      * @param  string|null  $env  Target environment (overrides config).
      * @param  string|null  $certPath  Custom path to the signing certificate.
@@ -82,9 +86,9 @@ class DgiiService
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function sendCommercialApproval(string $signed, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): CommercialApprovalData
+    public function sendCommercialApproval(string $token, string $signed, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): CommercialApprovalData
     {
-        return $this->submitCommercialApproval->handle($signed, $env, $certPath, $certPassword);
+        return $this->submitCommercialApproval->handle($token, $signed, $env, $certPath, $certPassword);
     }
 
     /**
@@ -125,7 +129,7 @@ class DgiiService
     }
 
     /**
-     * Resend an already signed and stored invoice to DGII.
+     * Send an already signed and stored invoice to DGII.
      *
      * Flow: Stored path -> Load XML -> Authenticate -> Send to DGII -> Return results.
      *
@@ -133,13 +137,13 @@ class DgiiService
      * @param  string|null  $env  Target environment (overrides config).
      * @param  string|null  $certPath  Custom path to the signing certificate.
      * @param  string|null  $certPassword  Password for the signing certificate.
-     * @return InvoiceData The result of the re-submission.
+     * @return InvoiceData The result of the submission.
      *
      * @throws ConnectionException
      */
-    public function resendInvoice(string $path, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
+    public function sendInvoice(string $path, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
-        return $this->resendInvoice->handle($path, $env, $certPath, $certPassword);
+        return $this->sendInvoice->handle($path, $env, $certPath, $certPassword);
     }
 
     /**
@@ -168,6 +172,22 @@ class DgiiService
     public function signInvoice(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
         return $this->signInvoice->handle($data, $env, $certPath, $certPassword);
+    }
+
+    /**
+     * Receive and submit a signed invoice.
+     *
+     * @param  string  $token  The security token from DGII.
+     * @param  string  $signed  The signed XML content.
+     * @param  string|null  $env  The target environment.
+     * @param  string|null  $certPath  Custom path to the certificate.
+     * @param  string|null  $certPassword  Certificate password.
+     *
+     * @throws ConnectionException
+     */
+    public function receiveInvoice(string $token, string $signed, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
+    {
+        return $this->receiveInvoice->handle($token, $signed, $env, $certPath, $certPassword);
     }
 
     /**

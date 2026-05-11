@@ -23,7 +23,7 @@ trait InteractsWithInvoice
      *
      * @throws ConnectionException
      */
-    protected function sendInvoiceToDgii(InvoiceXml $object, string $filePath, string $token, ?string $env = null): InvoiceReceived
+    protected function sendInvoice(InvoiceXml $object, string $filePath, string $token, ?string $env = null): InvoiceReceived
     {
         return $object->isConsumeInvoice() ?
             $this->consumeRepository->send($token, $filePath, $env) :
@@ -35,7 +35,7 @@ trait InteractsWithInvoice
      *
      * @throws ConnectionException
      */
-    protected function findInvoiceStatusInDgii(InvoiceXml $object, string $token, ?string $trackId = null, ?string $env = null): InvoiceReceived
+    protected function findInvoiceStatus(InvoiceXml $object, string $token, ?string $trackId = null, ?string $env = null): InvoiceReceived
     {
         return $object->isConsumeInvoice() ?
             $this->consumeRepository->find($token, $object, $env) :

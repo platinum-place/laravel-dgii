@@ -57,7 +57,7 @@ class ValidateInvoiceStatusAction
 
         $token = $this->authenticateAndGetToken($env, $certPath, $certPassword);
 
-        $response = $this->findInvoiceStatusInDgii($object, $token, $trackId, $env);
+        $response = $this->findInvoiceStatus($object, $token, $trackId, $env);
 
         $qrLink = $this->qrResolver->getInvoiceQrLink($object, $env);
 

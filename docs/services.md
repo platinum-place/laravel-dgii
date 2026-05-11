@@ -14,11 +14,12 @@ En la versión 2.0, el paquete ha consolidado sus servicios en una estructura m�
 ### Facturación Electrónica (e-CF)
 - `submitInvoice(array $data)`: Procesa el ciclo completo de una factura (Generación XML, Firma, Envío y Almacenamiento). Retorna un objeto `InvoiceData`.
 - `validateInvoiceStatus(string $path, ?string $trackId)`: Consulta el estado de procesamiento de una factura previamente enviada.
-- `resendInvoice(string $path)`: Permite reenviar un XML ya firmado y almacenado.
+- `sendInvoice(string $path)`: Permite enviar un XML ya firmado y almacenado.
+- `receiveInvoice(string $token, string $signed)`: Envía a la DGII un XML ya firmado pasando directamente el token de autenticación.
 
 ### Documentos Especiales
 - `sendCancellationRange(array $data)`: Gestiona la anulación de rangos de comprobantes (ANECF).
-- `sendCommercialApproval(string $signedXml)`: Envía la aprobación comercial de documentos recibidos (ARECF/ACECF).
+- `sendCommercialApproval(string $token, string $signedXml)`: Envía la aprobación comercial de documentos recibidos (ARECF/ACECF). Requiere un token de autenticación.
 
 ### Utilidades y Monitoreo
 - `requestSeed()`: Obtiene una nueva semilla de autenticación.

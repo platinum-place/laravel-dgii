@@ -14,18 +14,18 @@ use PlatinumPlace\LaravelDgii\Services\XmlSigner;
 use PlatinumPlace\LaravelDgii\Traits\InteractsWithInvoice;
 
 /**
- * Class ResendInvoiceAction
+ * Class SendInvoiceAction
  *
  * This action handles the re-submission of a previously signed and stored invoice
  * to the DGII. It is useful for retrying failed submissions or sending
  * documents that were signed offline.
  */
-class ResendInvoiceAction
+class SendInvoiceAction
 {
     use InteractsWithInvoice;
 
     /**
-     * Create a new resend invoice action instance.
+     * Create a new send invoice action instance.
      */
     public function __construct(
         protected XmlSigner $xmlSigner,
@@ -61,7 +61,7 @@ class ResendInvoiceAction
 
         $token = $this->authenticateAndGetToken($env, $certPath, $certPassword);
 
-        $response = $this->sendInvoiceToDgii($object, $filePath, $token, $env);
+        $response = $this->sendInvoice($object, $filePath, $token, $env);
 
         $qrLink = $this->qrResolver->getInvoiceQrLink($object, $env);
 
