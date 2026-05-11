@@ -5,6 +5,12 @@ All notable changes to `laravel-dgii` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.7] - 2026-05-10
+
+### Changed
+- XML files are now saved using their semantic name (RNC + Sequence) instead of random UUIDs, improving file organization and traceability.
+- Updated all storage actions (`SignInvoiceAction`, `ReceiveInvoiceAction`, etc.) to leverage the `getXmlName()` method.
+
 ## [2.0.6] - 2026-05-10
 
 ### Changed

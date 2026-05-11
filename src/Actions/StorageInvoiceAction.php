@@ -38,7 +38,7 @@ class StorageInvoiceAction
     {
         $object = new InvoiceXml($signed);
 
-        $path = $this->storage->save($signed);
+        $path = $this->storage->save($signed,$object->getXmlName());
 
         $qrLink = $this->qrResolver->getInvoiceQrLink($object, $env);
 

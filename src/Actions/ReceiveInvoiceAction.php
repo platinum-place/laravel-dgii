@@ -37,7 +37,7 @@ class ReceiveInvoiceAction
     {
         $object = new InvoiceXml($signed);
 
-        $path = $this->storage->save($signed);
+        $path = $this->storage->save($signed,$object->getXmlName());
 
         $filePath = $this->storage->realPath($path);
 
