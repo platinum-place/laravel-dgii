@@ -6,6 +6,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use PlatinumPlace\LaravelDgii\Data\CancellationRange\CancellationRangeResponse;
+use PlatinumPlace\LaravelDgii\Exceptions\DgiiCancellationRangeRepositoryException;
 
 /**
  * Repository for handling digital tax document cancellation ranges with DGII.
@@ -41,7 +42,7 @@ class DgiiCancellationRangeRepository
             ->withToken($token)
             ->attachXml($filePath)
             ->post(config('dgii.endpoints.cancellation.send'))
-            ->json();
+            ->json() ?? throw new DgiiCancellationRangeRepositoryException('Error enviando la anulación de rangos a la DGII.');
 
         // Return the processed response DTO
         return new CancellationRangeResponse($response);

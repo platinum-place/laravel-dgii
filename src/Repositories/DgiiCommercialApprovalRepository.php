@@ -5,6 +5,7 @@ namespace PlatinumPlace\LaravelDgii\Repositories;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
+use PlatinumPlace\LaravelDgii\Exceptions\DgiiCommercialApprovalRepositoryException;
 
 /**
  * Repository for handling commercial approvals of tax documents with DGII.
@@ -32,6 +33,7 @@ class DgiiCommercialApprovalRepository
      *
      * @throws RequestException
      * @throws ConnectionException
+     * @throws DgiiCommercialApprovalRepositoryException
      */
     public function send(string $token, string $filePath, ?string $env = null): array
     {
@@ -40,6 +42,6 @@ class DgiiCommercialApprovalRepository
             ->withToken($token)
             ->attachXml($filePath)
             ->post(config('dgii.endpoints.approval.send'))
-            ->json();
+            ->json() ?? throw new DgiiCommercialApprovalRepositoryException('Error enviando la aprobación comercial a la DGII.');
     }
 }

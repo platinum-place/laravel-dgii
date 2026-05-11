@@ -6,6 +6,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceResponse;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
+use PlatinumPlace\LaravelDgii\Exceptions\DgiiConsumeInvoiceRepositoryException;
 use PlatinumPlace\LaravelDgii\Services\DgiiResponseWrapper;
 
 /**
@@ -46,7 +47,7 @@ class DgiiConsumeInvoiceRepository
                 ->withToken($token)
                 ->attachXml($filePath)
                 ->post(config('dgii.endpoints.fc.send'))
-                ->json();
+                ->json() ?? throw new DgiiConsumeInvoiceRepositoryException('Error enviando la factura de consumo a la DGII.');
         });
 
         // Return the processed response DTO
@@ -75,7 +76,7 @@ class DgiiConsumeInvoiceRepository
                     'ENCF' => $xml->getSequenceNumber(),
                     'Cod_Seguridad_eCF' => $xml->getSecurityCode(),
                 ])
-                ->json();
+                ->json() ?? throw new DgiiConsumeInvoiceRepositoryException('Error consultando el estado de la factura de consumo.');
         });
 
         // Return the processed response DTO

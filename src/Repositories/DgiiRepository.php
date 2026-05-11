@@ -5,6 +5,7 @@ namespace PlatinumPlace\LaravelDgii\Repositories;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
+use PlatinumPlace\LaravelDgii\Exceptions\DgiiRepositoryException;
 
 /**
  * Repository for managing core DGII service interactions such as authentication and system status.
@@ -55,7 +56,7 @@ class DgiiRepository
         return Http::dgiiEcf($env)
             ->attachXml($path)
             ->post(config('dgii.endpoints.auth.validate'))
-            ->json();
+            ->json() ?? throw new DgiiRepositoryException('Error validando el token de acceso con la DGII.');
     }
 
     /**
@@ -72,7 +73,7 @@ class DgiiRepository
         // Execute the GET request to the global services status endpoint
         return Http::dgiiStatusEcf($env)
             ->get(config('dgii.endpoints.status.services'))
-            ->json();
+            ->json() ?? throw new DgiiRepositoryException('Error obteniendo el estado de los servicios de la DGII.');
     }
 
     /**
@@ -89,7 +90,7 @@ class DgiiRepository
         // Execute the GET request to the maintenance schedule endpoint
         return Http::dgiiStatusEcf($env)
             ->get(config('dgii.endpoints.status.maintenance'))
-            ->json();
+            ->json() ?? throw new DgiiRepositoryException('Error obteniendo las ventanas de mantenimiento de la DGII.');
     }
 
     /**
@@ -115,6 +116,6 @@ class DgiiRepository
             ->get(config('dgii.endpoints.status.environment'), [
                 'ambiente' => $environmentCode,
             ])
-            ->json();
+            ->json() ?? throw new DgiiRepositoryException('Error obteniendo el estado del entorno de la DGII.');
     }
 }

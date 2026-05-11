@@ -6,6 +6,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceResponse;
+use PlatinumPlace\LaravelDgii\Exceptions\DgiiInvoiceRepositoryException;
 use PlatinumPlace\LaravelDgii\Services\DgiiResponseWrapper;
 
 /**
@@ -46,7 +47,7 @@ class DgiiInvoiceRepository
                 ->withToken($token)
                 ->attachXml($filePath)
                 ->post(config('dgii.endpoints.invoice.send'))
-                ->json();
+                ->json() ?? throw new DgiiInvoiceRepositoryException('Error enviando la factura electrónica (e-CF) a la DGII.');
         });
 
         // Return the processed response DTO
@@ -73,7 +74,7 @@ class DgiiInvoiceRepository
                 ->get(config('dgii.endpoints.invoice.status'), [
                     'trackid' => $trackId,
                 ])
-                ->json();
+                ->json() ?? throw new DgiiInvoiceRepositoryException('Error consultando el estado de la factura por Track ID.');
         });
 
         // Return the processed response DTO
@@ -101,6 +102,6 @@ class DgiiInvoiceRepository
                 'RncEmisor' => $senderIdentification,
                 'Encf' => $sequenceNumber,
             ])
-            ->json();
+            ->json() ?? throw new DgiiInvoiceRepositoryException('Error obteniendo el historial de Track IDs de la factura.');
     }
 }
