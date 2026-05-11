@@ -194,6 +194,20 @@ class DgiiService
     }
 
     /**
+     * Request a security seed (semilla) from the DGII.
+     *
+     * @param  string|null  $env  The target environment.
+     * @return string The raw XML seed response.
+     *
+     * @throws RequestException
+     * @throws ConnectionException
+     */
+    public function requestSeed(?string $env = null): string
+    {
+        return $this->repository->getSeed($env);
+    }
+
+    /**
      * Exchange a signed seed XML for an authentication token.
      *
      * @param  string  $xml  The signed seed XML content.
@@ -206,20 +220,6 @@ class DgiiService
     public function receiveSeed(string $xml, ?string $env = null): array
     {
         return $this->receiveSeed->handle($xml, $env);
-    }
-
-    /**
-     * Request a security seed (semilla) from the DGII.
-     *
-     * @param  string|null  $env  The target environment.
-     * @return string The raw XML seed response.
-     *
-     * @throws RequestException
-     * @throws ConnectionException
-     */
-    public function requestSeed(?string $env = null): string
-    {
-        return $this->repository->getSeed($env);
     }
 
     /**

@@ -15,7 +15,7 @@ abstract readonly class AbstractXml
     protected SimpleXMLElement $xml;
 
     /** @var string The raw XML content as a string. */
-    public string $xmlContent;
+    public string $content;
 
     /**
      * Create a new class instance and validate XML content.
@@ -28,7 +28,7 @@ abstract readonly class AbstractXml
      */
     public function __construct(string $xml)
     {
-        $this->xmlContent = $xml;
+        $this->content = $xml;
 
         libxml_use_internal_errors(true);
         $loadedXml = simplexml_load_string($xml);

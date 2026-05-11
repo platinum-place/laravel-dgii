@@ -53,7 +53,7 @@ $data = Dgii::submitInvoice($arrayData);
 $response = $data->response; 
 
 // Acceder al XML firmado
-$xmlContent = $data->xml->getXml();
+$xmlContent = $data->xml->content;
 
 // Acceder al enlace QR
 $qr = $data->qrLink;
