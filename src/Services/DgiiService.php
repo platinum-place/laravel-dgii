@@ -212,7 +212,7 @@ class DgiiService
      *
      * @param  string  $xml  The signed seed XML content.
      * @param  string|null  $env  The target environment.
-     * @return array The authentication response (contains access_token and expires_in).
+     * @return array The authentication response (contains token and expires_in).
      *
      * @throws RequestException
      * @throws ConnectionException
@@ -227,7 +227,7 @@ class DgiiService
      *
      * @param  string  $path  Real path to the signed seed XML file.
      * @param  string|null  $env  The target environment.
-     * @return array The authentication response (contains access_token and expires_in).
+     * @return array The authentication response (contains token and expires_in).
      *
      * @throws RequestException
      * @throws ConnectionException

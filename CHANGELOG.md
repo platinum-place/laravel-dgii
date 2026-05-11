@@ -5,6 +5,12 @@ All notable changes to `laravel-dgii` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.10] - 2026-05-10
+
+### Fixed
+- Corrected the token key in `DgiiAuthenticator` from `access_token` to `token` to match the DGII API response.
+- Updated authentication-related DocBlocks to reflect the correct JSON key for tokens.
+
 ## [2.0.9] - 2026-05-10
 
 ### Added

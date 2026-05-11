@@ -53,7 +53,7 @@ class DgiiAuthenticator
 
             $realPath = $this->storage->realPath($path);
 
-            return $this->repository->getToken($realPath, $env)['access_token'];
+            return $this->repository->getToken($realPath, $env)['token'];
         });
     }
 }
