@@ -36,8 +36,14 @@ class XmlSigner
      */
     public function sign(string $xml, ?string $certPath = null, ?string $certPassword = null): string
     {
+        $certPath = $certPath ?? config('dgii.certificate');
+
+        if (! $this->storageRepository->exists($certPath)) {
+            throw new \InvalidArgumentException("The certificate file at path [{$certPath}] does not exist.");
+        }
+
         return (new SignManager)->sign(
-            $this->storageRepository->get($certPath ?? config('dgii.certificate')),
+            $this->storageRepository->get($certPath),
             $certPassword ?? config('dgii.certificate_password'),
             $xml
         );
@@ -56,8 +62,14 @@ class XmlSigner
      */
     public function validateCertificate(?string $certPath = null, ?string $certPassword = null): array
     {
+        $certPath = $certPath ?? config('dgii.certificate');
+
+        if (! $this->storageRepository->exists($certPath)) {
+            throw new \InvalidArgumentException("The certificate file at path [{$certPath}] does not exist.");
+        }
+
         return (new SignManager)->validateCertificate(
-            $this->storageRepository->get($certPath ?? config('dgii.certificate')),
+            $this->storageRepository->get($certPath),
             $certPassword ?? config('dgii.certificate_password')
         );
     }

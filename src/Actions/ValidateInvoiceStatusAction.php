@@ -51,6 +51,10 @@ class ValidateInvoiceStatusAction
      */
     public function handle(string $path, ?string $trackId = null, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
+        if (! $this->storage->exists($path)) {
+            throw new \InvalidArgumentException("The XML file at path [{$path}] does not exist.");
+        }
+
         $signed = $this->storage->get($path);
 
         $object = new InvoiceXml($signed);

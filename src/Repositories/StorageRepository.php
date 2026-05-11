@@ -67,6 +67,17 @@ class StorageRepository
     }
 
     /**
+     * Check if a file exists on the configured disk.
+     *
+     * @param  string  $xmlPath  The relative path of the XML file.
+     * @return bool True if the file exists, false otherwise.
+     */
+    public function exists(string $xmlPath): bool
+    {
+        return $this->storage->exists($xmlPath);
+    }
+
+    /**
      * Get the absolute server path of a stored file.
      *
      * This is primarily used for attaching files to HTTP requests or
