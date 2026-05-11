@@ -4,7 +4,7 @@ namespace PlatinumPlace\LaravelDgii\Actions;
 
 use PlatinumPlace\LaravelDgii\Data\Acknowledgment\AcknowledgmentData;
 use PlatinumPlace\LaravelDgii\Data\Acknowledgment\AcknowledgmentXml;
-use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceReceived;
+use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceResponse;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 use PlatinumPlace\LaravelDgii\Services\AcknowledgmentXmlParse;
@@ -38,7 +38,7 @@ class ProcessAcknowledgmentAction
      * 2. Sign: Apply the digital signature to the generated XML.
      * 3. Store: Save the signed acknowledgment XML to the configured storage.
      */
-    public function handle(InvoiceXml $invoiceXml, InvoiceReceived $invoiceReceived, ?string $certPath = null, ?string $certPassword = null): AcknowledgmentData
+    public function handle(InvoiceXml $invoiceXml, InvoiceResponse $invoiceReceived, ?string $certPath = null, ?string $certPassword = null): AcknowledgmentData
     {
         $xml = $this->xmlParser->make($invoiceXml, $invoiceReceived);
 

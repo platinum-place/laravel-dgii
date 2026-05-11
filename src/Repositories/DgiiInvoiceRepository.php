@@ -5,7 +5,7 @@ namespace PlatinumPlace\LaravelDgii\Repositories;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceReceived;
+use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceResponse;
 use PlatinumPlace\LaravelDgii\Services\DgiiResponseWrapper;
 
 /**
@@ -33,11 +33,11 @@ class DgiiInvoiceRepository
      * @param  string  $token  The authentication token obtained from DGII.
      * @param  string  $filePath  The absolute path to the signed XML file on disk.
      * @param  string|null  $env  The target DGII environment (testecf, certecf, ecf).
-     * @return InvoiceReceived The response object containing DGII submission details and status.
+     * @return InvoiceResponse The response object containing DGII submission details and status.
      *
      * @throws ConnectionException
      */
-    public function send(string $token, string $filePath, ?string $env = null): InvoiceReceived
+    public function send(string $token, string $filePath, ?string $env = null): InvoiceResponse
     {
         // Wrap the execution to capture both response data and HTTP status
         [$response, $status] = $this->dgiiResponseWrapper->wrap(function () use ($token, $filePath, $env) {
@@ -50,7 +50,7 @@ class DgiiInvoiceRepository
         });
 
         // Return the processed response DTO
-        return new InvoiceReceived($response, $status);
+        return new InvoiceResponse($response, $status);
     }
 
     /**
@@ -59,11 +59,11 @@ class DgiiInvoiceRepository
      * @param  string  $token  The authentication token obtained from DGII.
      * @param  string  $trackId  The tracking identifier returned by DGII upon submission.
      * @param  string|null  $env  The target DGII environment (testecf, certecf, ecf).
-     * @return InvoiceReceived The response object containing DGII status details.
+     * @return InvoiceResponse The response object containing DGII status details.
      *
      * @throws ConnectionException
      */
-    public function findByTrackId(string $token, string $trackId, ?string $env = null): InvoiceReceived
+    public function findByTrackId(string $token, string $trackId, ?string $env = null): InvoiceResponse
     {
         // Wrap the execution to capture both response data and HTTP status
         [$response, $status] = $this->dgiiResponseWrapper->wrap(function () use ($token, $trackId, $env) {
@@ -77,7 +77,7 @@ class DgiiInvoiceRepository
         });
 
         // Return the processed response DTO
-        return new InvoiceReceived($response, $status);
+        return new InvoiceResponse($response, $status);
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace PlatinumPlace\LaravelDgii\Traits;
 
 use Illuminate\Http\Client\ConnectionException;
-use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceReceived;
+use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceResponse;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 
 trait InteractsWithInvoice
@@ -23,7 +23,7 @@ trait InteractsWithInvoice
      *
      * @throws ConnectionException
      */
-    protected function sendInvoice(InvoiceXml $object, string $filePath, string $token, ?string $env = null): InvoiceReceived
+    protected function sendInvoice(InvoiceXml $object, string $filePath, string $token, ?string $env = null): InvoiceResponse
     {
         return $object->isConsumeInvoice() ?
             $this->consumeRepository->send($token, $filePath, $env) :
@@ -35,7 +35,7 @@ trait InteractsWithInvoice
      *
      * @throws ConnectionException
      */
-    protected function findInvoiceStatus(InvoiceXml $object, string $token, ?string $trackId = null, ?string $env = null): InvoiceReceived
+    protected function findInvoiceStatus(InvoiceXml $object, string $token, ?string $trackId = null, ?string $env = null): InvoiceResponse
     {
         return $object->isConsumeInvoice() ?
             $this->consumeRepository->find($token, $object, $env) :

@@ -14,12 +14,12 @@ readonly class CancellationRangeData
      *
      * @param  CancellationRangeXml  $xml  The parsed cancellation range XML object.
      * @param  string  $path  The absolute path where the XML file is stored.
-     * @param  CancellationRangeReceived  $response  The response received from DGII after submission.
+     * @param  CancellationRangeResponse  $response  The response received from DGII after submission.
      */
     public function __construct(
-        public CancellationRangeXml $xml,
-        public string $path,
-        public CancellationRangeReceived $response,
+        public CancellationRangeXml      $xml,
+        public string                    $path,
+        public CancellationRangeResponse $response,
     ) {
         //
     }

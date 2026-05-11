@@ -10,7 +10,7 @@ La interacción con el paquete fluye a través de las siguientes capas:
 2.  **Services:** `DgiiService` actúa como el orquestador central para procesos de negocio. `XmlSigner` (detrás de `DgiiXml`) se encarga de la lógica técnica de criptografía.
 3.  **Actions:** Son clases con una única responsabilidad (`handle()`). Realizan tareas atómicas como firmar un XML (`SignInvoiceAction`) o persistir archivos (`StorageInvoiceAction`). En la v2.0, estas acciones se han simplificado y aplanado estructuralmente.
 4.  **Repositories:** Encapsulan las llamadas a los servicios web de la DGII y la interacción con el almacenamiento, reemplazando la antigua capa de "Clients".
-5.  **Data (DTOs & XML):** Centraliza la estructura de los datos que fluyen entre las capas, incluyendo objetos XML (`InvoiceXml`) y respuestas de la API (`InvoiceReceived`), garantizando integridad y tipado fuerte.
+5.  **Data (DTOs & XML):** Centraliza la estructura de los datos que fluyen entre las capas, incluyendo objetos XML (`InvoiceXml`) y respuestas de la API (`InvoiceResponse`), garantizando integridad y tipado fuerte.
 
 ## Flujo de Trabajo (Workflow)
 

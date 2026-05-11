@@ -7,12 +7,12 @@ namespace PlatinumPlace\LaravelDgii\Data\CancellationRange;
  *
  * This class wraps the raw response array to provide structured access to status and processing results.
  */
-readonly class CancellationRangeReceived
+readonly class CancellationRangeResponse
 {
     /**
-     * Create a new CancellationRangeReceived instance.
+     * Create a new CancellationRangeResponse instance.
      *
-     * @param  array  $response  The raw HTTP response data from DGII.
+     * @param  array  $response  The raw JSON response from DGII.
      */
     public function __construct(
         public array $response,

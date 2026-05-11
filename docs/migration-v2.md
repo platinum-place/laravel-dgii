@@ -49,7 +49,7 @@ El método `Dgii::submitInvoice()` (antiguo `send()`) ahora devuelve un objeto `
 ```php
 $data = Dgii::submitInvoice($arrayData);
 
-// Acceder a la respuesta (InvoiceReceived)
+// Acceder a la respuesta (InvoiceResponse)
 $response = $data->response; 
 
 // Acceder al XML firmado

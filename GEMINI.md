@@ -17,7 +17,7 @@ El paquete automatiza el ciclo de vida de los documentos fiscales electrónicos,
 
 El paquete sigue una arquitectura orientada a servicios y acciones altamente desacoplada:
 
-- **Data (`src/Data/`):** Contiene el núcleo de datos del paquete. Unifica DTOs (`InvoiceData`), representaciones XML (`AbstractXml`, `InvoiceXml`) y objetos de respuesta (`InvoiceReceived`).
+- **Data (`src/Data/`):** Contiene el núcleo de datos del paquete. Unifica DTOs (`InvoiceData`), representaciones XML (`AbstractXml`, `InvoiceXml`) y objetos de respuesta (`InvoiceResponse`).
 - **Repositories (`src/Repositories/`):** Capa de abstracción para persistencia y comunicación externa. Incluye `DgiiInvoiceRepository` para la API de la DGII y `StorageRepository` para el sistema de archivos.
 - **Services (`src/Services/`):** El orquestador principal es `DgiiService` (accedido vía el facade `Dgii`). Coordina el flujo de trabajo entre acciones y repositorios.
 - **Actions (`src/Actions/`):** Lógica de negocio atómica y aplanada. Cada clase realiza una única tarea técnica (ej: `SignInvoiceAction`, `SubmitInvoiceAction`, `StorageInvoiceAction`).

@@ -3,7 +3,7 @@
 namespace PlatinumPlace\LaravelDgii\Services;
 
 use Illuminate\Support\Facades\View;
-use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceReceived;
+use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceResponse;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\Enums\ArecfCodeEnum;
 use PlatinumPlace\LaravelDgii\Enums\ArecfStatusEnum;
@@ -30,10 +30,10 @@ class AcknowledgmentXmlParse
      * Flow: Extract data from InvoiceXml and InvoiceReceived -> Determine error codes -> Render Blade template -> Return XML.
      *
      * @param  InvoiceXml  $invoiceXml  The original invoice XML data object.
-     * @param  InvoiceReceived  $invoiceReceived  The response data from the submission.
+     * @param  InvoiceResponse  $invoiceReceived  The response data from the submission.
      * @return string The rendered ARECF XML content.
      */
-    public function make(InvoiceXml $invoiceXml, InvoiceReceived $invoiceReceived): string
+    public function make(InvoiceXml $invoiceXml, InvoiceResponse $invoiceReceived): string
     {
         $arecfCodeId = null;
 

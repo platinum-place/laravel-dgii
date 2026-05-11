@@ -10,10 +10,10 @@ use PlatinumPlace\LaravelDgii\Enums\ArecfStatusEnum;
  * This class wraps the raw response array to provide structured access to track IDs,
  * processing status, and validation messages.
  */
-readonly class InvoiceReceived
+readonly class InvoiceResponse
 {
     /**
-     * Create a new InvoiceReceived instance.
+     * Create a new InvoiceResponse instance.
      *
      * @param  array  $response  The raw HTTP response data from DGII.
      * @param  ArecfStatusEnum|null  $arecfStatusEnum  The calculated commercial approval status (optional).
