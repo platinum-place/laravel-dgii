@@ -37,7 +37,6 @@ Este paquete se apoya en soluciones robustas de la comunidad:
 - **[Guía de Migración (v1 a v2.0)](./docs/usage/migration-v2.md)** - **Lectura obligatoria para usuarios existentes.**
 - [Estructuras de Datos (e-CF)](./docs/usage/data-structures.md) - Detalle de campos para cada tipo de documento.
 - [Arquitectura del Sistema](./docs/internals/architecture.md) - Entiende las capas de Repositorios, Datos y Acciones.
-- [Servicios y Métodos](./docs/internals/services.md) - Guía del `DgiiService` y monitoreo.
 - [Catálogo de Acciones](./docs/internals/actions.md) - Lista de acciones atómicas disponibles.
 - [Convenciones del Proyecto](./docs/internals/conventions.md) - Estándares de código e idioma.
 - [Documentación Oficial DGII](https://dgii.gov.do/cicloContribuyente/facturacion/comprobantesFiscalesElectronicosE-CF/Paginas/documentacionSobreE-CF.aspx) - Manuales legales y técnicos.

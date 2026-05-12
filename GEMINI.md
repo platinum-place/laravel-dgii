@@ -18,7 +18,6 @@ El paquete automatiza el ciclo de vida de los documentos fiscales electrónicos,
 El paquete sigue una arquitectura orientada a servicios y acciones altamente desacoplada. Para más detalles técnicos, consulta:
 - **[Arquitectura del Sistema](./docs/internals/architecture.md)**
 - **[Catálogo de Acciones](./docs/internals/actions.md)**
-- **[Servicios y Métodos](./docs/internals/services.md)**
 
 Estructura de directorios principal:
 - **Data (`src/Data/`):** Contiene el núcleo de datos del paquete. Unifica DTOs (`InvoiceData`), representaciones XML (`AbstractXml`, `InvoiceXml`) y objetos de respuesta (`InvoiceResponse`).

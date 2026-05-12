@@ -37,7 +37,6 @@ Complete index of resources to master the DGII integration:
 - **[Migration Guide (v1 to v2.0)](./docs/usage/migration-v2.md)** - **Required reading for existing users.**
 - [Data Structures (e-CF)](./docs/usage/data-structures.md) - Field details for each document type.
 - [System Architecture](./docs/internals/architecture.md) - Understand the Repositories, Data, and Actions layers.
-- [Services and Methods](./docs/internals/services.md) - Guide to `DgiiService` and monitoring.
 - [Actions Catalog](./docs/internals/actions.md) - List of available atomic actions.
 - [Project Conventions](./docs/internals/conventions.md) - Code and language standards.
 - [Official DGII Documentation](https://dgii.gov.do/cicloContribuyente/facturacion/comprobantesFiscalesElectronicosE-CF/Paginas/documentacionSobreE-CF.aspx) - Legal and technical manuals.
