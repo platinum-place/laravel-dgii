@@ -18,9 +18,9 @@ use PlatinumPlace\LaravelDgii\Services\DgiiService;
  * @method static array receiveSeed(string $xml, ?string $env = null)
  * @method static string requestSeed(?string $env = null)
  * @method static array requestToken(string $path, ?string $env = null)
- * @method static array getServiceStatus(?string $env = null)
- * @method static array getMaintenanceWindows(?string $env = null)
- * @method static array getEnvironmentStatus(?string $env = null)
+ * @method static array getServiceStatus()
+ * @method static array getMaintenanceWindows()
+ * @method static array getEnvironmentStatus(string $env)
  *
  * @see DgiiService
  */

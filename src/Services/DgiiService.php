@@ -259,41 +259,39 @@ class DgiiService
     /**
      * Retrieve the general health status of the DGII web services.
      *
-     * @param  string|null  $env  The environment to check.
      * @return array Status information.
      *
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function getServiceStatus(?string $env = null): array
+    public function getServiceStatus(): array
     {
-        return $this->repository->getServiceStatus($env);
+        return $this->repository->getServiceStatus();
     }
 
     /**
      * Retrieve a list of scheduled maintenance windows from DGII.
      *
-     * @param  string|null  $env  The environment to check.
      * @return array Maintenance schedule information.
      *
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function getMaintenanceWindows(?string $env = null): array
+    public function getMaintenanceWindows(): array
     {
-        return $this->repository->getMaintenanceWindows($env);
+        return $this->repository->getMaintenanceWindows();
     }
 
     /**
      * Check the availability of a specific environment.
      *
-     * @param  string|null  $env  The environment to check.
+     * @param  string  $env  The environment to check.
      * @return array Detailed environment status.
      *
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function getEnvironmentStatus(?string $env = null): array
+    public function getEnvironmentStatus(string $env): array
     {
         return $this->repository->getEnvironmentStatus($env);
     }

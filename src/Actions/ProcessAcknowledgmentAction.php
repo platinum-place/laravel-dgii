@@ -24,8 +24,8 @@ class ProcessAcknowledgmentAction
      */
     public function __construct(
         protected AcknowledgmentXmlParser $xmlParser,
-        protected XmlSigner               $xmlSigner,
-        protected StorageRepository       $storage,
+        protected XmlSigner $xmlSigner,
+        protected StorageRepository $storage,
     ) {
         //
     }

@@ -35,14 +35,8 @@ class HttpMacroServiceProvider extends ServiceProvider
                 ->throw();
         });
 
-        Http::macro('dgiiStatusEcf', function (?string $environment = null) {
-            $env = $environment ?: config('dgii.environment');
-
-            $baseUrl = config('dgii.domains.statusecf');
-
-            $finalUrl = rtrim($baseUrl, '/').'/'.ltrim($env, '/');
-
-            return Http::baseUrl($finalUrl)
+        Http::macro('dgiiStatusEcf', function () {
+            return Http::baseUrl(config('dgii.domains.statusecf'))
                 ->withHeaders([
                     'accept' => '*/*',
                     'Authorization' => 'Apikey '.config('dgii.api_key'),

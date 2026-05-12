@@ -62,16 +62,15 @@ class DgiiRepository
     /**
      * Check the operational status of DGII web services.
      *
-     * @param  string|null  $env  The target DGII environment (testecf, certecf, ecf).
      * @return array The operational status data for various DGII services.
      *
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function getServiceStatus(?string $env = null): array
+    public function getServiceStatus(): array
     {
         // Execute the GET request to the global services status endpoint
-        return Http::dgiiStatusEcf($env)
+        return Http::dgiiStatusEcf()
             ->get(config('dgii.endpoints.status.services'))
             ->json() ?? throw new DgiiRepositoryException('Error obteniendo el estado de los servicios de la DGII.');
     }
@@ -79,16 +78,15 @@ class DgiiRepository
     /**
      * Retrieve the list of scheduled maintenance windows for DGII systems.
      *
-     * @param  string|null  $env  The target DGII environment (testecf, certecf, ecf).
      * @return array List of maintenance windows and their descriptions.
      *
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function getMaintenanceWindows(?string $env = null): array
+    public function getMaintenanceWindows(): array
     {
         // Execute the GET request to the maintenance schedule endpoint
-        return Http::dgiiStatusEcf($env)
+        return Http::dgiiStatusEcf()
             ->get(config('dgii.endpoints.status.maintenance'))
             ->json() ?? throw new DgiiRepositoryException('Error obteniendo las ventanas de mantenimiento de la DGII.');
     }
@@ -96,23 +94,23 @@ class DgiiRepository
     /**
      * Check the overall availability of a specific DGII environment.
      *
-     * @param  string|null  $env  The target DGII environment (testecf, certecf, ecf).
+     * @param  string  $env  The target DGII environment (testecf, certecf, ecf).
      * @return array Environmental status data, including availability percentages.
      *
      * @throws RequestException
-     * @throws ConnectionException
+     *                          * @throws ConnectionException
      */
-    public function getEnvironmentStatus(?string $env = null): array
+    public function getEnvironmentStatus(string $env): array
     {
         // Map the environment string to the integer code expected by DGII
         $environmentCode = match ($env) {
+            'testecf' => 1,
             'ecf' => 2,
             'certecf' => 3,
-            default => 1,
         };
 
         // Execute the GET request with the environment parameter
-        return Http::dgiiStatusEcf($env)
+        return Http::dgiiStatusEcf()
             ->get(config('dgii.endpoints.status.environment'), [
                 'ambiente' => $environmentCode,
             ])
