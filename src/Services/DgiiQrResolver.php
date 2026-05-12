@@ -80,7 +80,7 @@ class DgiiQrResolver
             '%s/%s/%s?%s',
             config('dgii.domains.fc'),
             $env,
-            config('dgii.endpoints.fc.timbre'),
+            config('dgii.endpoints.fc.qr'),
             http_build_query($parameters)
         );
     }
