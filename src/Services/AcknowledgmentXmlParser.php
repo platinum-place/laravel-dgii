@@ -14,7 +14,7 @@ use PlatinumPlace\LaravelDgii\Enums\ArecfStatusEnum;
  * This service creates the XML required to acknowledge the receipt of an e-CF,
  * including the status (received or rejected) and any relevant error codes.
  */
-class AcknowledgmentXmlParse
+class AcknowledgmentXmlParser
 {
     /**
      * Create a new class instance.

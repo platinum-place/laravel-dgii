@@ -7,7 +7,7 @@ use PlatinumPlace\LaravelDgii\Data\Acknowledgment\AcknowledgmentXml;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceResponse;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
-use PlatinumPlace\LaravelDgii\Services\AcknowledgmentXmlParse;
+use PlatinumPlace\LaravelDgii\Services\AcknowledgmentXmlParser;
 use PlatinumPlace\LaravelDgii\Services\XmlSigner;
 
 /**
@@ -23,9 +23,9 @@ class ProcessAcknowledgmentAction
      * Create a new process acknowledgment action instance.
      */
     public function __construct(
-        protected AcknowledgmentXmlParse $xmlParser,
-        protected XmlSigner $xmlSigner,
-        protected StorageRepository $storage,
+        protected AcknowledgmentXmlParser $xmlParser,
+        protected XmlSigner               $xmlSigner,
+        protected StorageRepository       $storage,
     ) {
         //
     }
