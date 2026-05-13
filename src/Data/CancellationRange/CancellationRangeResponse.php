@@ -13,6 +13,11 @@ readonly class CancellationRangeResponse
         //
     }
 
+    public function getResponse(): array
+    {
+        return $this->response;
+    }
+
     public function getStatus(): ?string
     {
         return $this->response['nombre'] ?? null;

@@ -13,6 +13,11 @@ readonly class CommercialApprovalResponse
         //
     }
 
+    public function getResponse(): array
+    {
+        return $this->response;
+    }
+
     public function getStatus(): ?string
     {
         return $this->response['estado'] ?? null;

@@ -16,6 +16,11 @@ readonly class InvoiceResponse
         //
     }
 
+    public function getResponse(): array
+    {
+        return $this->response;
+    }
+
     public function getMessage(): ?string
     {
         if (! empty($this->response['mensajes'])) {
