@@ -28,7 +28,7 @@ class ConsumeInvoiceRepository extends AbstractInvoiceRepository
      */
     protected function getEndpointKey(): string
     {
-        return 'fc';
+        return 'consume_invoice';
     }
 
     /**

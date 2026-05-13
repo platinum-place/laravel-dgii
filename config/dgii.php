@@ -55,8 +55,8 @@ return [
     */
 
     'domains' => [
-        'invoice' => env('DGII_DOMAIN_ECF', 'https://ecf.dgii.gov.do'),
-        'consume_invoice' => env('DGII_DOMAIN_FC', 'https://fc.dgii.gov.do'),
+        'invoice' => env('DGII_DOMAIN_INVOICE', 'https://ecf.dgii.gov.do'),
+        'consume_invoice' => env('DGII_DOMAIN_CONSUME_INVOICE', 'https://fc.dgii.gov.do'),
         'status' => env('DGII_DOMAIN_STATUS', 'https://statusecf.dgii.gov.do'),
     ],
 
