@@ -13,10 +13,10 @@ class HttpMacroServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Http::macro('dgiiEcf', function (?string $environment = null) {
+        Http::macro('dgiiInvoice', function (?string $environment = null) {
             $env = $environment ?: config('dgii.environment');
 
-            $baseUrl = config('dgii.domains.ecf');
+            $baseUrl = config('dgii.domains.invoice');
 
             $finalUrl = rtrim($baseUrl, '/').'/'.ltrim($env, '/');
 
@@ -24,10 +24,10 @@ class HttpMacroServiceProvider extends ServiceProvider
                 ->throw();
         });
 
-        Http::macro('dgiiFc', function (?string $environment = null) {
+        Http::macro('dgiiConsumeInvoice', function (?string $environment = null) {
             $env = $environment ?: config('dgii.environment');
 
-            $baseUrl = config('dgii.domains.fc');
+            $baseUrl = config('dgii.domains.consume_invoice');
 
             $finalUrl = rtrim($baseUrl, '/').'/'.ltrim($env, '/');
 
@@ -35,8 +35,8 @@ class HttpMacroServiceProvider extends ServiceProvider
                 ->throw();
         });
 
-        Http::macro('dgiiStatusEcf', function () {
-            return Http::baseUrl(config('dgii.domains.statusecf'))
+        Http::macro('dgiiStatus', function () {
+            return Http::baseUrl(config('dgii.domains.status'))
                 ->withHeaders([
                     'accept' => '*/*',
                     'Authorization' => 'Apikey '.config('dgii.api_key'),
