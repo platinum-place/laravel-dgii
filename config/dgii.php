@@ -55,9 +55,9 @@ return [
     */
 
     'domains' => [
-        'ecf' => env('DGII_DOMAIN_ECF', 'https://ecf.dgii.gov.do'),
-        'fc' => env('DGII_DOMAIN_FC', 'https://fc.dgii.gov.do'),
-        'statusecf' => env('DGII_DOMAIN_STATUS', 'https://statusecf.dgii.gov.do'),
+        'invoice' => env('DGII_DOMAIN_ECF', 'https://ecf.dgii.gov.do'),
+        'consume_invoice' => env('DGII_DOMAIN_FC', 'https://fc.dgii.gov.do'),
+        'status' => env('DGII_DOMAIN_STATUS', 'https://statusecf.dgii.gov.do'),
     ],
 
     /*
@@ -83,16 +83,16 @@ return [
     |--------------------------------------------------------------------------
     |
     | Specific technical parameters for internal validations, such as
-    | document types and consumption billing limits.
+    | document types and consume billing limits.
     |
     */
 
     'rules' => [
-        // Default e-CF type for Consumption Invoice (Standard 32)
-        'fc_type' => (int) env('DGII_FC_TYPE', 32),
+        // Default e-CF type for consume Invoice (Standard 32)
+        'consume_invoice_type' => (int) env('DGII_CONSUME_INVOICE_TYPE', 32),
 
-        // Amount limit for an invoice to be considered simplified consumption
-        'fc_limit' => (int) env('DGII_FC_LIMIT', 250000),
+        // Amount limit for an invoice to be considered simplified consume
+        'consume_invoice_limit' => (int) env('DGII_CONSUME_INVOICE_LIMIT', 250000),
     ],
 
     /*
@@ -135,13 +135,13 @@ return [
         'invoice' => [
             'send' => 'recepcion/api/facturaselectronicas',
             'status' => 'consultaresultado/api/consultas/estado',
-            'trackids' => 'consultatrackids/api/trackids/consulta',
+            'list' => 'consultatrackids/api/trackids/consulta',
             'check' => 'consultaestado/api/consultas/estado',
             'qr' => 'ConsultaTimbre',
         ],
 
-        // Consumption Invoice Services (Domain: fc)
-        'fc' => [
+        // consume Invoice Services (Domain: fc)
+        'consume_invoice' => [
             'send' => 'recepcionfc/api/recepcion/ecf',
             'status' => 'consultarfce/api/Consultas/Consulta',
             'qr' => 'ConsultaTimbreFC',

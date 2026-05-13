@@ -38,9 +38,9 @@ $cancellation = Dgii::sendCancellationRange($data);
 
 Si estabas extendiendo el paquete o utilizando clases internas directamente, ten en cuenta los siguientes cambios de ubicación:
 
-- **Clients -> Repositories:** La capa de comunicación HTTP ahora se encuentra en `PlatinumPlace\LaravelDgii\Repositories`.
+- **Clients -> Repositories:** La capa de comunicación HTTP ahora se encuentra en `PlatinumPlace\LaravelDgii\Repositories`. Los repositorios han eliminado el prefijo `Dgii` de sus nombres (ej. `InvoiceRepository`).
 - **ValueObjects/DTOs -> Data:** Todos los objetos de transferencia de datos y representaciones XML ahora están bajo `PlatinumPlace\LaravelDgii\Data`.
-- **Actions:** Se han eliminado los sub-directorios dentro de `Actions/`. Todas las acciones ahora residen directamente en el namespace raíz de acciones.
+- **Actions:** Se han organizado por **Dominios** (ej. `Invoices`, `Auth`, `Xmls`) y **Roles** (`Orchestrators`, `Mappers`) para mejorar la mantenibilidad y escalabilidad del paquete.
 
 ## 3. Respuestas Enriquecidas
 

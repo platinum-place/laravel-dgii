@@ -21,9 +21,9 @@ El paquete sigue una arquitectura orientada a servicios y acciones altamente des
 
 Estructura de directorios principal:
 - **Data (`src/Data/`):** Contiene el núcleo de datos del paquete. Unifica DTOs (`InvoiceData`), representaciones XML (`AbstractXml`, `InvoiceXml`) y objetos de respuesta (`InvoiceResponse`).
-- **Repositories (`src/Repositories/`):** Capa de abstracción para persistencia y comunicación externa. Incluye `DgiiInvoiceRepository` para la API de la DGII y `StorageRepository` para el sistema de archivos.
-- **Services (`src/Services/`):** El orquestador principal es `DgiiService` (accedido vía el facade `Dgii`). Coordina el flujo de trabajo entre acciones y repositorios.
-- **Actions (`src/Actions/`):** Lógica de negocio atómica y aplanada. Cada clase realiza una única tarea técnica (ej: `SignInvoiceAction`, `SubmitInvoiceAction`, `StorageInvoiceAction`).
+- **Repositories (`src/Repositories/`):** Capa de abstracción para persistencia y comunicación externa. Incluye `InvoiceRepository` para la API de la DGII y `StorageRepository` para el sistema de archivos.
+- **Services (`src/Services/`):** El orquestador principal es `DgiiService` (accedido vía el facade `Dgii`). `XmlService` (vía `DgiiXml`) coordina la firma y validación de certificados.
+- **Actions (`src/Actions/`):** Lógica de negocio atómica organizada por dominios (ej. `Invoices`, `Auth`, `Xmls`) y roles (`Orchestrators`, `Mappers`).
 - **Providers (`src/Providers/`):** Configuración del contenedor de Laravel y macros de HTTP para la integración con la DGII.
 - **Templates (`resources/views/`):** Plantillas Blade para la generación de XML dinámico.
 

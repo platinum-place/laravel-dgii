@@ -5,6 +5,17 @@ All notable changes to `laravel-dgii` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-05-12
+
+### Changed
+- **BREAKING CHANGE:** Organized the `Actions/` directory by domains (`Invoices`, `Auth`, `Xmls`, etc.) and roles (`Orchestrators`, `Mappers`) for better scalability.
+- **BREAKING CHANGE:** Simplified Repository names by removing the `Dgii` prefix (e.g., `InvoiceRepository`, `ApiRepository`).
+- Renamed the internal `XmlSigner` service to `XmlService` (accessed via `DgiiXml` facade) to reflect its broader role in certificate validation and XML management.
+- Updated all internal references and documentation to match the new naming conventions and structure.
+
+### Fixed
+- Corrected a bug in `AcknowledgmentXml` where it was trying to access an undefined `xmlSigner` property instead of `xml`.
+
 ## [2.0.14] - 2026-05-12
 
 ### Fixed
