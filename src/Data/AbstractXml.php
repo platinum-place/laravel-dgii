@@ -5,26 +5,14 @@ namespace PlatinumPlace\LaravelDgii\Data;
 use InvalidArgumentException;
 use SimpleXMLElement;
 
-/**
- * Base class for DGII XML documents.
- * Provides automatic validation and structured access to content.
- */
 abstract readonly class AbstractXml
 {
-    /** @var SimpleXMLElement The loaded XML root element for structured access. */
     protected SimpleXMLElement $xml;
 
-    /** @var string The raw XML content as a string. */
     public string $content;
 
     /**
-     * Create a new class instance and validate XML content.
-     *
-     * Automatically parses the XML string into a SimpleXMLElement.
-     *
-     * @param  string  $xml  The raw XML content to process and validate.
-     *
-     * @throws InvalidArgumentException If the XML content is malformed or invalid.
+     * Create a new class instance.
      */
     public function __construct(string $xml)
     {
@@ -36,9 +24,22 @@ abstract readonly class AbstractXml
         if ($loadedXml === false) {
             $errors = libxml_get_errors();
             libxml_clear_errors();
-            throw new InvalidArgumentException('The XML content is invalid: '.($errors[0]->message ?? 'Unknown error'));
+            throw new InvalidArgumentException('Formato inválido: '.($errors[0]->message ?? 'Error desconocido.'));
         }
 
         $this->xml = $loadedXml;
+    }
+
+    public function withoutSignature(): ?string
+    {
+        $xml = clone $this->xml;
+
+        $xml->registerXPathNamespace('ds', 'http://www.w3.org/2000/09/xmldsig#');
+
+        foreach ($xml->xpath('//ds:Signature') as $signature) {
+            unset($signature[0]);
+        }
+
+        return $xml->asXML();
     }
 }

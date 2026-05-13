@@ -4,415 +4,293 @@ namespace PlatinumPlace\LaravelDgii\Data\Invoice;
 
 use PlatinumPlace\LaravelDgii\Data\AbstractXml;
 
-/**
- * Represents an Electronic Fiscal Receipt XML document (e-CF).
- *
- * This class provides extensive methods to extract header data, items,
- * and security details from any valid e-CF XML document.
- */
 readonly class InvoiceXml extends AbstractXml
 {
     /**
-     * Return the XML content without the digital signature block.
-     *
-     * Useful for auditing, canonicalization, or pre-processing tasks.
-     *
-     * @return string|null The XML string without the <ds:Signature> tag.
-     */
-    public function withoutSignature(): ?string
-    {
-        // Clone the original XML object to avoid modifying the current state
-        $xml = clone $this->xml;
-
-        // Register the XML Digital Signature namespace
-        $xml->registerXPathNamespace('ds', 'http://www.w3.org/2000/09/xmldsig#');
-
-        // Locate and remove all Signature elements
-        foreach ($xml->xpath('//ds:Signature') as $signature) {
-            unset($signature[0]);
-        }
-
-        // Return the resulting XML as a string
-        return $xml->asXML();
-    }
-
-    /**
-     * Get the e-NCF (Electronic Fiscal Receipt Sequence Number).
-     *
-     * @return string|null The e-NCF sequence or null if not found.
+     * Get the e-CF sequence number (eNCF).
+     * Corresponds to <eNCF> in <IdDoc>.
      */
     public function getSequenceNumber(): ?string
     {
-        // Extract the e-NCF from the identification section (IdDoc)
-        if (! empty($this->xml->Encabezado?->IdDoc)) {
-            return (string) $this->xml->Encabezado?->IdDoc?->eNCF;
-        }
+        $sequence = $this->xml->Encabezado?->IdDoc?->eNCF;
 
-        return null;
+        return ! empty($sequence) ? (string) $sequence : null;
     }
 
     /**
-     * Get the 6-digit security code for the e-CF.
-     *
-     * For RFCE, it's explicitly defined; for standard e-CF, it's derived from the signature.
-     *
-     * @return string|null The 6-digit security code.
+     * Get the security code of the e-CF.
+     * Corresponds to <CodigoSeguridadeCF> or the first 6 characters of the SignatureValue.
      */
     public function getSecurityCode(): ?string
     {
-        // Check if explicitly defined (typical in RFCE)
-        if (! empty($this->xml->Encabezado?->CodigoSeguridadeCF)) {
-            return (string) $this->xml->Encabezado?->CodigoSeguridadeCF;
+        $securityCode = $this->xml->Encabezado?->CodigoSeguridadeCF;
+
+        if (! empty($securityCode)) {
+            return (string) $securityCode;
         }
 
-        // Derive from the digital signature value if available
-        if (! empty($this->xml->Signature?->SignatureValue)) {
-            return substr((string) $this->xml->Signature?->SignatureValue, 0, 6);
-        }
+        $signatureValue = $this->xml->Signature?->SignatureValue;
 
-        return null;
+        return ! empty($signatureValue) ? substr((string) $signatureValue, 0, 6) : null;
     }
 
     /**
-     * Get the digital signature date and time from the document.
-     *
-     * @return string|null ISO format date/time or null.
+     * Get the date and time when the document was signed.
+     * Corresponds to <FechaHoraFirma>.
      */
     public function getSignatureDate(): ?string
     {
-        // Check if the signature date is present in the XML
-        if (! empty($this->xml->FechaHoraFirma)) {
-            return (string) $this->xml->FechaHoraFirma;
-        }
+        $signatureDate = $this->xml->FechaHoraFirma;
 
-        // Fallback to current date if not found
-        return date('d-m-Y H:i:s');
+        return ! empty($signatureDate) ? (string) $signatureDate : date('d-m-Y H:i:s');
     }
 
     /**
-     * Get the invoice type code (e.g., 31, 32, 33, 41).
-     *
-     * @return string|null The e-CF type code.
+     * Get the e-CF type.
+     * Corresponds to <TipoeCF> in <IdDoc>.
      */
     public function getInvoiceType(): ?string
     {
-        // Extract the TipoeCF field from the IdDoc section
-        if (! empty($this->xml->Encabezado?->IdDoc?->TipoeCF)) {
-            return (string) $this->xml->Encabezado?->IdDoc?->TipoeCF;
-        }
+        $type = $this->xml->Encabezado?->IdDoc?->TipoeCF;
 
-        return null;
+        return ! empty($type) ? (string) $type : null;
     }
 
     /**
-     * Get the total amount of the document.
-     *
-     * @return string|null The total amount as a string.
+     * Get the total amount of the invoice.
+     * Corresponds to <MontoTotal> in <Totales>.
      */
     public function getTotalAmount(): ?string
     {
-        // Extract the total amount from the Totales section
-        if (! empty($this->xml->Encabezado?->Totales?->MontoTotal)) {
-            return (string) $this->xml->Encabezado?->Totales?->MontoTotal;
-        }
+        $total = $this->xml->Encabezado?->Totales?->MontoTotal;
 
-        return null;
+        return ! empty($total) ? (string) $total : null;
     }
 
     /**
-     * Determine if the XML is an RFCE (Consolidated Consumption Summary).
-     *
-     * @return bool True if it is an RFCE.
+     * Check if the document is a Electronic Consumer Invoice Summary (RFCE).
      */
     public function isRfce(): bool
     {
-        // RFCEs are identified by the presence of a specific security code field in the header
-        return ! empty($this->xml->Encabezado?->CodigoSeguridadeCF);
+        $securityCode = $this->xml->Encabezado?->CodigoSeguridadeCF;
+
+        return ! empty($securityCode);
     }
 
     /**
-     * Determine if it's a consumption invoice (B32) based on type and threshold rules.
-     *
-     * @return bool True if it's considered a consumption invoice.
+     * Check if the document is a consume invoice based on type and total amount rules.
      */
     public function isConsumeInvoice(): bool
     {
-        // Get technical parameters from the document and config
         $type = (int) $this->getInvoiceType();
         $total = (float) $this->getTotalAmount();
 
-        // Check against the consumption invoice type and amount threshold
-        return
-            $this->isRfce() ||
-            ($type === (int) config('dgii.rules.fc_type') && $total < (float) config('dgii.rules.fc_limit'));
+        $consumeType = (int) config('dgii.rules.consume_invoice_type');
+        $consumeLimit = (float) config('dgii.rules.consume_invoice_limit');
+
+        return $this->isRfce() || ($type === $consumeType && $total < $consumeLimit);
     }
 
     /**
-     * Get the sender's identification (RNC).
-     *
-     * @return string|null The sender's RNC.
+     * Get the sender identification (RNC).
+     * Corresponds to <RNCEmisor> in <Emisor>.
      */
     public function getSenderIdentification(): ?string
     {
-        // Extract the sender's RNC from the Emisor section
-        if (! empty($this->xml->Encabezado?->Emisor->RNCEmisor)) {
-            return (string) $this->xml->Encabezado?->Emisor->RNCEmisor;
-        }
+        $identification = $this->xml->Encabezado?->Emisor->RNCEmisor;
 
-        return null;
+        return ! empty($identification) ? (string) $identification : null;
     }
 
     /**
-     * Get the document emission date.
-     *
-     * @return string|null The emission date string.
+     * Get the document release date.
+     * Corresponds to <FechaEmision> in <Emisor>.
      */
     public function getReleaseDate(): ?string
     {
-        // Extract the emission date from the Emisor section
-        if (! empty($this->xml->Encabezado?->Emisor?->FechaEmision)) {
-            return (string) $this->xml->Encabezado?->Emisor?->FechaEmision;
-        }
+        $releaseDate = $this->xml->Encabezado?->Emisor?->FechaEmision;
 
-        return null;
+        return ! empty($releaseDate) ? (string) $releaseDate : null;
     }
 
     /**
-     * Get the buyer's identification (RNC or Foreign ID).
-     *
-     * @return string|null The buyer's ID or null if anonymous/missing.
+     * Get the buyer identification (RNC or Foreigner ID).
+     * Corresponds to <RNCComprador> or <IdentificadorExtranjero> in <Comprador>.
      */
     public function getBuyerIdentification(): ?string
     {
-        // Try to extract foreign identifier first
-        if (! empty($this->xml->Encabezado?->Comprador?->IdentificadorExtranjero)) {
-            return (string) $this->xml->Encabezado?->Comprador?->IdentificadorExtranjero;
-        }
+        $identification = $this->xml->Encabezado?->Comprador?->RNCComprador 
+            ?? $this->xml->Encabezado?->Comprador?->IdentificadorExtranjero;
 
-        // Fallback to local RNC
-        if (! empty($this->xml->Encabezado?->Comprador?->RNCComprador)) {
-            return (string) $this->xml->Encabezado?->Comprador?->RNCComprador;
-        }
-
-        return null;
+        return ! empty($identification) ? (string) $identification : null;
     }
 
     /**
-     * Get a suggested file name for the XML based on sender and sequence.
-     *
-     * @return string|null The generated filename.
+     * Get the generated XML name based on sender identification and sequence.
      */
     public function getXmlName(): ?string
     {
-        // Combine sender RNC and sequence number to form the filename
-        if (! empty($this->xml->Encabezado)) {
-            return $this->getSenderIdentification().$this->getSequenceNumber();
-        }
+        $header = $this->xml->Encabezado;
 
-        return null;
+        return ! empty($header) ? $this->getSenderIdentification().$this->getSequenceNumber() : null;
     }
 
     /**
-     * Get the sequence expiration date.
-     *
-     * @return string|null The expiration date string.
+     * Get the due date for the sequence.
+     * Corresponds to <FechaVencimientoSecuencia> in <IdDoc>.
      */
     public function getSequenceDueDate(): ?string
     {
-        // Extract the sequence expiration date from the IdDoc section
-        if (! empty($this->xml->Encabezado?->IdDoc?->FechaVencimientoSecuencia)) {
-            return (string) $this->xml->Encabezado?->IdDoc?->FechaVencimientoSecuencia;
-        }
+        $dueDate = $this->xml->Encabezado?->IdDoc?->FechaVencimientoSecuencia;
 
-        return null;
+        return ! empty($dueDate) ? (string) $dueDate : null;
     }
 
     /**
-     * Get the modified e-NCF (referenced in Credit/Debit Notes).
-     *
-     * @return string|null The original e-NCF sequence number.
+     * Get the modified e-NCF sequence number.
+     * Corresponds to <eNCFModificado> in <IdDoc>.
      */
     public function getModifiedSequenceNumber(): ?string
     {
-        // Extract the referenced e-NCF for modification notes
-        if (! empty($this->xml->Encabezado?->IdDoc?->eNCFModificado)) {
-            return (string) $this->xml->Encabezado?->IdDoc?->eNCFModificado;
-        }
+        $modifiedSequence = $this->xml->Encabezado?->IdDoc?->eNCFModificado;
 
-        return null;
+        return ! empty($modifiedSequence) ? (string) $modifiedSequence : null;
     }
 
     /**
-     * Get the modification Reason code for notes.
-     *
-     * @return string|null The modification code.
+     * Get the modification code.
+     * Corresponds to <CodigoModificacion> in <IdDoc>.
      */
     public function getModificationCode(): ?string
     {
-        // Extract the modification reason code
-        if (! empty($this->xml->Encabezado?->IdDoc?->CodigoModificacion)) {
-            return (string) $this->xml->Encabezado?->IdDoc?->CodigoModificacion;
-        }
+        $modificationCode = $this->xml->Encabezado?->IdDoc?->CodigoModificacion;
 
-        return null;
+        return ! empty($modificationCode) ? (string) $modificationCode : null;
     }
 
     /**
-     * Get additional information about the buyer if present.
-     *
-     * @return string|null Additional info or null.
+     * Get additional information/observations for the buyer.
+     * Corresponds to <InformacionAdicionalComprador> in <Comprador>.
      */
     public function getObservations(): ?string
     {
-        // Extract additional buyer info/observations
-        if (! empty($this->xml->Encabezado?->Comprador?->InformacionAdicionalComprador)) {
-            return (string) $this->xml->Encabezado?->Comprador?->InformacionAdicionalComprador;
-        }
+        $observations = $this->xml->Encabezado?->Comprador?->InformacionAdicionalComprador;
 
-        return null;
+        return ! empty($observations) ? (string) $observations : null;
     }
 
     /**
-     * Get all invoice line items from the document.
-     *
-     * @return array List of items with their quantities, prices, and totals.
+     * Get the invoice line items.
+     * Corresponds to <DetallesItems>.
      */
     public function getLines(): array
     {
         $lines = [];
+        $items = $this->xml->DetallesItems?->Item;
 
-        // Check if there are line items in the document
-        if (! empty($this->xml->DetallesItems?->Item)) {
-            // Iterate through each item and extract details
-            foreach ($this->xml->DetallesItems?->Item as $item) {
-                $lines[] = [
-                    'NumeroLinea' => (int) $item->NumeroLinea,
-                    'NombreItem' => (string) $item->NombreItem,
-                    'CantidadItem' => (float) $item->CantidadItem,
-                    'PrecioUnitarioItem' => (float) $item->PrecioUnitarioItem,
-                    'DescuentoMonto' => (float) ($item->DescuentoMonto ?? 0),
-                    'MontoItem' => (float) $item->MontoItem,
-                    'MontoImpuesto' => (float) ($item->MontoImpuesto ?? 0),
-                ];
-            }
+        if (empty($items)) {
+            return $lines;
+        }
+
+        foreach ($items as $item) {
+            $lines[] = [
+                'NumeroLinea' => (int) $item->NumeroLinea,
+                'NombreItem' => (string) $item->NombreItem,
+                'CantidadItem' => (float) $item->CantidadItem,
+                'PrecioUnitarioItem' => (float) $item->PrecioUnitarioItem,
+                'DescuentoMonto' => (float) ($item->DescuentoMonto ?? 0),
+                'MontoItem' => (float) $item->MontoItem,
+                'MontoImpuesto' => (float) ($item->MontoImpuesto ?? 0),
+            ];
         }
 
         return $lines;
     }
 
     /**
-     * Get the buyer's corporate name (Razon Social).
-     *
-     * @return string|null The corporate name or null.
+     * Get the buyer corporate name.
+     * Corresponds to <RazonSocialComprador> in <Comprador>.
      */
     public function getBuyerCorporateName(): ?string
     {
-        // Extract the buyer's corporate name
-        if (! empty($this->xml->Encabezado?->Comprador?->RazonSocialComprador)) {
-            return (string) $this->xml->Encabezado?->Comprador?->RazonSocialComprador;
-        }
+        $corporateName = $this->xml->Encabezado?->Comprador?->RazonSocialComprador;
 
-        return null;
+        return ! empty($corporateName) ? (string) $corporateName : null;
     }
 
     /**
-     * Get the buyer's physical address.
-     *
-     * @return string|null The address string or null.
+     * Get the buyer address.
+     * Corresponds to <DireccionComprador> in <Comprador>.
      */
     public function getBuyerAddress(): ?string
     {
-        // Extract the buyer's address
-        if (! empty($this->xml->Encabezado?->Comprador?->DireccionComprador)) {
-            return (string) $this->xml->Encabezado?->Comprador?->DireccionComprador;
-        }
+        $address = $this->xml->Encabezado?->Comprador?->DireccionComprador;
 
-        return null;
+        return ! empty($address) ? (string) $address : null;
     }
 
     /**
-     * Check if the buyer is identified as a foreigner.
-     *
-     * @return bool True if buyer has a foreign identifier.
+     * Check if the buyer is a foreigner.
      */
     public function isBuyerForeigner(): bool
     {
-        // Presence of the foreign identifier field indicates a foreigner
-        return ! empty($this->xml->Encabezado?->Comprador?->IdentificadorExtranjero);
+        $foreignerId = $this->xml->Encabezado?->Comprador?->IdentificadorExtranjero;
+
+        return ! empty($foreignerId);
     }
 
     /**
-     * Get the sender's corporate name (Razón Social).
-     *
-     * @return string|null The corporate name or null.
+     * Get the sender corporate name.
+     * Corresponds to <RazonSocialEmisor> in <Emisor>.
      */
     public function getSenderCorporateName(): ?string
     {
-        // Extract the sender's corporate name
-        if (! empty($this->xml->Encabezado?->Emisor->RazonSocialEmisor)) {
-            return (string) $this->xml->Encabezado?->Emisor->RazonSocialEmisor;
-        }
+        $corporateName = $this->xml->Encabezado?->Emisor->RazonSocialEmisor;
 
-        return null;
+        return ! empty($corporateName) ? (string) $corporateName : null;
     }
 
     /**
-     * Get the sender's physical address.
-     *
-     * @return string|null The address string or null.
+     * Get the sender address.
+     * Corresponds to <DireccionEmisor> in <Emisor>.
      */
     public function getSenderAddress(): ?string
     {
-        // Extract the sender's address
-        if (! empty($this->xml->Encabezado?->Emisor->DireccionEmisor)) {
-            return (string) $this->xml->Encabezado?->Emisor->DireccionEmisor;
-        }
+        $address = $this->xml->Encabezado?->Emisor->DireccionEmisor;
 
-        return null;
+        return ! empty($address) ? (string) $address : null;
     }
 
     /**
-     * Get the total ITBIS (VAT) amount.
-     *
-     * @return float|null Total taxes or null.
+     * Get the total taxes (ITBIS).
+     * Corresponds to <TotalITBIS> in <Totales>.
      */
     public function getTotalTaxes(): ?float
     {
-        // Extract the total tax amount from the totals section
-        if (! empty($this->xml->Encabezado?->Totales?->TotalITBIS)) {
-            return (float) $this->xml->Encabezado?->Totales?->TotalITBIS;
-        }
+        $totalTaxes = $this->xml->Encabezado?->Totales?->TotalITBIS;
 
-        return null;
+        return ! empty($totalTaxes) ? (float) $totalTaxes : null;
     }
 
     /**
-     * Get the total amount subject to taxes (Monto Gravado).
-     *
-     * @return float|null Total taxed amount or null.
+     * Get the total amount taxed.
+     * Corresponds to <MontoGravadoTotal> in <Totales>.
      */
     public function getTotalAmountTaxed(): ?float
     {
-        // Extract the total taxed amount from the totals section
-        if (! empty($this->xml->Encabezado?->Totales?->MontoGravadoTotal)) {
-            return (float) $this->xml->Encabezado?->Totales?->MontoGravadoTotal;
-        }
+        $totalTaxed = $this->xml->Encabezado?->Totales?->MontoGravadoTotal;
 
-        return null;
+        return ! empty($totalTaxed) ? (float) $totalTaxed : null;
     }
 
     /**
      * Get the total exempt amount.
-     *
-     * @return float|null Total exempt amount or null.
+     * Corresponds to <MontoExento> in <Totales>.
      */
     public function getTotalExempt(): ?float
     {
-        // Extract the total exempt amount from the totals section
-        if (! empty($this->xml->Encabezado?->Totales?->MontoExento)) {
-            return (float) $this->xml->Encabezado?->Totales?->MontoExento;
-        }
+        $exemptAmount = $this->xml->Encabezado?->Totales?->MontoExento;
 
-        return null;
+        return ! empty($exemptAmount) ? (float) $exemptAmount : null;
     }
 }

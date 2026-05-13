@@ -4,58 +4,37 @@ namespace PlatinumPlace\LaravelDgii\Data\Acknowledgment;
 
 use PlatinumPlace\LaravelDgii\Data\AbstractXml;
 
-/**
- * Represents an Acknowledgment XML document (Acuse de Recibo).
- */
 readonly class AcknowledgmentXml extends AbstractXml
 {
     /**
-     * Get the buyer's identification (RNC) from the document content.
-     *
-     * @return string|null The buyer's identification number or null if not found.
+     * Get the buyer identification (RNC).
+     * Corresponds to <RNCComprador> in <DetalleAcusedeRecibo>.
      */
     public function getBuyerIdentification(): ?string
     {
-        // Check if the buyer RNC exists in the acknowledgment details
-        if (! empty($this->xmlSigner?->DetalleAcusedeRecibo?->RNCComprador)) {
-            // Return the value as a string
-            return (string) $this->xmlSigner?->DetalleAcusedeRecibo?->RNCComprador;
-        }
+        $identification = $this->xml?->DetalleAcusedeRecibo?->RNCComprador;
 
-        return null;
+        return ! empty($identification) ? (string) $identification : null;
     }
 
     /**
-     * Get the e-CF sequence number (eNCF) from the document content.
-     *
-     * @return string|null The e-CF sequence number or null if not found.
+     * Get the e-CF sequence number (eNCF).
+     * Corresponds to <eNCF> in <DetalleAcusedeRecibo>.
      */
     public function getSequenceNumber(): ?string
     {
-        // Check if the sequence number exists in the acknowledgment details
-        if (! empty($this->xmlSigner?->DetalleAcusedeRecibo?->eNCF)) {
-            // Return the value as a string
-            return (string) $this->xmlSigner?->DetalleAcusedeRecibo?->eNCF;
-        }
+        $sequence = $this->xml?->DetalleAcusedeRecibo?->eNCF;
 
-        return null;
+        return ! empty($sequence) ? (string) $sequence : null;
     }
 
     /**
-     * Get the suggested name for the XML file based on its content.
-     *
-     * Combines buyer RNC and e-CF sequence number.
-     *
-     * @return string|null The generated XML filename or null if required data is missing.
+     * Get the generated XML name based on buyer identification and sequence.
      */
     public function getXmlName(): ?string
     {
-        // Check if the detail section exists to build the name
-        if (! empty($this->xmlSigner?->DetalleAcusedeRecibo)) {
-            // Combine identification and sequence number
-            return $this->getBuyerIdentification().$this->getSequenceNumber();
-        }
+        $header = $this->xml?->DetalleAcusedeRecibo;
 
-        return null;
+        return ! empty($header) ? $this->getBuyerIdentification().$this->getSequenceNumber() : null;
     }
 }
