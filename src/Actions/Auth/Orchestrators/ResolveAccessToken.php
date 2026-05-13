@@ -2,8 +2,10 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\Auth\Orchestrators;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use PlatinumPlace\LaravelDgii\Actions\Xmls\Orchestrators\SignXmlAction;
+use PlatinumPlace\LaravelDgii\Exceptions\DgiiRepositoryException;
 use PlatinumPlace\LaravelDgii\Repositories\SeedRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
@@ -33,6 +35,10 @@ class ResolveAccessToken
      * 4. Sign the seed XML with the digital certificate.
      * 5. Save the signed seed to storage.
      * 6. Exchange the signed seed for an access token via the repository.
+     *
+     * @throws DgiiRepositoryException
+     * @throws ConnectionException
+     * @throws \InvalidArgumentException
      */
     public function handle(?string $env = null, ?string $certPath = null, ?string $certPassword = null): string
     {

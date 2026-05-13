@@ -19,6 +19,9 @@ class MapInvoiceXmlAction
 
     /**
      * Render the XML template for a specific Invoice type.
+     *
+     *
+     * @throws \Throwable
      */
     public function handle(array $data): string
     {

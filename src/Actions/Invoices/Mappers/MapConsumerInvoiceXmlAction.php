@@ -20,6 +20,9 @@ class MapConsumerInvoiceXmlAction
 
     /**
      * Render the RFCE XML template using Blade.
+     *
+     *
+     * @throws \Throwable
      */
     public function handle(InvoiceXml $invoice, array $data): string
     {

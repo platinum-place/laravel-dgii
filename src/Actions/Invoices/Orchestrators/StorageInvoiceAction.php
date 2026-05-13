@@ -29,6 +29,8 @@ class StorageInvoiceAction
      * 1. Initialize the InvoiceXml object from the signed string.
      * 2. Save the signed XML to the local storage.
      * 3. Resolve the QR link for the invoice.
+     *
+     * @throws \InvalidArgumentException
      */
     public function handle(string $signed, ?string $env = null): InvoiceData
     {

@@ -34,6 +34,8 @@ class ProcessAcknowledgmentAction
      * 2. Sign the generated XML using the digital certificate.
      * 3. Initialize the AcknowledgmentXml data object.
      * 4. Save the signed XML to storage.
+     *
+     * @throws \InvalidArgumentException
      */
     public function handle(InvoiceXml $invoiceXml, InvoiceResponse $invoiceReceived, ?string $certPath = null, ?string $certPassword = null): AcknowledgmentData
     {

@@ -2,6 +2,8 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\Seeds\Orchestrators;
 
+use Illuminate\Http\Client\ConnectionException;
+use PlatinumPlace\LaravelDgii\Exceptions\DgiiRepositoryException;
 use PlatinumPlace\LaravelDgii\Repositories\SeedRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
@@ -27,6 +29,10 @@ class ReceiveSeedAction
      * 1. Save the seed XML to storage.
      * 2. Retrieve the absolute path of the saved XML.
      * 3. Call the repository to exchange the seed path for a token.
+     *
+     * @throws DgiiRepositoryException
+     * @throws ConnectionException
+     * @throws \InvalidArgumentException
      */
     public function handle(string $xml, ?string $env = null): array
     {

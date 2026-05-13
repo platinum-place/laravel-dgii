@@ -27,6 +27,8 @@ class SignXmlAction
      * 2. Verify certificate existence in storage.
      * 3. Load certificate content.
      * 4. Use SignManager to apply the digital signature to the XML.
+     *
+     * @throws \InvalidArgumentException
      */
     public function handle(string $xml, ?string $certPath = null, ?string $certPassword = null): string
     {

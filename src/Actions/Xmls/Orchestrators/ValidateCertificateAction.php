@@ -27,6 +27,8 @@ class ValidateCertificateAction
      * 2. Verify certificate existence in storage.
      * 3. Load certificate content.
      * 4. Use SignManager to validate the certificate and password.
+     *
+     * @throws \InvalidArgumentException
      */
     public function handle(?string $path = null, ?string $password = null): array
     {

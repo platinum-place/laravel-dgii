@@ -119,7 +119,7 @@ readonly class InvoiceXml extends AbstractXml
      */
     public function getBuyerIdentification(): ?string
     {
-        $identification = $this->xml->Encabezado?->Comprador?->RNCComprador 
+        $identification = $this->xml->Encabezado?->Comprador?->RNCComprador
             ?? $this->xml->Encabezado?->Comprador?->IdentificadorExtranjero;
 
         return ! empty($identification) ? (string) $identification : null;

@@ -2,9 +2,11 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\CommercialApprovals\Orchestrators;
 
+use Illuminate\Http\Client\ConnectionException;
 use PlatinumPlace\LaravelDgii\Actions\Xmls\Orchestrators\ValidateCertificateAction;
 use PlatinumPlace\LaravelDgii\Data\CommercialApproval\CommercialApprovalData;
 use PlatinumPlace\LaravelDgii\Data\CommercialApproval\CommercialApprovalXml;
+use PlatinumPlace\LaravelDgii\Exceptions\DgiiRepositoryException;
 use PlatinumPlace\LaravelDgii\Repositories\CommercialApprovalRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
@@ -32,6 +34,10 @@ class SubmitCommercialApprovalAction
      * 2. Initialize the CommercialApprovalXml object from the signed string.
      * 3. Save the signed XML to the local storage.
      * 4. Call the repository to send the file to the DGII API.
+     *
+     * @throws DgiiRepositoryException
+     * @throws ConnectionException
+     * @throws \InvalidArgumentException
      */
     public function handle(string $token, string $signed, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): CommercialApprovalData
     {

@@ -19,6 +19,9 @@ class MapCancellationRangeXmlAction
 
     /**
      * Render the ANECF XML template using Blade.
+     *
+     *
+     * @throws \Throwable
      */
     public function handle(array $data): string
     {

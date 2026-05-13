@@ -2,10 +2,12 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\Invoices\Orchestrators;
 
+use Illuminate\Http\Client\ConnectionException;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgments\Orchestrators\ProcessAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Auth\Orchestrators\ResolveAccessToken;
 use PlatinumPlace\LaravelDgii\Actions\Xmls\Orchestrators\ValidateCertificateAction;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData;
+use PlatinumPlace\LaravelDgii\Exceptions\DgiiRepositoryException;
 use PlatinumPlace\LaravelDgii\Repositories\ConsumerInvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\InvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
@@ -40,6 +42,10 @@ class SubmitInvoiceAction
      * 4. Resolve a valid access token (via cache or DGII).
      * 5. Submit the XML to the DGII API (Standard or Consumption).
      * 6. Process and sign the DGII's acknowledgment response.
+     *
+     * @throws DgiiRepositoryException
+     * @throws ConnectionException
+     * @throws \InvalidArgumentException
      */
     public function handle(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {

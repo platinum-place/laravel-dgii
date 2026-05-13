@@ -23,6 +23,9 @@ class MapAcknowledgmentXmlAction
 
     /**
      * Map invoice and response data to the ARECF XML template.
+     *
+     *
+     * @throws \Throwable
      */
     public function handle(InvoiceXml $invoiceXml, InvoiceResponse $invoiceReceived): string
     {

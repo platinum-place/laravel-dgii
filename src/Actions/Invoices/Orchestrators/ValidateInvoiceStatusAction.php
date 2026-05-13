@@ -2,11 +2,13 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\Invoices\Orchestrators;
 
+use Illuminate\Http\Client\ConnectionException;
 use PlatinumPlace\LaravelDgii\Actions\Auth\Orchestrators\ResolveAccessToken;
 use PlatinumPlace\LaravelDgii\Actions\Invoices\ResolveInvoiceQrLinkAction;
 use PlatinumPlace\LaravelDgii\Actions\Xmls\Orchestrators\ValidateCertificateAction;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
+use PlatinumPlace\LaravelDgii\Exceptions\DgiiRepositoryException;
 use PlatinumPlace\LaravelDgii\Repositories\ConsumerInvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\InvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
@@ -39,6 +41,10 @@ class ValidateInvoiceStatusAction
      * 3. Resolve a valid access token.
      * 4. Query the invoice status via the DGII API (using TrackId or Invoice object).
      * 5. Resolve the QR link for the invoice.
+     *
+     * @throws DgiiRepositoryException
+     * @throws ConnectionException
+     * @throws \InvalidArgumentException
      */
     public function handle(string $path, ?string $trackId = null, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {

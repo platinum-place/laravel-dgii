@@ -40,6 +40,8 @@ class SignInvoiceAction
      * 4. Save the signed XML to storage.
      * 5. If it's a consumer invoice, generate and sign the summary XML.
      * 6. Resolve the QR link for the invoice.
+     *
+     * @throws \InvalidArgumentException
      */
     public function handle(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {

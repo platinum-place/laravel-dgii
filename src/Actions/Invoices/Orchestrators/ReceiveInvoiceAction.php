@@ -2,10 +2,12 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\Invoices\Orchestrators;
 
+use Illuminate\Http\Client\ConnectionException;
 use PlatinumPlace\LaravelDgii\Actions\Acknowledgments\Orchestrators\ProcessAcknowledgmentAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoices\ResolveInvoiceQrLinkAction;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
+use PlatinumPlace\LaravelDgii\Exceptions\DgiiRepositoryException;
 use PlatinumPlace\LaravelDgii\Repositories\InvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
@@ -35,6 +37,10 @@ class ReceiveInvoiceAction
      * 3. Submit the file to the DGII API using the provided token.
      * 4. Resolve the QR link for the invoice.
      * 5. Process and sign the DGII's acknowledgment response.
+     *
+     * @throws DgiiRepositoryException
+     * @throws ConnectionException
+     * @throws \InvalidArgumentException
      */
     public function handle(string $token, string $signed, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {

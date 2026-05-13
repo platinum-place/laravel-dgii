@@ -35,6 +35,8 @@ class SignXmlInvoiceAction
      * 3. Sign the XML using the digital certificate.
      * 4. Save the signed XML to storage.
      * 5. Resolve the QR link for the invoice.
+     *
+     * @throws \InvalidArgumentException
      */
     public function handle(string $xml, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {

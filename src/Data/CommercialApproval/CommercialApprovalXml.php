@@ -23,7 +23,7 @@ readonly class CommercialApprovalXml extends AbstractXml
      */
     public function getSequenceNumber(): ?string
     {
-        $sequence = $this->xml?->DetalleAprobacionComercial?->eNCF 
+        $sequence = $this->xml?->DetalleAprobacionComercial?->eNCF
             ?? $this->xml?->DetalleAcusedeRecibo?->eNCF;
 
         return ! empty($sequence) ? (string) $sequence : null;

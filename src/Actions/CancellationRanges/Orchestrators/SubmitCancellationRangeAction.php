@@ -2,12 +2,14 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\CancellationRanges\Orchestrators;
 
+use Illuminate\Http\Client\ConnectionException;
 use PlatinumPlace\LaravelDgii\Actions\Auth\Orchestrators\ResolveAccessToken;
 use PlatinumPlace\LaravelDgii\Actions\CancellationRanges\Mappers\MapCancellationRangeXmlAction;
 use PlatinumPlace\LaravelDgii\Actions\Xmls\Orchestrators\SignXmlAction;
 use PlatinumPlace\LaravelDgii\Actions\Xmls\Orchestrators\ValidateCertificateAction;
 use PlatinumPlace\LaravelDgii\Data\CancellationRange\CancellationRangeData;
 use PlatinumPlace\LaravelDgii\Data\CancellationRange\CancellationRangeXml;
+use PlatinumPlace\LaravelDgii\Exceptions\DgiiRepositoryException;
 use PlatinumPlace\LaravelDgii\Repositories\CancellationRangeRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
@@ -40,6 +42,10 @@ class SubmitCancellationRangeAction
      * 4. Save the signed XML to storage.
      * 5. Resolve a valid access token.
      * 6. Submit the file to the DGII API via the repository.
+     *
+     * @throws DgiiRepositoryException
+     * @throws ConnectionException
+     * @throws \InvalidArgumentException
      */
     public function handle(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): CancellationRangeData
     {
