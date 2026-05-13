@@ -8,7 +8,7 @@ use PlatinumPlace\LaravelDgii\Actions\Invoices\ResolveInvoiceQrLinkAction;
 use PlatinumPlace\LaravelDgii\Actions\Xmls\Orchestrators\ValidateCertificateAction;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
-use PlatinumPlace\LaravelDgii\Repositories\ConsumeInvoiceRepository;
+use PlatinumPlace\LaravelDgii\Repositories\ConsumerInvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\InvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
@@ -25,7 +25,7 @@ class SendInvoiceAction
         protected StorageRepository $storage,
         protected ResolveAccessToken $accessToken,
         protected InvoiceRepository $invoiceRepository,
-        protected ConsumeInvoiceRepository $consumeRepository,
+        protected ConsumerInvoiceRepository $consumerRepository,
         protected ResolveInvoiceQrLinkAction $qrResolver,
         protected ProcessAcknowledgmentAction $processAcknowledgment,
     ) {
@@ -55,9 +55,9 @@ class SendInvoiceAction
 
         $token = $this->accessToken->handle($env, $certPath, $certPassword);
 
-        $response = $object->isConsumeInvoice() ?
-            $this->consumeRepository->sendConsumeInvoice($token, $filePath, $env) :
-            $this->invoiceRepository->send($token, $filePath, $env);
+        $response = $object->isConsumerInvoice() ?
+            $this->consumerRepository->sendConsumerInvoice($token, $filePath, $env) :
+            $this->invoiceRepository->sendInvoice($token, $filePath, $env);
 
         $qrLink = $this->qrResolver->handle($object, $env);
 

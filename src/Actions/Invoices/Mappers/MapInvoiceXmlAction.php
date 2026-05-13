@@ -5,7 +5,7 @@ namespace PlatinumPlace\LaravelDgii\Actions\Invoices\Mappers;
 use Illuminate\Support\Facades\View;
 
 /**
- * Generates the raw XML string for an e-CF using Blade templates.
+ * Generates the raw XML string for an Invoice using Blade templates.
  */
 class MapInvoiceXmlAction
 {
@@ -18,7 +18,7 @@ class MapInvoiceXmlAction
     }
 
     /**
-     * Render the XML template for a specific e-CF type.
+     * Render the XML template for a specific Invoice type.
      */
     public function handle(array $data): string
     {

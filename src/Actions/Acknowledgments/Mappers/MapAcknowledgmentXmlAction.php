@@ -5,8 +5,8 @@ namespace PlatinumPlace\LaravelDgii\Actions\Acknowledgments\Mappers;
 use Illuminate\Support\Facades\View;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceResponse;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
-use PlatinumPlace\LaravelDgii\Enums\ArecfCodeEnum;
-use PlatinumPlace\LaravelDgii\Enums\ArecfStatusEnum;
+use PlatinumPlace\LaravelDgii\Enums\AcknowledgmentCodeEnum;
+use PlatinumPlace\LaravelDgii\Enums\AcknowledgmentStatusEnum;
 
 /**
  * Generates the raw XML string for an Acknowledgment of Receipt (ARECF).
@@ -29,15 +29,15 @@ class MapAcknowledgmentXmlAction
         $arecfCodeId = null;
 
         // TODO: validate more error codes
-        if ($invoiceReceived->arecfStatusEnum === ArecfStatusEnum::NOT_RECEIVED) {
-            $arecfCodeId = ArecfCodeEnum::SPECIFICATION_ERROR->value;
+        if ($invoiceReceived->acknowledgmentStatusEnum === AcknowledgmentStatusEnum::NOT_RECEIVED) {
+            $arecfCodeId = AcknowledgmentCodeEnum::SPECIFICATION_ERROR->value;
         }
 
         $data = [
             'RNCEmisor' => $invoiceXml->getSenderIdentification(),
             'RNCComprador' => $invoiceXml->getBuyerIdentification(),
             'eNCF' => $invoiceXml->getSequenceNumber(),
-            'Estado' => $invoiceReceived->arecfStatusEnum->value,
+            'Estado' => $invoiceReceived->acknowledgmentStatusEnum->value,
         ];
 
         if ($arecfCodeId) {

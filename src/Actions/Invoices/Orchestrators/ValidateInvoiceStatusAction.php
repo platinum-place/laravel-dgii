@@ -7,7 +7,7 @@ use PlatinumPlace\LaravelDgii\Actions\Invoices\ResolveInvoiceQrLinkAction;
 use PlatinumPlace\LaravelDgii\Actions\Xmls\Orchestrators\ValidateCertificateAction;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
-use PlatinumPlace\LaravelDgii\Repositories\ConsumeInvoiceRepository;
+use PlatinumPlace\LaravelDgii\Repositories\ConsumerInvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\InvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
@@ -24,7 +24,7 @@ class ValidateInvoiceStatusAction
         protected StorageRepository $storage,
         protected ResolveAccessToken $accessToken,
         protected InvoiceRepository $invoiceRepository,
-        protected ConsumeInvoiceRepository $consumeRepository,
+        protected ConsumerInvoiceRepository $consumerRepository,
         protected ResolveInvoiceQrLinkAction $qrResolver,
     ) {
         //
@@ -52,8 +52,8 @@ class ValidateInvoiceStatusAction
 
         $token = $this->accessToken->handle($env, $certPath, $certPassword);
 
-        $response = $object->isConsumeInvoice() ?
-            $this->consumeRepository->findConsumeInvoice($token, $object, $env) :
+        $response = $object->isConsumerInvoice() ?
+            $this->consumerRepository->findConsumerInvoice($token, $object, $env) :
             $this->invoiceRepository->findByTrackId($token, $trackId, $env);
 
         $qrLink = $this->qrResolver->handle($object, $env);

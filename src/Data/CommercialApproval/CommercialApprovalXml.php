@@ -18,7 +18,7 @@ readonly class CommercialApprovalXml extends AbstractXml
     }
 
     /**
-     * Get the e-CF sequence number (eNCF).
+     * Get the Invoice sequence number (eNCF).
      * Corresponds to <eNCF> in <DetalleAprobacionComercial> or <DetalleAcusedeRecibo>.
      */
     public function getSequenceNumber(): ?string

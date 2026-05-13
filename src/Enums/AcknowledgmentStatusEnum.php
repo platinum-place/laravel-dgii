@@ -2,7 +2,7 @@
 
 namespace PlatinumPlace\LaravelDgii\Enums;
 
-enum ArecfStatusEnum: int
+enum AcknowledgmentStatusEnum: int
 {
     case RECEIVED = 0;
 

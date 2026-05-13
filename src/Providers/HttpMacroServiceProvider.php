@@ -24,10 +24,10 @@ class HttpMacroServiceProvider extends ServiceProvider
                 ->throw();
         });
 
-        Http::macro('dgiiConsumeInvoice', function (?string $environment = null) {
+        Http::macro('dgiiConsumerInvoice', function (?string $environment = null) {
             $env = $environment ?: config('dgii.environment');
 
-            $baseUrl = config('dgii.domains.consume_invoice');
+            $baseUrl = config('dgii.domains.consumer_invoice');
 
             $finalUrl = rtrim($baseUrl, '/').'/'.ltrim($env, '/');
 

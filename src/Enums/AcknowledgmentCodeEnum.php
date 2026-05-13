@@ -2,7 +2,7 @@
 
 namespace PlatinumPlace\LaravelDgii\Enums;
 
-enum ArecfCodeEnum: int
+enum AcknowledgmentCodeEnum: int
 {
     case SPECIFICATION_ERROR = 1;
 

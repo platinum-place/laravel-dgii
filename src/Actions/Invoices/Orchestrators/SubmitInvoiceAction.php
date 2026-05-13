@@ -6,7 +6,7 @@ use PlatinumPlace\LaravelDgii\Actions\Acknowledgments\Orchestrators\ProcessAckno
 use PlatinumPlace\LaravelDgii\Actions\Auth\Orchestrators\ResolveAccessToken;
 use PlatinumPlace\LaravelDgii\Actions\Xmls\Orchestrators\ValidateCertificateAction;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData;
-use PlatinumPlace\LaravelDgii\Repositories\ConsumeInvoiceRepository;
+use PlatinumPlace\LaravelDgii\Repositories\ConsumerInvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\InvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
@@ -24,7 +24,7 @@ class SubmitInvoiceAction
         protected StorageRepository $storage,
         protected ResolveAccessToken $accessToken,
         protected InvoiceRepository $invoiceRepository,
-        protected ConsumeInvoiceRepository $consumeRepository,
+        protected ConsumerInvoiceRepository $consumerRepository,
         protected ProcessAcknowledgmentAction $processAcknowledgment,
     ) {
         //
@@ -55,9 +55,9 @@ class SubmitInvoiceAction
 
         $token = $this->accessToken->handle($env, $certPath, $certPassword);
 
-        $response = $xml->isConsumeInvoice() ?
-            $this->consumeRepository->sendConsumeInvoice($token, $filePath, $env) :
-            $this->invoiceRepository->send($token, $filePath, $env);
+        $response = $xml->isConsumerInvoice() ?
+            $this->consumerRepository->sendConsumerInvoice($token, $filePath, $env) :
+            $this->invoiceRepository->sendInvoice($token, $filePath, $env);
 
         $acknowledgmentObject = $this->processAcknowledgment->handle($xml, $response, $certPath, $certPassword);
 

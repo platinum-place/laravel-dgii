@@ -2,7 +2,7 @@
 
 namespace PlatinumPlace\LaravelDgii\Data\Invoice;
 
-use PlatinumPlace\LaravelDgii\Enums\ArecfStatusEnum;
+use PlatinumPlace\LaravelDgii\Enums\AcknowledgmentStatusEnum;
 
 readonly class InvoiceResponse
 {
@@ -11,7 +11,7 @@ readonly class InvoiceResponse
      */
     public function __construct(
         public array $response,
-        public ?ArecfStatusEnum $arecfStatusEnum = null,
+        public ?AcknowledgmentStatusEnum $acknowledgmentStatusEnum = null,
     ) {
         //
     }
@@ -57,6 +57,6 @@ readonly class InvoiceResponse
 
     public function notReceived(): bool
     {
-        return $this->arecfStatusEnum === ArecfStatusEnum::NOT_RECEIVED;
+        return $this->acknowledgmentStatusEnum === AcknowledgmentStatusEnum::NOT_RECEIVED;
     }
 }

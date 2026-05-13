@@ -56,7 +56,7 @@ return [
 
     'domains' => [
         'invoice' => env('DGII_DOMAIN_INVOICE', 'https://ecf.dgii.gov.do'),
-        'consume_invoice' => env('DGII_DOMAIN_CONSUME_INVOICE', 'https://fc.dgii.gov.do'),
+        'consumer_invoice' => env('DGII_DOMAIN_CONSUME_INVOICE', 'https://fc.dgii.gov.do'),
         'status' => env('DGII_DOMAIN_STATUS', 'https://statusecf.dgii.gov.do'),
     ],
 
@@ -88,11 +88,11 @@ return [
     */
 
     'rules' => [
-        // Default e-CF type for consume Invoice (Standard 32)
-        'consume_invoice_type' => (int) env('DGII_CONSUME_INVOICE_TYPE', 32),
+        // Default Invoice type for consumer Invoice (Standard 32)
+        'consumer_invoice_type' => (int) env('DGII_CONSUME_INVOICE_TYPE', 32),
 
-        // Amount limit for an invoice to be considered simplified consume
-        'consume_invoice_limit' => (int) env('DGII_CONSUME_INVOICE_LIMIT', 250000),
+        // Amount limit for an invoice to be considered simplified consumer
+        'consumer_invoice_limit' => (int) env('DGII_CONSUME_INVOICE_LIMIT', 250000),
     ],
 
     /*
@@ -140,8 +140,8 @@ return [
             'qr' => 'ConsultaTimbre',
         ],
 
-        // consume Invoice Services (Domain: fc)
-        'consume_invoice' => [
+        // consumer Invoice Services (Domain: fc)
+        'consumer_invoice' => [
             'send' => 'recepcionfc/api/recepcion/ecf',
             'status' => 'consultarfce/api/Consultas/Consulta',
             'qr' => 'ConsultaTimbreFC',

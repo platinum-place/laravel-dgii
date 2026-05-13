@@ -11,44 +11,44 @@ use PlatinumPlace\LaravelDgii\Exceptions\DgiiRepositoryException;
 use PlatinumPlace\LaravelDgii\Repositories\Abstracts\AbstractInvoiceRepository;
 
 /**
- * Repository for handling consume invoice operations (Factura de Consumo Electrónica).
+ * Repository for handling consumer invoice operations (Factura de Consumo Electrónica).
  */
-class ConsumeInvoiceRepository extends AbstractInvoiceRepository
+class ConsumerInvoiceRepository extends AbstractInvoiceRepository
 {
     /**
-     * Get the configured HTTP client for the FC API.
+     * Get the configured HTTP client for the Consumer Invoice API.
      */
     public function getHttpClient(?string $env = null): PendingRequest
     {
-        return Http::dgiiConsumeInvoice($env);
+        return Http::dgiiConsumerInvoice($env);
     }
 
     /**
-     * Get the endpoint key for consume invoice operations.
+     * Get the endpoint key for consumer invoice operations.
      */
     protected function getEndpointKey(): string
     {
-        return 'consume_invoice';
+        return 'consumer_invoice';
     }
 
     /**
-     * Sends a consume invoice to the DGII.
+     * Sends a consumer invoice to the DGII.
      *
      * @throws ConnectionException
      * @throws DgiiRepositoryException
      */
-    public function sendConsumeInvoice(string $token, string $filePath, ?string $env = null): InvoiceResponse
+    public function sendConsumerInvoice(string $token, string $filePath, ?string $env = null): InvoiceResponse
     {
         return $this->returnResponse(fn () => $this->send('send', $token, $filePath, $env));
     }
 
     /**
-     * Find a consume invoice status using its XML metadata.
+     * Find a consumer invoice status using its XML metadata.
      *
      * @throws ConnectionException
      * @throws DgiiRepositoryException
      */
-    public function findConsumeInvoice(string $token, InvoiceXml $xml, ?string $env = null): InvoiceResponse
+    public function findConsumerInvoice(string $token, InvoiceXml $xml, ?string $env = null): InvoiceResponse
     {
         return $this->returnResponse(
             fn () => $this->find(

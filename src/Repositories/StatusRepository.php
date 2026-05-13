@@ -18,7 +18,7 @@ class StatusRepository extends AbstractApiRepository
      */
     public function getHttpClient(?string $env = null): PendingRequest
     {
-        return Http::dgiiStatusEcf();
+        return Http::dgiiStatus();
     }
 
     /**
@@ -30,7 +30,7 @@ class StatusRepository extends AbstractApiRepository
     }
 
     /**
-     * Retrieves the general status of all DGII e-CF services.
+     * Retrieves the general status of all DGII Invoice services.
      *
      * @throws ConnectionException
      * @throws DgiiRepositoryException

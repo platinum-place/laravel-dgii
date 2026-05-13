@@ -7,7 +7,7 @@ use PlatinumPlace\LaravelDgii\Data\AbstractXml;
 readonly class InvoiceXml extends AbstractXml
 {
     /**
-     * Get the e-CF sequence number (eNCF).
+     * Get the Invoice sequence number (eNCF).
      * Corresponds to <eNCF> in <IdDoc>.
      */
     public function getSequenceNumber(): ?string
@@ -18,7 +18,7 @@ readonly class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Get the security code of the e-CF.
+     * Get the security code of the Invoice.
      * Corresponds to <CodigoSeguridadeCF> or the first 6 characters of the SignatureValue.
      */
     public function getSecurityCode(): ?string
@@ -46,7 +46,7 @@ readonly class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Get the e-CF type.
+     * Get the Invoice type.
      * Corresponds to <TipoeCF> in <IdDoc>.
      */
     public function getInvoiceType(): ?string
@@ -78,15 +78,15 @@ readonly class InvoiceXml extends AbstractXml
     }
 
     /**
-     * Check if the document is a consume invoice based on type and total amount rules.
+     * Check if the document is a consumer invoice based on type and total amount rules.
      */
-    public function isConsumeInvoice(): bool
+    public function isConsumerInvoice(): bool
     {
         $type = (int) $this->getInvoiceType();
         $total = (float) $this->getTotalAmount();
 
-        $consumeType = (int) config('dgii.rules.consume_invoice_type');
-        $consumeLimit = (float) config('dgii.rules.consume_invoice_limit');
+        $consumeType = (int) config('dgii.rules.consumer_invoice_type');
+        $consumeLimit = (float) config('dgii.rules.consumer_invoice_limit');
 
         return $this->isRfce() || ($type === $consumeType && $total < $consumeLimit);
     }

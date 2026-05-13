@@ -4,7 +4,7 @@ namespace PlatinumPlace\LaravelDgii\Repositories\Abstracts;
 
 use Illuminate\Http\Client\ConnectionException;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceResponse;
-use PlatinumPlace\LaravelDgii\Enums\ArecfStatusEnum;
+use PlatinumPlace\LaravelDgii\Enums\AcknowledgmentStatusEnum;
 use PlatinumPlace\LaravelDgii\Exceptions\DgiiRepositoryException;
 
 /**
@@ -23,8 +23,8 @@ abstract class AbstractInvoiceRepository extends AbstractApiRepository
         $response = $closure();
 
         $status = $response['receive'] === false ?
-            ArecfStatusEnum::NOT_RECEIVED :
-            ArecfStatusEnum::RECEIVED;
+            AcknowledgmentStatusEnum::NOT_RECEIVED :
+            AcknowledgmentStatusEnum::RECEIVED;
 
         // Return the processed response DTO
         return new InvoiceResponse($response, $status);

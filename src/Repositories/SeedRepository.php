@@ -14,11 +14,11 @@ use PlatinumPlace\LaravelDgii\Repositories\Abstracts\AbstractApiRepository;
 class SeedRepository extends AbstractApiRepository
 {
     /**
-     * Get the configured HTTP client for the e-CF API.
+     * Get the configured HTTP client for the Invoice API.
      */
     public function getHttpClient(?string $env = null): PendingRequest
     {
-        return Http::dgiiEcf($env);
+        return Http::dgiiInvoice($env);
     }
 
     /**

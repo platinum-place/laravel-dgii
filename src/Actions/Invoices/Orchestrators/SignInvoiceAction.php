@@ -2,7 +2,7 @@
 
 namespace PlatinumPlace\LaravelDgii\Actions\Invoices\Orchestrators;
 
-use PlatinumPlace\LaravelDgii\Actions\Invoices\Mappers\MapConsumeInvoiceXmlAction;
+use PlatinumPlace\LaravelDgii\Actions\Invoices\Mappers\MapConsumerInvoiceXmlAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoices\Mappers\MapInvoiceXmlAction;
 use PlatinumPlace\LaravelDgii\Actions\Invoices\ResolveInvoiceQrLinkAction;
 use PlatinumPlace\LaravelDgii\Actions\Xmls\Orchestrators\SignXmlAction;
@@ -23,7 +23,7 @@ class SignInvoiceAction
         protected ValidateCertificateAction $validateCertificate,
         protected MapInvoiceXmlAction $InvoiceMapper,
         protected SignXmlAction $signXml,
-        protected MapConsumeInvoiceXmlAction $ConsumeMapper,
+        protected MapConsumerInvoiceXmlAction $ConsumerMapper,
         protected StorageRepository $storage,
         protected ResolveInvoiceQrLinkAction $qrResolver,
     ) {
@@ -31,14 +31,14 @@ class SignInvoiceAction
     }
 
     /**
-     * Map raw data to XML, sign it, and handle consumption invoice logic if necessary.
+     * Map raw data to XML, sign it, and handle consumer invoice logic if necessary.
      *
      * Flow:
      * 1. Validate the digital certificate.
      * 2. Map invoice data to XML using Blade templates.
      * 3. Sign the generated XML.
      * 4. Save the signed XML to storage.
-     * 5. If it's a consumption invoice, generate and sign the summary XML.
+     * 5. If it's a consumer invoice, generate and sign the summary XML.
      * 6. Resolve the QR link for the invoice.
      */
     public function handle(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
@@ -53,7 +53,7 @@ class SignInvoiceAction
 
         $invoicePath = $this->storage->save($invoiceSigned, $invoiceObject->getXmlName());
 
-        if ($invoiceObject->isConsumeInvoice()) {
+        if ($invoiceObject->isConsumerInvoice()) {
             $integralXml = $invoiceXml;
 
             $integralSigned = $invoiceSigned;
@@ -62,7 +62,7 @@ class SignInvoiceAction
 
             $integralPath = $invoicePath;
 
-            $invoiceXml = $this->ConsumeMapper->handle($integralObject, $data);
+            $invoiceXml = $this->ConsumerMapper->handle($integralObject, $data);
 
             $invoiceSigned = $this->signXml->handle($invoiceXml, $certPath, $certPassword);
 

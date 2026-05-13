@@ -18,7 +18,7 @@ class ResolveInvoiceQrLinkAction
     }
 
     /**
-     * Generate a QR link for a standard e-CF.
+     * Generate a QR link for a standard Invoice.
      */
     public function getInvoiceQrLink(string $senderIdentification, string $sequenceNumber, string $totalAmount, string $securityCode, string $releaseDate, string $signatureDate, ?string $buyerIdentification = null, ?string $env = null): string
     {
@@ -47,9 +47,9 @@ class ResolveInvoiceQrLinkAction
     }
 
     /**
-     * Generate a QR link for a Consumption Invoice Summary (RFCE).
+     * Generate a QR link for a Consumer Invoice Summary (RFCE).
      */
-    public function getConsumeInvoiceQrLink(string $senderIdentification, string $sequenceNumber, string $totalAmount, string $securityCode, ?string $env = null): string
+    public function getConsumerInvoiceQrLink(string $senderIdentification, string $sequenceNumber, string $totalAmount, string $securityCode, ?string $env = null): string
     {
         $env ??= config('dgii.environment');
 
@@ -62,9 +62,9 @@ class ResolveInvoiceQrLinkAction
 
         return sprintf(
             '%s/%s/%s?%s',
-            config('dgii.domains.consume_invoice'),
+            config('dgii.domains.consumer_invoice'),
             $env,
-            config('dgii.endpoints.consume_invoice.qr'),
+            config('dgii.endpoints.consumer_invoice.qr'),
             http_build_query($parameters)
         );
     }
@@ -82,8 +82,8 @@ class ResolveInvoiceQrLinkAction
         $signatureDate = $invoiceXml->getSignatureDate();
         $buyerIdentification = $invoiceXml->getBuyerIdentification();
 
-        if ($invoiceXml->isConsumeInvoice()) {
-            return $this->getConsumeInvoiceQrLink(
+        if ($invoiceXml->isConsumerInvoice()) {
+            return $this->getConsumerInvoiceQrLink(
                 $senderIdentification,
                 $sequenceNumber,
                 $totalAmount,

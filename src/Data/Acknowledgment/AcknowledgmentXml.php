@@ -18,7 +18,7 @@ readonly class AcknowledgmentXml extends AbstractXml
     }
 
     /**
-     * Get the e-CF sequence number (eNCF).
+     * Get the Invoice sequence number (eNCF).
      * Corresponds to <eNCF> in <DetalleAcusedeRecibo>.
      */
     public function getSequenceNumber(): ?string
