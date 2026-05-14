@@ -5,6 +5,16 @@ All notable changes to `laravel-dgii` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.4] - 2026-05-14
+
+### Fixed
+- Ensure received responses from DGII API include the `receive` flag for consistent internal state management.
+
+## [2.1.3] - 2026-05-14
+
+### Refactored
+- Renamed `returnResponse()` to `returnInvoiceResponse()` in `AbstractInvoiceRepository` to improve clarity and avoid naming collisions.
+
 ## [2.1.2] - 2026-05-13
 
 ### Added
