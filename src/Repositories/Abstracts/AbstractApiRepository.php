@@ -52,6 +52,8 @@ abstract class AbstractApiRepository
             if (empty($response)) {
                 throw new DgiiRepositoryException('Error al momento de enviar datos a DGII.');
             }
+
+            $response['receive'] = true;
         } catch (RequestException $exception) {
             $response = $exception->response->json();
 
