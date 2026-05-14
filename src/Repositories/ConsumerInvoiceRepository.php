@@ -39,7 +39,7 @@ class ConsumerInvoiceRepository extends AbstractInvoiceRepository
      */
     public function sendConsumerInvoice(string $token, string $filePath, ?string $env = null): InvoiceResponse
     {
-        return $this->returnResponse(fn () => $this->send('send', $token, $filePath, $env));
+        return $this->returnInvoiceResponse(fn () => $this->send('send', $token, $filePath, $env));
     }
 
     /**
@@ -50,7 +50,7 @@ class ConsumerInvoiceRepository extends AbstractInvoiceRepository
      */
     public function findConsumerInvoice(string $token, InvoiceXml $xml, ?string $env = null): InvoiceResponse
     {
-        return $this->returnResponse(
+        return $this->returnInvoiceResponse(
             fn () => $this->find(
                 'status',
                 $token,

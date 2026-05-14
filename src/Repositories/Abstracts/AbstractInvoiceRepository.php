@@ -18,7 +18,7 @@ abstract class AbstractInvoiceRepository extends AbstractApiRepository
      * @throws ConnectionException
      * @throws DgiiRepositoryException
      */
-    public function returnResponse(\Closure $closure): InvoiceResponse
+    public function returnInvoiceResponse(\Closure $closure): InvoiceResponse
     {
         $response = $closure();
 

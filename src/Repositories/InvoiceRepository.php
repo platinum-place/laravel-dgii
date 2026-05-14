@@ -40,7 +40,7 @@ class InvoiceRepository extends AbstractInvoiceRepository
      */
     public function sendInvoice(string $token, string $filePath, ?string $env = null): InvoiceResponse
     {
-        return $this->returnResponse(fn () => $this->send('send', $token, $filePath, $env));
+        return $this->returnInvoiceResponse(fn () => $this->send('send', $token, $filePath, $env));
     }
 
     /**
@@ -51,7 +51,7 @@ class InvoiceRepository extends AbstractInvoiceRepository
      */
     public function findByTrackId(string $token, string $trackId, ?string $env = null): InvoiceResponse
     {
-        return $this->returnResponse(
+        return $this->returnInvoiceResponse(
             fn () => $this->find(
                 'status',
                 $token,
