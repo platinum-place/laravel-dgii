@@ -50,7 +50,7 @@ class ReceiveInvoiceAction
 
         $filePath = $this->storage->realPath($path);
 
-        $response = $this->repository->send($token, $filePath, $env);
+        $response = $this->repository->sendInvoice($token, $filePath, $env);
 
         $qrLink = $this->qrResolver->handle($object, $env);
 
