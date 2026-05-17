@@ -4,9 +4,6 @@ namespace PlatinumPlace\LaravelDgii\Actions\Invoices;
 
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 
-/**
- * Resolves the official DGII QR link for an electronic invoice.
- */
 class ResolveInvoiceQrLinkAction
 {
     /**
@@ -17,10 +14,7 @@ class ResolveInvoiceQrLinkAction
         //
     }
 
-    /**
-     * Generate a QR link for a standard Invoice.
-     */
-    public function getInvoiceQrLink(string $senderIdentification, string $sequenceNumber, string $totalAmount, string $securityCode, string $releaseDate, string $signatureDate, ?string $buyerIdentification = null, ?string $env = null): string
+    protected function getInvoiceQrLink(string $senderIdentification, string $sequenceNumber, string $totalAmount, string $securityCode, string $releaseDate, string $signatureDate, ?string $buyerIdentification = null, ?string $env = null): string
     {
         $env ??= config('dgii.environment');
 
@@ -46,10 +40,7 @@ class ResolveInvoiceQrLinkAction
         );
     }
 
-    /**
-     * Generate a QR link for a Consumer Invoice Summary (RFCE).
-     */
-    public function getConsumerInvoiceQrLink(string $senderIdentification, string $sequenceNumber, string $totalAmount, string $securityCode, ?string $env = null): string
+    protected function getConsumerInvoiceQrLink(string $senderIdentification, string $sequenceNumber, string $totalAmount, string $securityCode, ?string $env = null): string
     {
         $env ??= config('dgii.environment');
 
@@ -69,9 +60,6 @@ class ResolveInvoiceQrLinkAction
         );
     }
 
-    /**
-     * Resolve the appropriate QR link based on the invoice type.
-     */
     public function handle(InvoiceXml $invoiceXml, ?string $env = null): string
     {
         $senderIdentification = $invoiceXml->getSenderIdentification();

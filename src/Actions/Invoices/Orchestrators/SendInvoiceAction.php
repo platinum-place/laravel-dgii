@@ -14,9 +14,6 @@ use PlatinumPlace\LaravelDgii\Repositories\ConsumerInvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\InvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
-/**
- * Orchestrates the sending of an already signed invoice to the DGII.
- */
 class SendInvoiceAction
 {
     /**
@@ -34,21 +31,6 @@ class SendInvoiceAction
         //
     }
 
-    /**
-     * Send a signed XML file to the DGII and process the response.
-     *
-     * Flow:
-     * 1. Check if the signed XML file exists in storage.
-     * 2. Load the signed XML content.
-     * 3. Resolve a valid access token.
-     * 4. Submit the XML to the DGII API (Standard or Consumption).
-     * 5. Resolve the QR link for the invoice.
-     * 6. Process and sign the DGII's acknowledgment response.
-     *
-     * @throws DgiiRepositoryException
-     * @throws ConnectionException
-     * @throws \InvalidArgumentException
-     */
     public function handle(string $path, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
         $this->storage->ifExists($path);

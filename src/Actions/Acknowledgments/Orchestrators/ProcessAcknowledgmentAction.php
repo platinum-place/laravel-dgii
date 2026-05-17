@@ -10,9 +10,6 @@ use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceResponse;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
-/**
- * Orchestrates the processing and signing of the DGII's acknowledgment response.
- */
 class ProcessAcknowledgmentAction
 {
     /**
@@ -26,17 +23,6 @@ class ProcessAcknowledgmentAction
         //
     }
 
-    /**
-     * Map, sign, and store the acknowledgment document.
-     *
-     * Flow:
-     * 1. Map the invoice data and DGII response into an acknowledgment XML.
-     * 2. Sign the generated XML using the digital certificate.
-     * 3. Initialize the AcknowledgmentXml data object.
-     * 4. Save the signed XML to storage.
-     *
-     * @throws \InvalidArgumentException
-     */
     public function handle(InvoiceXml $invoiceXml, InvoiceResponse $invoiceReceived, ?string $certPath = null, ?string $certPassword = null): AcknowledgmentData
     {
         $xml = $this->mapper->handle($invoiceXml, $invoiceReceived);

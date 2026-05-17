@@ -7,9 +7,6 @@ use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
-/**
- * Orchestrates the persistence and QR resolution of a signed invoice.
- */
 class StorageInvoiceAction
 {
     /**
@@ -22,16 +19,6 @@ class StorageInvoiceAction
         //
     }
 
-    /**
-     * Save a signed XML string and resolve its QR link.
-     *
-     * Flow:
-     * 1. Initialize the InvoiceXml object from the signed string.
-     * 2. Save the signed XML to the local storage.
-     * 3. Resolve the QR link for the invoice.
-     *
-     * @throws \InvalidArgumentException
-     */
     public function handle(string $signed, ?string $env = null): InvoiceData
     {
         $object = new InvoiceXml($signed);

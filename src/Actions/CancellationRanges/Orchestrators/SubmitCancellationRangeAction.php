@@ -13,9 +13,6 @@ use PlatinumPlace\LaravelDgii\Exceptions\DgiiRepositoryException;
 use PlatinumPlace\LaravelDgii\Repositories\CancellationRangeRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
-/**
- * Orchestrates the submission of a range cancellation (e-NCF) to the DGII.
- */
 class SubmitCancellationRangeAction
 {
     /**
@@ -32,21 +29,7 @@ class SubmitCancellationRangeAction
         //
     }
 
-    /**
-     * Map, sign, store, and submit a range cancellation document.
-     *
-     * Flow:
-     * 1. Validate the digital certificate.
-     * 2. Map the raw data to the cancellation range XML.
-     * 3. Sign the generated XML using the digital certificate.
-     * 4. Save the signed XML to storage.
-     * 5. Resolve a valid access token.
-     * 6. Submit the file to the DGII API via the repository.
-     *
-     * @throws DgiiRepositoryException
-     * @throws ConnectionException
-     * @throws \InvalidArgumentException
-     */
+
     public function handle(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): CancellationRangeData
     {
         $this->validateCertificate->handle($certPath, $certPassword);

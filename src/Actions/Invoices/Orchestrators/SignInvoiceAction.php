@@ -11,9 +11,6 @@ use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
-/**
- * Orchestrates the generation and signing of an electronic invoice XML.
- */
 class SignInvoiceAction
 {
     /**
@@ -30,19 +27,6 @@ class SignInvoiceAction
         //
     }
 
-    /**
-     * Map raw data to XML, sign it, and handle consumer invoice logic if necessary.
-     *
-     * Flow:
-     * 1. Validate the digital certificate.
-     * 2. Map invoice data to XML using Blade templates.
-     * 3. Sign the generated XML.
-     * 4. Save the signed XML to storage.
-     * 5. If it's a consumer invoice, generate and sign the summary XML.
-     * 6. Resolve the QR link for the invoice.
-     *
-     * @throws \InvalidArgumentException
-     */
     public function handle(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
         $this->validateCertificate->handle($certPath, $certPassword);

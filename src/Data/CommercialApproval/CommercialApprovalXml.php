@@ -6,10 +6,6 @@ use PlatinumPlace\LaravelDgii\Data\AbstractXml;
 
 readonly class CommercialApprovalXml extends AbstractXml
 {
-    /**
-     * Get the buyer identification (RNC).
-     * Corresponds to <RNCComprador> in <DetalleAprobacionComercial>.
-     */
     public function getBuyerIdentification(): ?string
     {
         $identification = $this->xml?->DetalleAprobacionComercial?->RNCComprador;
@@ -17,10 +13,6 @@ readonly class CommercialApprovalXml extends AbstractXml
         return ! empty($identification) ? (string) $identification : null;
     }
 
-    /**
-     * Get the Invoice sequence number (eNCF).
-     * Corresponds to <eNCF> in <DetalleAprobacionComercial> or <DetalleAcusedeRecibo>.
-     */
     public function getSequenceNumber(): ?string
     {
         $sequence = $this->xml?->DetalleAprobacionComercial?->eNCF
@@ -29,9 +21,6 @@ readonly class CommercialApprovalXml extends AbstractXml
         return ! empty($sequence) ? (string) $sequence : null;
     }
 
-    /**
-     * Get the generated XML name based on buyer identification and sequence.
-     */
     public function getXmlName(): ?string
     {
         $header = $this->xml?->DetalleAprobacionComercial;

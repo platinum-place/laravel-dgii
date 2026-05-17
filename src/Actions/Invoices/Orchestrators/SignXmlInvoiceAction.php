@@ -9,9 +9,6 @@ use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceData;
 use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
-/**
- * Orchestrates the signing of an already generated invoice XML.
- */
 class SignXmlInvoiceAction
 {
     /**
@@ -26,18 +23,6 @@ class SignXmlInvoiceAction
         //
     }
 
-    /**
-     * Update the signing timestamp, sign the XML, and store it.
-     *
-     * Flow:
-     * 1. Validate the digital certificate.
-     * 2. Inject current date and time into the XML's FechaHoraFirma tag.
-     * 3. Sign the XML using the digital certificate.
-     * 4. Save the signed XML to storage.
-     * 5. Resolve the QR link for the invoice.
-     *
-     * @throws \InvalidArgumentException
-     */
     public function handle(string $xml, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
         $this->validateCertificate->handle($certPath, $certPassword);

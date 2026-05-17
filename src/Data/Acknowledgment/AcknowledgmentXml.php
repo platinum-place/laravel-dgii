@@ -6,10 +6,6 @@ use PlatinumPlace\LaravelDgii\Data\AbstractXml;
 
 readonly class AcknowledgmentXml extends AbstractXml
 {
-    /**
-     * Get the buyer identification (RNC).
-     * Corresponds to <RNCComprador> in <DetalleAcusedeRecibo>.
-     */
     public function getBuyerIdentification(): ?string
     {
         $identification = $this->xml?->DetalleAcusedeRecibo?->RNCComprador;
@@ -17,10 +13,6 @@ readonly class AcknowledgmentXml extends AbstractXml
         return ! empty($identification) ? (string) $identification : null;
     }
 
-    /**
-     * Get the Invoice sequence number (eNCF).
-     * Corresponds to <eNCF> in <DetalleAcusedeRecibo>.
-     */
     public function getSequenceNumber(): ?string
     {
         $sequence = $this->xml?->DetalleAcusedeRecibo?->eNCF;
@@ -28,9 +20,6 @@ readonly class AcknowledgmentXml extends AbstractXml
         return ! empty($sequence) ? (string) $sequence : null;
     }
 
-    /**
-     * Get the generated XML name based on buyer identification and sequence.
-     */
     public function getXmlName(): ?string
     {
         $header = $this->xml?->DetalleAcusedeRecibo;

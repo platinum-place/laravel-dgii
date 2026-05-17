@@ -9,9 +9,6 @@ use PlatinumPlace\LaravelDgii\Exceptions\DgiiRepositoryException;
 use PlatinumPlace\LaravelDgii\Repositories\SeedRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
-/**
- * Resolves a valid access token for the DGII API.
- */
 class ResolveAccessToken
 {
     /**
@@ -25,21 +22,6 @@ class ResolveAccessToken
         //
     }
 
-    /**
-     * Get a valid token from cache or retrieve a new one from the DGII.
-     *
-     * Flow:
-     * 1. Calculate cache key and TTL.
-     * 2. Check cache for an existing token.
-     * 3. If not in cache, request a new seed from the repository.
-     * 4. Sign the seed XML with the digital certificate.
-     * 5. Save the signed seed to storage.
-     * 6. Exchange the signed seed for an access token via the repository.
-     *
-     * @throws DgiiRepositoryException
-     * @throws ConnectionException
-     * @throws \InvalidArgumentException
-     */
     public function handle(?string $env = null, ?string $certPath = null, ?string $certPassword = null): string
     {
         $cacheKey = config('dgii.cache.prefix').md5($certPath.$env);

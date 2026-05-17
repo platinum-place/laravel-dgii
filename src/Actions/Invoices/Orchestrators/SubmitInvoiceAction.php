@@ -12,9 +12,6 @@ use PlatinumPlace\LaravelDgii\Repositories\ConsumerInvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\InvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
-/**
- * Orchestrates the submission of an electronic invoice to the DGII.
- */
 class SubmitInvoiceAction
 {
     /**
@@ -32,21 +29,6 @@ class SubmitInvoiceAction
         //
     }
 
-    /**
-     * Handle the invoice submission process.
-     *
-     * Flow:
-     * 1. Validate the digital certificate.
-     * 2. Sign the invoice XML using the certificate.
-     * 3. Store the signed XML in the local repository.
-     * 4. Resolve a valid access token (via cache or DGII).
-     * 5. Submit the XML to the DGII API (Standard or Consumption).
-     * 6. Process and sign the DGII's acknowledgment response.
-     *
-     * @throws DgiiRepositoryException
-     * @throws ConnectionException
-     * @throws \InvalidArgumentException
-     */
     public function handle(array $data, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
         $this->validateCertificate->handle($certPath, $certPassword);

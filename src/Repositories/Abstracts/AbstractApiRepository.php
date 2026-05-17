@@ -8,9 +8,6 @@ use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Collection;
 use PlatinumPlace\LaravelDgii\Exceptions\DgiiRepositoryException;
 
-/**
- * Base repository for handling common DGII API operations.
- */
 abstract class AbstractApiRepository
 {
     /**
@@ -21,29 +18,15 @@ abstract class AbstractApiRepository
         //
     }
 
-    /**
-     * Get the configured HTTP client for the DGII API.
-     */
     abstract public function getHttpClient(?string $env = null): PendingRequest;
 
-    /**
-     * Get the endpoint key used for configuration lookups.
-     */
     abstract protected function getEndpointKey(): string;
 
-    /**
-     * Resolve the full endpoint URL for a given key.
-     */
     protected function getEndpoint(string $endpoint): string
     {
         return config("dgii.endpoints.{$this->getEndpointKey()}.{$endpoint}");
     }
 
-    /**
-     * Processes the API response and handles common request exceptions.
-     *
-     * @throws DgiiRepositoryException
-     */
     protected function returnResponse(\Closure $closure): array
     {
         try {
@@ -63,12 +46,6 @@ abstract class AbstractApiRepository
         return $response;
     }
 
-    /**
-     * Sends a file to the DGII API.
-     *
-     * @throws ConnectionException
-     * @throws DgiiRepositoryException
-     */
     public function send(string $endpoint, string $token, string $filePath, ?string $env = null): array
     {
         return $this->returnResponse(
@@ -80,12 +57,6 @@ abstract class AbstractApiRepository
         );
     }
 
-    /**
-     * Find a single record from the DGII API.
-     *
-     * @throws ConnectionException
-     * @throws DgiiRepositoryException
-     */
     public function find(string $endpoint, string $token, array $params, ?string $env = null): array
     {
         return $this->returnResponse(
@@ -97,10 +68,7 @@ abstract class AbstractApiRepository
     }
 
     /**
-     * Get a collection of records from the DGII API.
-     *
      * @throws ConnectionException
-     * @throws RequestException
      */
     public function all(string $endpoint, string $token, array $params, ?string $env = null): Collection
     {

@@ -8,9 +8,6 @@ use PlatinumPlace\LaravelDgii\Data\Invoice\InvoiceXml;
 use PlatinumPlace\LaravelDgii\Enums\AcknowledgmentCodeEnum;
 use PlatinumPlace\LaravelDgii\Enums\AcknowledgmentStatusEnum;
 
-/**
- * Generates the raw XML string for an Acknowledgment of Receipt (ARECF).
- */
 class MapAcknowledgmentXmlAction
 {
     /**
@@ -21,12 +18,6 @@ class MapAcknowledgmentXmlAction
         //
     }
 
-    /**
-     * Map invoice and response data to the ARECF XML template.
-     *
-     *
-     * @throws \Throwable
-     */
     public function handle(InvoiceXml $invoiceXml, InvoiceResponse $invoiceReceived): string
     {
         $arecfCodeId = null;

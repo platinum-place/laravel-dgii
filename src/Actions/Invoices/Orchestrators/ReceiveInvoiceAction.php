@@ -11,9 +11,6 @@ use PlatinumPlace\LaravelDgii\Exceptions\DgiiRepositoryException;
 use PlatinumPlace\LaravelDgii\Repositories\InvoiceRepository;
 use PlatinumPlace\LaravelDgii\Repositories\StorageRepository;
 
-/**
- * Orchestrates the reception of a signed invoice from a third party.
- */
 class ReceiveInvoiceAction
 {
     /**
@@ -28,20 +25,6 @@ class ReceiveInvoiceAction
         //
     }
 
-    /**
-     * Store, submit, and process the acknowledgment for a received invoice.
-     *
-     * Flow:
-     * 1. Initialize the InvoiceXml object from the signed string.
-     * 2. Save the signed XML to the local storage.
-     * 3. Submit the file to the DGII API using the provided token.
-     * 4. Resolve the QR link for the invoice.
-     * 5. Process and sign the DGII's acknowledgment response.
-     *
-     * @throws DgiiRepositoryException
-     * @throws ConnectionException
-     * @throws \InvalidArgumentException
-     */
     public function handle(string $token, string $signed, ?string $env = null, ?string $certPath = null, ?string $certPassword = null): InvoiceData
     {
         $object = new InvoiceXml($signed);

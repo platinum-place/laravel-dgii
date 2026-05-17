@@ -8,32 +8,20 @@ use Illuminate\Support\Facades\Http;
 use PlatinumPlace\LaravelDgii\Exceptions\DgiiRepositoryException;
 use PlatinumPlace\LaravelDgii\Repositories\Abstracts\AbstractApiRepository;
 
-/**
- * Repository for querying the operational status of DGII services.
- */
 class StatusRepository extends AbstractApiRepository
 {
-    /**
-     * Get the configured HTTP client for the status API.
-     */
     public function getHttpClient(?string $env = null): PendingRequest
     {
         return Http::dgiiStatus();
     }
 
-    /**
-     * Get the endpoint key for status queries.
-     */
     protected function getEndpointKey(): string
     {
         return 'status';
     }
 
     /**
-     * Retrieves the general status of all DGII Invoice services.
-     *
      * @throws ConnectionException
-     * @throws DgiiRepositoryException
      */
     public function getServiceStatus(): array
     {
@@ -43,10 +31,7 @@ class StatusRepository extends AbstractApiRepository
     }
 
     /**
-     * Retrieves upcoming maintenance windows from the DGII.
-     *
      * @throws ConnectionException
-     * @throws DgiiRepositoryException
      */
     public function getMaintenanceWindows(): array
     {
@@ -56,10 +41,7 @@ class StatusRepository extends AbstractApiRepository
     }
 
     /**
-     * Retrieves the status for a specific environment (test, cert, prod).
-     *
      * @throws ConnectionException
-     * @throws DgiiRepositoryException
      */
     public function getEnvironmentStatus(string $env): array
     {
