@@ -4,10 +4,6 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/platinum-place/laravel-dgii.svg?style=flat-square)](https://packagist.org/packages/platinum-place/laravel-dgii)
 [![GitHub License](https://img.shields.io/github/license/platinum-place/laravel-dgii.svg?style=flat-square)](LICENSE)
 
-Integración minimalista y elegante con los servicios web de la **Dirección General de Impuestos Internos (DGII)** para el manejo de **Comprobantes Fiscales Electrónicos (e-CF)** en Laravel.
-
-> [Read in English 🇺🇸](./README_EN.md)
-
 ---
 
 ## 🎯 Filosofía del Paquete
