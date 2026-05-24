@@ -1,60 +1,87 @@
-# Acciones (Actions)
+# Catálogo de Acciones (Actions)
 
-Las Acciones representan la lógica de negocio atómica y reutilizable del paquete. En la versión 2.0, las acciones se organizan por **Dominios** y **Roles** para garantizar una estructura escalable y fácil de navegar.
+Las Acciones representan la lógica de negocio atómica del paquete. Cada acción tiene una única responsabilidad y es inyectada automáticamente por el contenedor de Laravel en `DgiiService` (o puede ser inyectada directamente en las clases de tu aplicación si deseas saltarte el Gateway).
 
-## Características de las Acciones
+Todas las acciones devuelven estructuras de datos primitivas (`array`, `string`, `bool`) para otorgar la máxima interoperabilidad y simplificar su consumo.
 
-- **Responsabilidad Única:** Cada acción realiza una tarea puntual (ej. `SignInvoiceAction` solo orquesta la firma).
-- **Organización por Roles:**
-  - **Orchestrators:** Coordinan múltiples pasos o servicios para completar una tarea de negocio.
-  - **Mappers:** Se encargan exclusivamente de la transformación de datos (ej. de Array a XML).
-- **Inyección por Contenedor:** Son instanciadas automáticamente por Laravel.
-- **Interoperabilidad:** Todas trabajan con objetos del namespace `Data` para garantizar la consistencia de los datos.
+---
 
-## Lista de Acciones Disponibles
+## Dominios y Acciones Disponibles
 
-A continuación se detallan las acciones principales organizadas por dominio:
+### 1. Semillas y Autenticación (`src/Domains/Seeds/Actions/`)
+* **`FetchAuthSeedAction`**:
+  * *Propósito:* Obtiene la semilla XML limpia desde los servidores de la DGII.
+  * *Entrada:* `string $env`
+  * *Salida:* `string` (XML de la semilla)
+* **`SendAuthSeedAction`**:
+  * *Propósito:* Envía la semilla firmada para validar y obtener el token de acceso.
+  * *Entrada:* `string $env, string $filePath` (ruta al XML de la semilla firmada)
+  * *Salida:* `array` (Token e información de expiración)
 
-### Facturación (`src/Actions/Invoices/`)
-- `SignInvoiceAction`: Orquesta la generación del XML y su firma digital.
-- `SignXmlInvoiceAction`: Orquesta la firma digital de un XML ya generado.
-- `SubmitInvoiceAction`: Gestiona el ciclo completo: firma, almacenamiento y envío a la DGII.
-- `ReceiveInvoiceAction`: Gestiona el envío a la DGII de un documento ya firmado.
-- `ValidateInvoiceStatusAction`: Consulta el estatus de procesamiento usando el `trackId`.
-- `SendInvoiceAction`: Envía un archivo XML ya firmado y almacenado previamente.
-- `StorageInvoiceAction`: Persiste los archivos y respuestas en el `StorageRepository`.
-- `ResolveInvoiceQrLinkAction`: Genera el enlace oficial del código QR para el e-CF.
+### 2. Facturación e-CF (`src/Domains/Invoices/Actions/`)
+* **`RenderInvoiceXmlAction`**:
+  * *Propósito:* Renderiza la plantilla Blade del e-CF e integra la firma digital PKCS#12.
+  * *Entrada:* `string $certContent, string $certPassword, array $data`
+  * *Salida:* `string` (XML firmado)
+* **`SendInvoiceAction`**:
+  * *Propósito:* Realiza la petición POST de subida del e-CF firmado a la DGII.
+  * *Entrada:* `string $env, string $token, string $filePath`
+  * *Salida:* `array` (Estado del envío y `trackId`)
+* **`FindInvoiceAction`**:
+  * *Propósito:* Consulta el estatus de un e-CF mediante su `trackId`.
+  * *Entrada:* `string $env, string $token, string $trackId`
+  * *Salida:* `array` (Estatus oficial del procesamiento)
+* **`FetchInvoicesAction`**:
+  * *Propósito:* Obtiene los trackIds asociados a un RNC emisor y secuencia de e-CF.
+  * *Entrada:* `string $env, string $token, string $senderIdentification, string $sequenceNumber`
+  * *Salida:* `array` (Historial de trackIds y estatus)
 
-### Criptografía y Certificados (`src/Actions/Xmls/`)
-- `SignXmlAction`: Acción de bajo nivel para la firma digital de strings XML.
-- `ValidateCertificateAction`: Verifica la validez y extrae información del certificado configurado.
+### 3. Facturas de Consumo (`src/Domains/ConsumerInvoices/Actions/`)
+* **`RenderConsumerInvoiceXmlAction`**:
+  * *Propósito:* Renderiza y firma el e-CF de consumo. Extrae y calcula el código de seguridad e-CF de forma automática.
+  * *Entrada:* `string $certContent, string $certPassword, array $data`
+  * *Salida:* `array` (Contiene el XML firmado y el XML integral)
+* **`SendConsumerInvoiceAction`**:
+  * *Propósito:* Envía facturas de consumo al endpoint especializado de la DGII (`recepcionfc`).
+  * *Entrada:* `string $env, string $token, string $filePath`
+  * *Salida:* `array` (Respuesta oficial del procesamiento)
+* **`FetchConsumerInvoiceAction`**:
+  * *Propósito:* Consulta el estatus de facturas de consumo usando RNC, secuencia y código de seguridad.
+  * *Entrada:* `string $env, string $token, string $senderIdentification, string $sequenceNumber, string $securityCode`
+  * *Salida:* `array` (Respuesta oficial de consulta)
 
-### Otros Documentos
-- `SubmitCancellationRangeAction`: Procesa el envío de anulación de rangos (ANECF).
-- `SubmitCommercialApprovalAction`: Procesa el envío de aprobaciones comerciales (ARECF/ACECF).
-- `ProcessAcknowledgmentAction`: Maneja la generación y procesamiento de acuses de recibo.
+### 4. Anulación de Rangos (`src/Domains/CancellationRanges/Actions/`)
+* **`RenderCancellationRangeXmlAction`**:
+  * *Propósito:* Renderiza y firma la solicitud de anulación de rangos (ANECF).
+  * *Entrada:* `string $certContent, string $certPassword, array $data`
+  * *Salida:* `string` (XML firmado)
+* **`SendCancellationRangeAction`**:
+  * *Propósito:* Envía la solicitud firmada al endpoint de anulación de rangos.
+  * *Entrada:* `string $env, string $token, string $filePath`
+  * *Salida:* `array` (Confirmación del estatus de anulación)
 
-### Autenticación y Semillas
-- `ReceiveSeedAction`: Gestiona el intercambio de la semilla firmada por un token de acceso.
-- `ResolveAccessToken`: Recupera o genera un token válido para las peticiones a la DGII.
+### 5. Aprobaciones Comerciales (`src/Domains/CommercialApprovals/Actions/`)
+* **`SendCommercialApprovalAction`**:
+  * *Propósito:* Envía respuestas de aceptación comercial firmadas (ARECF/ACECF).
+  * *Entrada:* `string $env, string $token, string $filePath`
+  * *Salida:* `array` (Confirmación del estatus de aprobación)
 
-## Beneficios de la Nueva Estructura
+### 6. Acuses de Recibo (`src/Domains/Acknowledgments/Actions/`)
+* **`RenderAcknowledgmentXmlAction`**:
+  * *Propósito:* Genera y firma acuses de recibo para e-CF.
+  * *Entrada:* `string $certContent, string $certPassword, string $senderIdentification, string $buyerIdentification, string $sequenceNumber, string $status, ?string $notReceivedCode = null`
+  * *Salida:* `string` (XML firmado)
 
-1.  **Escalabilidad:** La separación por dominios evita que la carpeta `Actions` se sature de archivos no relacionados.
-2.  **Claridad Intencional:** Al separar `Orchestrators` de `Mappers`, es evidente qué acciones contienen lógica de flujo y cuáles solo transformación.
-3.  **Mantenibilidad:** Facilita la localización de errores y la implementación de pruebas unitarias específicas para cada rol.
-
-## Ejemplo de Uso Manual
-
-Si deseas usar una acción de forma independiente al servicio principal:
-
-```php
-use PlatinumPlace\LaravelDgii\Actions\Invoices\Orchestrators\SignInvoiceAction;
-
-public function sign(SignInvoiceAction $signInvoice, array $data)
-{
-    // La acción se encarga de resolver las dependencias necesarias
-    $invoiceData = $signInvoice->handle($data);
-    // ...
-}
-```
+### 7. Disponibilidad DGII (`src/Domains/Dgii/Actions/`)
+* **`FetchServiceStatusAction`**:
+  * *Propósito:* Consulta la disponibilidad general de los servicios de la DGII.
+  * *Entrada:* `string $apiKey`
+  * *Salida:* `array` (Estado de cada servicio)
+* **`FetchMaintenanceWindowsAction`**:
+  * *Propósito:* Obtiene las ventanas de mantenimiento programadas.
+  * *Entrada:* `string $apiKey`
+  * *Salida:* `array`
+* **`FetchEnvironmentStatusAction`**:
+  * *Propósito:* Comprueba la disponibilidad de un ambiente específico (sandbox, certificación o producción).
+  * *Entrada:* `string $apiKey, string $env`
+  * *Salida:* `array`

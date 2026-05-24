@@ -1,33 +1,99 @@
-# Convenciones del Proyecto
+# Convenciones del Proyecto y Guía del Colaborador (v1.0)
 
-Este proyecto mantiene un estándar estricto en cuanto al idioma y estilo de código para garantizar profesionalismo, compatibilidad internacional y claridad para el equipo de desarrollo.
+Este paquete mantiene estándares estrictos de desarrollo para asegurar que la integración con la DGII siga siendo rápida, mantenible, libre de estado (stateless) y fácil de extender por cualquier desarrollador.
 
-## Idioma del Código Fuente
+---
 
-**Todo el código fuente debe escribirse en INGLÉS.**
+## 📝 1. Reglas Generales de Código e Idioma
 
-Esto incluye, pero no se limita a:
-- **Nombres de Clases y Interfaces:** (ej. `InvoiceData`, `DgiiClientInterface`).
-- **Nombres de Métodos y Funciones:** (ej. `sendInvoice`, `handleResponse`).
-- **Nombres de Variables y Propiedades:** (ej. `$signedXml`, `$accessToken`).
-- **Nombres de Base de Datos y Configuración:** (ej. `storage_disk`, `api_key`).
-- **DocBlocks y Comentarios Técnicos:** Todos los bloques de documentación de PHP y comentarios dentro del código deben estar redactados en inglés siguiendo los estándares de la industria.
+1. **Código Fuente en INGLÉS:**
+   * Nombres de clases, métodos, variables, parámetros, namespaces, comentarios técnicos y docblocks deben estar redactados en inglés.
+   * *Ejemplo:* `RenderInvoiceXmlAction`, `FetchAuthSeedAction`, `$certContent`.
+2. **Documentación en ESPAÑOL:**
+   * Todos los manuales, archivos markdown (`.md`) y explicaciones dirigidas a usuarios y desarrolladores deben mantenerse en español (dado que el público objetivo es la República Dominicana).
+3. **Estilo de Código:**
+   * Se sigue rigurosamente el estándar **PSR-12**.
+   * Es mandatorio formatear los archivos utilizando `Laravel Pint` antes de realizar cualquier commit.
 
-*Razón: El inglés es el lenguaje universal de la programación y facilita la integración con librerías externas y la colaboración global.*
+---
 
-## Idioma de la Documentación
+## 🏗️ 2. Patrones Arquitectónicos de la v1.0
 
-**Toda la documentación dirigida a usuarios y desarrolladores debe escribirse en ESPAÑOL.**
+Para colaborar o agregar nuevas funciones en el paquete, debes seguir estrictamente los siguientes patrones de diseño:
 
-Esto incluye:
-- **Archivos Markdown (.md):** (ej. `README.md`, `ARCHITECTURE.md`, `docs/*.md`).
-- **Mensajes de Git:** Los mensajes de commit deben seguir el estándar de *Conventional Commits* y estar redactados en español (ej. `feat(invoice): agregar soporte para facturas de consumo`).
+### 2.1 Acciones 100% Libres de Estado (Stateless Actions)
+Ninguna clase de acción (`Action`) debe depender de archivos de configuración globales o leer secretos del entorno (`env()`, `config()`) internamente (a excepción de los nombres de los endpoints y dominios).
+* **Regla:** Pide los certificados, contraseñas, llaves de API y tokens de acceso siempre como argumentos de entrada en el método `handle()`.
+* **Razón:** Esto hace que las acciones sean puras y reutilizables en cualquier arquitectura (como aplicaciones multi-inquilino o con firma de múltiples certificados).
 
-*Razón: Al ser un paquete diseñado específicamente para la República Dominicana (DGII), la documentación en español asegura una mejor comprensión para el público objetivo.*
+```php
+// ❌ MALO: Depender de la configuración interna
+public function handle(string $filePath): array
+{
+    $token = config('dgii.api_key'); // No hacer esto
+}
 
-## Estilo de Código
+//  BUENO: Recibir la credencial por parámetro
+public function handle(string $apiKey, string $filePath): array
+{
+    // Lógica pura
+}
+```
 
-- **PSR-12:** Seguimos rigurosamente los estándares de estilo de PHP (PSR-12).
-- **Laravel Pint:** Es obligatorio ejecutar `Laravel Pint` antes de realizar cualquier commit para asegurar la consistencia del estilo.
-- **Tipado Fuerte:** Se requiere el uso de tipos en las propiedades de las clases, parámetros de métodos y tipos de retorno (PHP 8.2+).
-- **Composicón sobre Herencia:** Preferimos el uso de `Actions` inyectadas y composición para extender la funcionalidad en lugar de jerarquías de clases complejas.
+### 2.2 Uso Exclusivo de Datos Primitivos (`array` / `string` / `bool`)
+Nunca crees clases DTO o respuestas customizadas (`InvoiceData`, `ResponseObject`). 
+* **Regla:** Las acciones deben retornar strings limpios (para XMLs) o arrays asociativos nativos (`array`) para las respuestas parsed de los web services.
+* **Razón:** Facilita la manipulación y serialización directa de los datos en la aplicación del usuario sin obligar a mapear clases del paquete.
+
+### 2.3 Cero Capas de Abstracción Redundantes (No Repositorios, No Modelos)
+No crees clases de repositorio abstractas ni interfaces redundantes. La comunicación HTTP debe realizarse directamente en la Acción usando el cliente HTTP de Laravel (`Http`) y sus macros.
+
+---
+
+## 🛠️ 3. ¿Cómo agregar una nueva funcionalidad?
+
+Si necesitas integrar un nuevo servicio web de la DGII (por ejemplo, consultas especializadas de NCF o nuevos tipos de aprobaciones), sigue este flujo de desarrollo:
+
+### Paso 1: Ubicar el Dominio
+Identifica en cuál dominio de negocio en `src/Domains/` encaja la nueva función. Si es un dominio totalmente nuevo, crea una carpeta representativa (ej. `src/Domains/NewFeature/Actions/`).
+
+### Paso 2: Crear la Acción Atómica
+Crea una clase Action con una única responsabilidad (`handle()`) y inyéctale dependencias nativas si las requiere en su constructor.
+```php
+namespace PlatinumPlace\LaravelDgii\Domains\NewFeature\Actions;
+
+use Illuminate\Support\Facades\Http;
+
+class SendNewFeatureAction
+{
+    public function handle(string $env, string $token, string $filePath): array
+    {
+        $response = Http::dgiiInvoice($env)
+            ->withToken($token)
+            ->attachXml($filePath)
+            ->post(config('dgii.endpoints.new_feature.send'));
+
+        return $response->json();
+    }
+}
+```
+
+### Paso 3: Exponer en el Gateway `DgiiService`
+Inyecta tu nueva acción en el constructor de `src/DgiiService.php` y expone un método limpio para que sea accesible de forma directa y cómoda por los usuarios mediante el Facade `Dgii`.
+
+```php
+// En src/DgiiService.php
+
+public function __construct(
+    // ...
+    protected SendNewFeatureAction $sendNewFeature,
+) {}
+
+public function sendNewFeature(string $token, string $filePath, ?string $env = null): array
+{
+    return $this->sendNewFeature->handle($env ?: config('dgii.environment'), $token, $filePath);
+}
+```
+
+### Paso 4: Documentar
+Añade la descripción de la nueva acción y sus tipos de entrada y salida en `docs/internals/actions.md`.

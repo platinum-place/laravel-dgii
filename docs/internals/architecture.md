@@ -1,30 +1,48 @@
-# Arquitectura del Proyecto (v2.0)
+# Arquitectura del Proyecto (v1.0)
 
-Este paquete sigue una arquitectura moderna orientada a servicios y acciones, diseñada para ser modular, testeable y fácil de usar dentro del ecosistema de Laravel.
+Este paquete sigue una arquitectura minimalista y orientada a acciones agrupadas por dominios de negocio. Está diseñado para ser un facilitador (enabler) del ecosistema de Laravel que simplifica los puntos complejos de la integración con la DGII (firma digital, autenticación por semillas, peticiones HTTP y consultas de estatus) sin ocultar o complicar el flujo nativo establecido por la DGII.
 
 ## Capas del Sistema
 
-La interacción con el paquete fluye a través de las siguientes capas:
+La interacción con el paquete fluye de manera directa y plana:
 
-1.  **Facades:** El facade unificado `Dgii` es la interfaz pública principal para servicios web. Se incluye también `DgiiXml` para la gestión directa de firmas digitales y certificados.
-2.  **Services:** `DgiiService` actúa como el orquestador central para procesos de negocio. `XmlService` (detrás de `DgiiXml`) coordina la lógica técnica de criptografía delegando en acciones especializadas.
-3.  **Actions:** Son clases con una única responsabilidad (`handle()`). Realizan tareas atómicas como firmar un XML o persistir archivos. En la v2.0, estas acciones se organizan por dominios (ej. `Invoices`, `Auth`, `Xmls`) y roles (`Orchestrators`, `Mappers`) para una mejor mantenibilidad.
-4.  **Repositories:** Encapsulan las llamadas a los servicios web de la DGII y la interacción con el almacenamiento. Se ha implementado una jerarquía modular:
-    *   `AbstractApiRepository`: Proporciona la lógica base para peticiones HTTP, manejo de endpoints y gestión de errores comunes.
-    *   `AbstractInvoiceRepository`: Extiende la base para estandarizar el procesamiento de respuestas en objetos `InvoiceResponse`.
-    *   **Repositorios Concretos:** (ej. `InvoiceRepository`, `ConsumeInvoiceRepository`) Implementan la configuración específica de cada API.
-    *   `StorageRepository`: Gestiona la persistencia de archivos siguiendo una estructura organizada por fecha y UUID.
-5.  **Data (DTOs & XML):** Centraliza la estructura de los datos que fluyen entre las capas, incluyendo objetos XML (`InvoiceXml`) y respuestas de la API (`InvoiceResponse`), garantizando integridad y tipado fuerte.
+1. **Facade (`Dgii`):** Interfaz pública principal del paquete. Simplifica el uso del servicio exponiendo métodos estáticos.
+2. **Gateway Service (`DgiiService`):** Es el único servicio del paquete, encargado de actuar como una puerta de enlace unificada. Inyecta directamente las acciones de cada dominio y las expone en firmas de métodos limpias que reciben y retornan datos primitivos (`array`, `string`, `bool`).
+3. **Domain Actions (`src/Domains/`):** El corazón de la lógica de negocio se divide en dominios atómicos. Cada acción (`Action`) tiene una única responsabilidad (`handle()`):
+   * **Seeds:** Obtención y validación de semillas de autenticación de la DGII.
+   * **Invoices:** Generación, firma digital, envío y consulta de facturas electrónicas (e-CF).
+   * **ConsumerInvoices:** Lógica específica para facturas electrónicas de consumo.
+   * **CancellationRanges:** Solicitud de anulación de rangos de e-CF (ANECF).
+   * **CommercialApprovals:** Envío de aprobaciones comerciales de e-CF (ARECF/ACECF).
+   * **Acknowledgments:** Generación de acuses de recibo.
+   * **Dgii:** Monitoreo y consulta de disponibilidad de servidores de la DGII.
+4. **Templates (`resources/views/`):** Plantillas Blade opcionales que proveen una base estándar para renderizar los XML solicitados por la DGII antes de ser firmados digitalmente.
+
+---
 
 ## Flujo de Trabajo (Workflow)
 
 Cuando el usuario invoca un método desde el **Facade `Dgii`**:
-1.  El Facade resuelve `DgiiService` desde el contenedor de Laravel.
-2.  El Service recibe la solicitud y orquesta las **Actions** necesarias.
-3.  Por ejemplo, al ejecutar `Dgii::submitInvoice($data)`:
-    *   Se ejecuta `SignInvoiceAction` para generar y firmar digitalmente el XML.
-    *   Se utiliza `InvoiceRepository` para realizar la petición HTTP post-autenticación.
-    *   Se usa `StorageInvoiceAction` (vía `StorageRepository`) para persistir el XML firmado en el disco.
-4.  El Service devuelve un objeto `InvoiceData` que contiene el estado completo del ciclo de vida del documento.
 
-Esta separación de responsabilidades permite que cada componente sea probado de forma aislada y que el código sea fácil de mantener y extender.
+```mermaid
+sequenceDiagram
+    participant App as Aplicación del Usuario
+    participant Facade as Facade Dgii
+    participant Gateway as DgiiService
+    participant Action as Action del Dominio
+    participant DGII as Servidores DGII
+    
+    App->>Facade: Dgii::sendInvoice($token, $filePath)
+    Facade->>Gateway: sendInvoice($token, $filePath)
+    Gateway->>Action: handle($env, $token, $filePath)
+    Action->>DGII: Petición HTTP (POST)
+    DGII-->>Action: Respuesta JSON
+    Action-->>Gateway: array (Respuesta parsed)
+    Gateway-->>Facade: array
+    Facade-->>App: array
+```
+
+Esta separación atómica permite:
+1. **Control Total:** El desarrollador puede elegir ignorar las plantillas del paquete, generar su propio XML y simplemente usar el paquete para firmar (`RenderInvoiceXmlAction`) y enviar (`SendInvoiceAction`).
+2. **Facilidad de Testeo:** Cada acción es una clase simple e independiente, permitiendo probar flujos particulares mediante `Http::fake()` de forma ágil.
+3. **Mantenimiento Cero:** Si la DGII agrega un nuevo campo a un servicio web, no es necesario actualizar una jerarquía de DTOs en el paquete; el desarrollador pasa los datos nativos correspondientes.

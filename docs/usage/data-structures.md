@@ -1,11 +1,16 @@
 # Estructuras de Datos DGII (Data Structures)
 
-Esta guía detalla la estructura de los arrays de datos esperados por los servicios de este paquete para generar los documentos XML requeridos por la DGII.
+Esta guía detalla la estructura de los arrays de datos esperados por los servicios de este paquete para generar los documentos XML utilizando las **plantillas Blade integradas**.
+
+> [!NOTE]
+> **Tú Tienes el Control Absoluto:**
+> Debido a que el paquete adopta un enfoque minimalista e independiente (stateless), **no estás obligado a utilizar estas estructuras ni las plantillas Blade del paquete**.
+> Si tu aplicación ya genera sus propios strings XML, puedes saltarte por completo las acciones `render` y pasar tu XML generado directamente a los servicios de firma digital o enviarlo de forma directa a la DGII.
 
 ---
 
 ## 1. Facturas Electrónicas (e-CF)
-Utilizado por `Dgii::submitInvoice()`. Soporta tipos 31, 32, 33, 34, 41, 43, 44, 45, 46 y 47.
+Utilizado por `Dgii::renderInvoice()`. Soporta tipos 31, 32, 33, 34, 41, 43, 44, 45, 46 y 47.
 
 ### Encabezado (`IdDoc`)
 | Campo | Descripción |
@@ -45,7 +50,7 @@ Un array de items, cada uno con:
 ---
 
 ## 2. Anulación de Rangos (ANECF)
-Utilizado por `Dgii::sendCancellationRange()`.
+Utilizado por `Dgii::renderCancellationRange()`.
 
 | Campo | Descripción |
 | :--- | :--- |
@@ -55,10 +60,9 @@ Utilizado por `Dgii::sendCancellationRange()`.
 
 ---
 
-## 3. Aprobación Comercial (ARECF / ACECF)
-Utilizado por `Dgii::sendCommercialApproval()`.
+## 3. Acuse de Recibo (ARECF)
+Utilizado por `Dgii::renderAcknowledgment()`.
 
-### Acuse de Recibo (ARECF)
 | Campo | Descripción |
 | :--- | :--- |
 | `RNCEmisor` | RNC de quien emitió la factura. |
@@ -66,17 +70,10 @@ Utilizado por `Dgii::sendCommercialApproval()`.
 | `eNCF` | e-NCF del documento. |
 | `Estado` | `0` (Aceptado), `1` (Rechazado). |
 
-### Aprobación Comercial (ACECF)
-Similar a ARECF pero incluye:
-| Campo | Descripción |
-| :--- | :--- |
-| `MontoTotal` | Monto total de la factura. |
-| `FechaEmision` | Fecha de la factura. |
-
 ---
 
 ## Enlaces de Referencia Oficial
 Para detalles técnicos exhaustivos sobre validaciones de campos y códigos de error, consulte los manuales originales:
 
-*   **Portal Oficial e-CF:** [Documentación sobre e-CF](https://dgii.gov.do/cicloContribuyente/facturacion/comprobantesFiscalesElectronicosE-CF/Paginas/documentacionSobreE-CF.aspx)
-*   **Guía Técnica:** Especificaciones de Formato XML y Web Services.
+* **Portal Oficial e-CF:** [Documentación sobre e-CF](https://dgii.gov.do/cicloContribuyente/facturacion/comprobantesFiscalesElectronicosE-CF/Paginas/documentacionSobreE-CF.aspx)
+* **Guía Técnica:** Especificaciones de Formato XML y Web Services.

@@ -4,116 +4,127 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/platinum-place/laravel-dgii.svg?style=flat-square)](https://packagist.org/packages/platinum-place/laravel-dgii)
 [![GitHub License](https://img.shields.io/github/license/platinum-place/laravel-dgii.svg?style=flat-square)](LICENSE)
 
-Integración elegante con los servicios web de la **Dirección General de Impuestos Internos (DGII)** para el manejo de **Comprobantes Fiscales Electrónicos (e-CF)** en Laravel.
+Integración minimalista y elegante con los servicios web de la **Dirección General de Impuestos Internos (DGII)** para el manejo de **Comprobantes Fiscales Electrónicos (e-CF)** en Laravel.
 
-> [Read in English 🇺🇸](./README_EN.md) | **[Guía de Migración v1 a v2](./docs/usage/migration-v2.md)**
-
----
-
-## 🚀 Características principales
-
-- **Firma Digital:** Firma automática de XML utilizando certificados `.p12` / `.pfx`.
-- **Validación Robusta:** Validación preventiva de certificados antes de iniciar procesos de firma o envío.
-- **Autenticación Inteligente:** Gestión automática de semillas y tokens con caché integrado.
-- **Ciclo Completo e-CF:** Generación, firma, envío y consulta de estado de facturas electrónicas.
-- **Soporte Extendido:** Facturas de crédito fiscal (31), consumo (32), notas de crédito (33), y más.
-- **Documentos Especiales:** Aprobación comercial (ARECF) y Anulación de rangos (ANECF).
----
-
-## 📦 Dependencias Core
-
-Este paquete se apoya en soluciones robustas de la comunidad:
-
-- **Firma XML:** `platinum-place/php-dgii-xml-signer`
-- **HTTP Client:** Guzzle (vía Laravel HTTP Facade)
+> [Read in English 🇺🇸](./README_EN.md)
 
 ---
 
-## 📖 Documentación
+## 🎯 Filosofía del Paquete
 
-Índice completo de recursos para dominar la integración con la DGII:
+Este paquete sigue una **filosofía de facilitador (enabler)**:
+* **El que sabe usar la DGII sabe usar el paquete.**
+* No intentamos "esconder" ni duplicar las validaciones o flujos de la DGII bajo modelos complejos o DTOs pesados.
+* El paquete es **100% libre de estado (stateless)** y no almacena credenciales ni claves en el archivo de configuración. Todo (entornos, tokens de acceso, certificados, contraseñas, llaves de API) se suministra en tiempo de ejecución por quien consume el método.
+* Facilitamos únicamente las partes complejas de la integración:
+  1. La **firma digital PKCS#12** de los XMLs.
+  2. La **autenticación** mediante el ciclo Semilla -> Firma -> Token de acceso.
+  3. La **comunicación HTTP** nativa optimizada con macros de Laravel para subir y consultar e-CF.
 
-- **[Primeros Pasos](./docs/usage/getting-started.md)** - Guía rápida de instalación y configuración.
-- **[Guía de Migración (v1 a v2.0)](./docs/usage/migration-v2.md)** - **Lectura obligatoria para usuarios existentes.**
-- [Estructuras de Datos (e-CF)](./docs/usage/data-structures.md) - Detalle de campos para cada tipo de documento.
-- [Arquitectura del Sistema](./docs/internals/architecture.md) - Entiende las capas de Repositorios, Datos y Acciones.
-- [Catálogo de Acciones](./docs/internals/actions.md) - Lista de acciones atómicas disponibles.
-- [Convenciones del Proyecto](./docs/internals/conventions.md) - Estándares de código e idioma.
-- [Documentación Oficial DGII](https://dgii.gov.do/cicloContribuyente/facturacion/comprobantesFiscalesElectronicosE-CF/Paginas/documentacionSobreE-CF.aspx) - Manuales legales y técnicos.
+---
+
+## 🏗️ Estructura de Directorios
+
+* **Domains (`src/Domains/`):** Contiene acciones atómicas (`Actions`) independientes por dominio de negocio (Invoices, ConsumerInvoices, Seeds, CancellationRanges, CommercialApprovals, Acknowledgments, Dgii).
+* **DgiiService (`src/DgiiService.php`):** Gateway minimalista expuesto mediante el Facade `Dgii` que inyecta y expone de forma directa estas acciones.
+* **Templates (`resources/views/`):** Vistas Blade opcionales para la estructuración de XMLs de e-CF estándar, de consumo, anulaciones y acuses.
+
+---
 
 ## 🛠️ Instalación
 
+Instala el paquete mediante Composer:
+
 ```bash
 composer require platinum-place/laravel-dgii
+```
+
+Publica el archivo de configuración opcional para endpoints y dominios:
+
+```bash
 php artisan vendor:publish --tag=dgii-config
 ```
 
-Configura tus credenciales en el archivo `.env`:
+---
 
-```env
-DGII_ENVIRONMENT=testecf
-DGII_CERT_PATH=storage/dgii/certs/mi_certificado.p12
-DGII_KEY_PASSWORD=tu_password
-DGII_API_KEY=tu_api_key
+## 🚀 Uso Rápido (vía Facades)
+
+Toda interacción pública se realiza a través del Facade `Dgii`.
+
+### 1. Obtener Semilla y Autenticarse
+
+```php
+use PlatinumPlace\LaravelDgii\Facades\Dgii;
+
+// 1. Obtener semilla limpia desde la DGII
+$seedXml = Dgii::getSeed('testecf'); // testecf (sandbox), certecf (certificación), ecf (producción)
+
+// 2. [Tu aplicación] Firma digitalmente el XML de la semilla y guárdalo en un archivo.
+// 3. Intercambiar la semilla firmada por un access token oficial
+$authInfo = Dgii::verifySeed('testecf', '/ruta/a/semilla_firmada.xml');
+
+$accessToken = $authInfo['token'];
+```
+
+### 2. Generar y Firmar Facturas (e-CF)
+
+Puedes usar las plantillas Blade del paquete o generar tu propio XML y firmarlo manualmente usando el SignManager integrado.
+
+```php
+use PlatinumPlace\LaravelDgii\Facades\Dgii;
+
+$invoiceData = [
+    'IdDoc' => ['TipoeCF' => 31, 'eNCF' => 'E310000000001', ...],
+    'Emisor' => [...],
+    'Comprador' => [...],
+    'DetallesItems' => [...]
+];
+
+$certContent = file_get_contents('/ruta/al/certificado.p12');
+$certPassword = 'tu_contraseña';
+
+// Genera el XML y aplica la firma digital PKCS#12
+$signedXml = Dgii::renderInvoice($certContent, $certPassword, $invoiceData);
+
+// [Tu aplicación] Guarda el XML firmado donde prefieras en tu disco local o base de datos.
+```
+
+### 3. Enviar e-CF y Consultar Estatus
+
+```php
+use PlatinumPlace\LaravelDgii\Facades\Dgii;
+
+// 1. Enviar el XML firmado a la DGII (especificando el ambiente, token y archivo)
+$result = Dgii::sendInvoice('testecf', $accessToken, '/ruta/al/comprobante_firmado.xml');
+
+$trackId = $result['trackId'];
+
+// 2. Consultar el estado de procesamiento del comprobante mediante el trackId
+$status = Dgii::findInvoice('testecf', $accessToken, $trackId);
+```
+
+### 4. Consultar Estatus de Servicios de la DGII
+
+```php
+use PlatinumPlace\LaravelDgii\Facades\Dgii;
+
+$apiKey = 'tu_api_key';
+
+// Consulta el estado general
+$services = Dgii::getServiceStatus($apiKey);
+
+// Consulta las ventanas de mantenimiento programadas
+$maintenance = Dgii::getMaintenanceWindows($apiKey);
 ```
 
 ---
 
-## 📖 Uso rápido (vía Facades)
+## 📖 Documentación Completa
 
-El paquete utiliza un único Facade `Dgii` para todas las operaciones principales.
-
-### Enviar una Factura (e-CF)
-```php
-use PlatinumPlace\LaravelDgii\Facades\Dgii;
-
-// Los datos siguen la estructura oficial de la DGII
-$invoiceData = [...]; 
-
-// Firma, almacena y envía en un solo paso
-$result = Dgii::submitInvoice($invoiceData);
-
-// El resultado es un objeto InvoiceData con toda la información del ciclo de vida
-echo $result->response->getTrackId();
-echo $result->qrLink;
-```
-
-### Anulación de Rango (ANECF)
-```php
-use PlatinumPlace\LaravelDgii\Facades\Dgii;
-
-$response = Dgii::sendCancellationRange($data);
-```
-
-### Consultar Estado de Servicios
-```php
-use PlatinumPlace\LaravelDgii\Facades\Dgii;
-
-$status = Dgii::getServiceStatus();
-```
-
-### Firma de XML Manual (Opcional)
-Si necesitas firmar un XML manualmente o validar un certificado:
-```php
-use PlatinumPlace\LaravelDgii\Facades\DgiiXml;
-
-// Firmar un XML
-$signedXml = DgiiXml::sign($rawXml);
-
-// Validar certificado configurado
-$info = DgiiXml::validateCertificate();
-```
-
----
-
-## 🙋‍♂️ Soporte y Consultoría
-
-Si necesitas asistencia técnica con la implementación de este paquete o tienes dudas generales sobre el ecosistema de **Facturación Electrónica en la República Dominicana**, puedes contactarme directamente.
-
-Ofrezco servicios de consultoría especializada para empresas que buscan certificar sus sistemas ante la DGII.
-
-- **Contacto:** Mis métodos de contacto actualizados están disponibles en mi **[Perfil de GitHub](https://github.com/platinum-place)**.
-- **Issues:** Para errores del paquete, por favor abre un issue en este repositorio.
+- **[Primeros Pasos](./docs/usage/getting-started.md)** - Guía detallada para comenzar la integración.
+- **[Arquitectura de Dominio](./docs/internals/architecture.md)** - Detalle técnico del sistema de acciones.
+- **[Catálogo de Acciones](./docs/internals/actions.md)** - Listado completo de acciones disponibles en `src/Domains/`.
+- **[Estructuras de Datos](./docs/usage/data-structures.md)** - Detalle del formato esperado en los arrays para renderizar XMLs.
 
 ---
 
