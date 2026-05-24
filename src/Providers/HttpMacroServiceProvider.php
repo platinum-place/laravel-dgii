@@ -37,10 +37,6 @@ class HttpMacroServiceProvider extends ServiceProvider
 
         Http::macro('dgiiStatus', function () {
             return Http::baseUrl(config('dgii.domains.status'))
-                ->withHeaders([
-                    'accept' => '*/*',
-                    'Authorization' => 'Apikey '.config('dgii.api_key'),
-                ])
                 ->throw();
         });
 
