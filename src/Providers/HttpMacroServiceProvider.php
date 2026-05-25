@@ -13,9 +13,7 @@ class HttpMacroServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Http::macro('dgiiInvoice', function (?string $environment = null) {
-            $env = $environment ?: config('dgii.environment');
-
+        Http::macro('dgiiInvoice', static function (string $env) {
             $baseUrl = config('dgii.domains.invoice');
 
             $finalUrl = rtrim($baseUrl, '/') . '/' . ltrim($env, '/');
@@ -24,9 +22,7 @@ class HttpMacroServiceProvider extends ServiceProvider
                 ->throw();
         });
 
-        Http::macro('dgiiConsumerInvoice', function (?string $environment = null) {
-            $env = $environment ?: config('dgii.environment');
-
+        Http::macro('dgiiConsumerInvoice', static function (string $env) {
             $baseUrl = config('dgii.domains.consumer_invoice');
 
             $finalUrl = rtrim($baseUrl, '/') . '/' . ltrim($env, '/');
@@ -35,7 +31,7 @@ class HttpMacroServiceProvider extends ServiceProvider
                 ->throw();
         });
 
-        Http::macro('dgiiStatus', function () {
+        Http::macro('dgiiStatus', static function () {
             return Http::baseUrl(config('dgii.domains.status'))
                 ->withHeaders([
                     'accept' => '*/*',

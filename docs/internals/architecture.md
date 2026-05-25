@@ -1,4 +1,4 @@
-# Arquitectura del Proyecto (v1.3.4)
+# Arquitectura del Proyecto (v1.3.6)
 
 Este paquete sigue una arquitectura minimalista y orientada a acciones. Está diseñado para ser un facilitador (enabler) del ecosistema de Laravel que simplifica los puntos complejos de la integración con la DGII (firma digital, autenticación por semillas, peticiones HTTP y consultas de estatus) sin ocultar o complicar el flujo nativo establecido por la DGII.
 

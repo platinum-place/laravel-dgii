@@ -1,4 +1,4 @@
-# Catálogo de Acciones (Actions) (v1.3.5)
+# Catálogo de Acciones (Actions) (v1.3.6)
 
 Las Acciones representan la lógica de negocio atómica del paquete. Cada acción tiene una única responsabilidad y es inyectada automáticamente por el contenedor de Laravel en `DgiiService`.
 
