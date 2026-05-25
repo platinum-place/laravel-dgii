@@ -195,9 +195,9 @@ class DgiiService
      *
      * @throws ConnectionException
      */
-    public function getServiceStatus(string $apiKey): array
+    public function getServiceStatus(): array
     {
-        return $this->fetchServiceStatus->handle($apiKey);
+        return $this->fetchServiceStatus->handle();
     }
 
     /**
@@ -205,9 +205,9 @@ class DgiiService
      *
      * @throws ConnectionException
      */
-    public function getMaintenanceWindows(string $apiKey): array
+    public function getMaintenanceWindows(): array
     {
-        return $this->fetchMaintenanceWindows->handle($apiKey);
+        return $this->fetchMaintenanceWindows->handle();
     }
 
     /**
@@ -215,8 +215,8 @@ class DgiiService
      *
      * @throws ConnectionException
      */
-    public function getEnvironmentStatus(string $apiKey, string $env): array
+    public function getEnvironmentStatus(string $env): array
     {
-        return $this->fetchEnvironmentStatus->handle($apiKey, $env);
+        return $this->fetchEnvironmentStatus->handle($env);
     }
 }

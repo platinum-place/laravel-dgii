@@ -18,13 +18,9 @@ class FetchEnvironmentStatusAction
     /**
      * @throws ConnectionException
      */
-    public function handle(string $apiKey, string $env): array
+    public function handle(string $env): array
     {
         $response = Http::dgiiStatus()
-            ->withHeaders([
-                'accept' => '*/*',
-                'Authorization' => "Apikey {$apiKey}",
-            ])
             ->get(config('dgii.endpoints.status.environment'), [
                 'ambiente' => match ($env) {
                     'testecf' => 1,

@@ -18,13 +18,9 @@ class FetchMaintenanceWindowsAction
     /**
      * @throws ConnectionException
      */
-    public function handle(string $apiKey): array
+    public function handle(): array
     {
         $response = Http::dgiiStatus()
-            ->withHeaders([
-                'accept' => '*/*',
-                'Authorization' => "Apikey {$apiKey}",
-            ])
             ->get(config('dgii.endpoints.status.maintenance'));
 
         return $response->json();

@@ -18,28 +18,29 @@ Este paquete mantiene estándares estrictos de desarrollo para asegurar que la i
 ---
 
 ## 🏗️ 2. Patrones Arquitectónicos de la v2.2
+# Convenciones del Proyecto y Guía del Colaborador (v2.3)
 
-Para colaborar o agregar nuevas funciones en el paquete, debes seguir estrictamente los siguientes patrones de diseño:
+...
 
 ### 2.1 Acciones 100% Libres de Estado (Stateless Actions)
-Ninguna clase de acción (`Action`) debe depender de archivos de configuración globales o leer secretos del entorno (`env()`, `config()`) internamente (a excepción de los nombres de los endpoints y dominios).
-* **Regla:** Pide los certificados, contraseñas, llaves de API y tokens de acceso siempre como argumentos de entrada en el método `handle()`.
-* **Razón:** Esto hace que las acciones sean puras y reutilizables en cualquier arquitectura (como aplicaciones multi-inquilino o con firma de múltiples certificados).
+Ninguna clase de acción (`Action`) debe depender de archivos de configuración globales para datos dinámicos o sensibles que varían por cliente (ej: certificados, contraseñas de certificados o tokens de acceso).
+* **Regla:** Pide los certificados, contraseñas y tokens de acceso siempre como argumentos de entrada en el método `handle()`.
+* **Excepción:** La `API Key` para servicios de estatus y disponibilidad puede configurarse globalmente en el archivo `config/dgii.php` si es constante para toda la aplicación.
+* **Razón:** Esto mantiene la flexibilidad para aplicaciones multi-inquilino mientras simplifica el uso de servicios compartidos.
 
 ```php
-// ❌ MALO: Depender de la configuración interna
+// ❌ MALO: Depender de tokens dinámicos de la configuración
 public function handle(string $filePath): array
 {
-    $token = config('dgii.api_key'); // No hacer esto
+    $token = config('dgii.access_token'); // No hacer esto
 }
 
-//  BUENO: Recibir la credencial por parámetro
-public function handle(string $apiKey, string $filePath): array
+//  BUENO: Recibir el secreto dinámico por parámetro
+public function handle(string $token, string $filePath): array
 {
     // Lógica pura
 }
 ```
-
 ### 2.2 Uso Exclusivo de Datos Primitivos (`array` / `string` / `bool`)
 Nunca crees clases DTO o respuestas customizadas (`InvoiceData`, `ResponseObject`). 
 * **Regla:** Las acciones deben retornar strings limpios (para XMLs) o arrays asociativos nativos (`array`) para las respuestas parsed de los web services.

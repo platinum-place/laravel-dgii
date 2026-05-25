@@ -24,13 +24,16 @@ php artisan vendor:publish --tag=dgii-config
 
 El paquete **no guarda contraseñas, certificados ni llaves de API en su archivo de configuración**. Esto te otorga un control total sobre cómo almacenas y administras estos datos sensibles (por ejemplo, encriptados en tu base de datos o en servicios de Vault).
 
-Solo debes configurar las variables de entorno en tu `.env` si los servidores web oficiales cambiaran:
+Solo debes configurar las variables de entorno en tu `.env`:
 
 ```env
 # Por defecto se asume la configuración oficial de la DGII
 DGII_DOMAIN_INVOICE=https://ecf.dgii.gov.do
 DGII_DOMAIN_CONSUME_INVOICE=https://fc.dgii.gov.do
 DGII_DOMAIN_STATUS=https://statusecf.dgii.gov.do
+
+# API Key requerida para servicios de estatus y disponibilidad
+DGII_API_KEY=tu_api_key_aqui
 ```
 
 ---

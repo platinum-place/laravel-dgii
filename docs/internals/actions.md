@@ -1,4 +1,4 @@
-# Catálogo de Acciones (Actions)
+# Catálogo de Acciones (Actions) (v2.3)
 
 Las Acciones representan la lógica de negocio atómica del paquete. Cada acción tiene una única responsabilidad y es inyectada automáticamente por el contenedor de Laravel en `DgiiService`.
 
@@ -75,13 +75,13 @@ Todas las acciones devuelven estructuras de datos primitivas (`array`, `string`,
 ### 7. Disponibilidad DGII
 * **`FetchServiceStatusAction`**:
   * *Propósito:* Consulta la disponibilidad general de los servicios de la DGII.
-  * *Entrada:* `string $apiKey`
+  * *Entrada:* (Ninguna)
   * *Salida:* `array` (Estado de cada servicio)
 * **`FetchMaintenanceWindowsAction`**:
   * *Propósito:* Obtiene las ventanas de mantenimiento programadas.
-  * *Entrada:* `string $apiKey`
+  * *Entrada:* (Ninguna)
   * *Salida:* `array`
 * **`FetchEnvironmentStatusAction`**:
   * *Propósito:* Comprueba la disponibilidad de un ambiente específico (sandbox, certificación o producción).
-  * *Entrada:* `string $apiKey, string $env`
+  * *Entrada:* `string $env`
   * *Salida:* `array`

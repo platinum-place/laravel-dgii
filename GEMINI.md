@@ -13,9 +13,9 @@ El paquete simplifica el ciclo de vida de los documentos fiscales electrónicos,
 - **Firma XML:** `platinum-place/php-dgii-xml-signer`.
 - **HTTP:** Laravel HTTP Client (Guzzle).
 
-## 🏗️ Arquitectura y Estructura (v2.2)
+## 🏗️ Arquitectura y Estructura (v2.3)
 
-El paquete sigue una filosofía minimalista y de facilitador (enabler). Su objetivo principal no es ocultar los flujos de la DGII, sino simplificar los puntos de dolor (firma digital, consultas de estatus, autenticación y comunicación HTTP).
+El paquete sigue una filosofía minimalista y de facilitador (enabler). En esta versión, se ha simplificado el acceso a los servicios de estatus permitiendo una configuración global de la API Key.
 
 Para más detalles técnicos, consulta:
 - **[Arquitectura del Sistema](./docs/internals/architecture.md)**
@@ -30,7 +30,7 @@ Estructura de directorios principal:
 
 ## 🛠️ Comandos de Desarrollo
 
-### Instalación (v2.2)
+### Instalación (v2.3)
 ```bash
 composer require platinum-place/laravel-dgii
 php artisan vendor:publish --tag=dgii-config

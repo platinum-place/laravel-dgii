@@ -85,4 +85,16 @@ return [
         // Amount limit for an invoice to be considered simplified consumer
         'consumer_invoice_limit' => 250000,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Status Services API Key
+    |--------------------------------------------------------------------------
+    |
+    | The API Key provided by DGII required to interact with status and
+    | availability services (statusecf).
+    |
+    */
+
+    'api_key' => env('DGII_API_KEY'),
 ];

@@ -18,7 +18,7 @@ class HttpMacroServiceProvider extends ServiceProvider
 
             $baseUrl = config('dgii.domains.invoice');
 
-            $finalUrl = rtrim($baseUrl, '/').'/'.ltrim($env, '/');
+            $finalUrl = rtrim($baseUrl, '/') . '/' . ltrim($env, '/');
 
             return Http::baseUrl($finalUrl)
                 ->throw();
@@ -29,7 +29,7 @@ class HttpMacroServiceProvider extends ServiceProvider
 
             $baseUrl = config('dgii.domains.consumer_invoice');
 
-            $finalUrl = rtrim($baseUrl, '/').'/'.ltrim($env, '/');
+            $finalUrl = rtrim($baseUrl, '/') . '/' . ltrim($env, '/');
 
             return Http::baseUrl($finalUrl)
                 ->throw();
@@ -37,6 +37,10 @@ class HttpMacroServiceProvider extends ServiceProvider
 
         Http::macro('dgiiStatus', function () {
             return Http::baseUrl(config('dgii.domains.status'))
+                ->withHeaders([
+                    'accept' => '*/*',
+                    'Authorization' => 'Apikey ' . config('dgii.api_key'),
+                ])
                 ->throw();
         });
 
