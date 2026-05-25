@@ -1,4 +1,4 @@
-# Convenciones del Proyecto y Guía del Colaborador (v1.0)
+# Convenciones del Proyecto y Guía del Colaborador (v2.2)
 
 Este paquete mantiene estándares estrictos de desarrollo para asegurar que la integración con la DGII siga siendo rápida, mantenible, libre de estado (stateless) y fácil de extender por cualquier desarrollador.
 
@@ -17,7 +17,7 @@ Este paquete mantiene estándares estrictos de desarrollo para asegurar que la i
 
 ---
 
-## 🏗️ 2. Patrones Arquitectónicos de la v1.0
+## 🏗️ 2. Patrones Arquitectónicos de la v2.2
 
 Para colaborar o agregar nuevas funciones en el paquete, debes seguir estrictamente los siguientes patrones de diseño:
 
@@ -54,13 +54,10 @@ No crees clases de repositorio abstractas ni interfaces redundantes. La comunica
 
 Si necesitas integrar un nuevo servicio web de la DGII (por ejemplo, consultas especializadas de NCF o nuevos tipos de aprobaciones), sigue este flujo de desarrollo:
 
-### Paso 1: Ubicar el Dominio
-Identifica en cuál dominio de negocio en `src/Domains/` encaja la nueva función. Si es un dominio totalmente nuevo, crea una carpeta representativa (ej. `src/Domains/NewFeature/Actions/`).
-
-### Paso 2: Crear la Acción Atómica
-Crea una clase Action con una única responsabilidad (`handle()`) y inyéctale dependencias nativas si las requiere en su constructor.
+### Paso 1: Crear la Acción Atómica
+Crea una clase Action en `src/Actions/` con una única responsabilidad (`handle()`) e inyéctale dependencias nativas si las requiere en su constructor.
 ```php
-namespace PlatinumPlace\LaravelDgii\Domains\NewFeature\Actions;
+namespace PlatinumPlace\LaravelDgii\Actions;
 
 use Illuminate\Support\Facades\Http;
 
@@ -78,7 +75,7 @@ class SendNewFeatureAction
 }
 ```
 
-### Paso 3: Exponer en el Gateway `DgiiService`
+### Paso 2: Exponer en el Gateway `DgiiService`
 Inyecta tu nueva acción en el constructor de `src/DgiiService.php` y expone un método limpio para que sea accesible de forma directa y cómoda por los usuarios mediante el Facade `Dgii`.
 
 ```php
@@ -95,5 +92,5 @@ public function sendNewFeature(string $token, string $filePath, ?string $env = n
 }
 ```
 
-### Paso 4: Documentar
+### Paso 3: Documentar
 Añade la descripción de la nueva acción y sus tipos de entrada y salida en `docs/internals/actions.md`.

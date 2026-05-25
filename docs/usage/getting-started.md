@@ -87,7 +87,10 @@ $invoiceData = [
 ];
 
 // Renders y firmas el XML en un solo paso
-$signedInvoiceXml = Dgii::renderInvoice($certContent, $certPassword, $invoiceData);
+$invoiceResult = Dgii::renderInvoice($certContent, $certPassword, $invoiceData);
+
+// El resultado contiene el 'xml' firmado y opcionalmente el XML 'integral' para consumo
+$signedInvoiceXml = $invoiceResult['xml'];
 
 // Guarda el XML firmado en tu base de datos o almacenamiento físico
 $invoiceFilePath = '/ruta/a/facturas/E310000000001.xml';
@@ -120,4 +123,4 @@ if ($statusResult['status'] === 'Aceptado') {
 ## 📚 Siguientes Pasos
 
 * **[Estructuras de Datos](./data-structures.md)** - Conoce la estructura de arrays esperada para las plantillas XML dinámicas.
-* **[Catálogo de Acciones](../internals/actions.md)** - Lista detallada de todas las acciones por dominio.
+* **[Catálogo de Acciones](../internals/actions.md)** - Lista detallada de todas las acciones.

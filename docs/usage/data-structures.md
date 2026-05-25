@@ -10,7 +10,7 @@ Esta guía detalla la estructura de los arrays de datos esperados por los servic
 ---
 
 ## 1. Facturas Electrónicas (e-CF)
-Utilizado por `Dgii::renderInvoice()`. Soporta tipos 31, 32, 33, 34, 41, 43, 44, 45, 46 y 47.
+Utilizado por `Dgii::renderInvoice()`. Retorna un `array` con las llaves `xml` (el documento firmado) e `integral` (requerido para facturas de consumo). Soporta tipos 31, 32, 33, 34, 41, 43, 44, 45, 46 y 47.
 
 ### Encabezado (`IdDoc`)
 | Campo | Descripción |

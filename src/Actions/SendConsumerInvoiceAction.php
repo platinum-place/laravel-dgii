@@ -1,11 +1,11 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Domains\Invoices\Actions;
+namespace PlatinumPlace\LaravelDgii\Actions;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
-class SendInvoiceAction
+class SendConsumerInvoiceAction
 {
     /**
      * Create a new class instance.
@@ -23,7 +23,7 @@ class SendInvoiceAction
         $response = Http::dgiiInvoice($env)
             ->withToken($token)
             ->attachXml($filePath)
-            ->post(config('dgii.endpoints.invoice.send'));
+            ->post(config('dgii.endpoints.consumer_invoice.send'));
 
         return $response->json();
     }

@@ -1,11 +1,11 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Domains\Invoices\Actions;
+namespace PlatinumPlace\LaravelDgii\Actions;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
-class FindInvoiceAction
+class SendCommercialApprovalAction
 {
     /**
      * Create a new class instance.
@@ -18,13 +18,12 @@ class FindInvoiceAction
     /**
      * @throws ConnectionException
      */
-    public function handle(string $env, string $token, string $trackId): array
+    public function handle(string $env, string $token, string $filePath): array
     {
         $response = Http::dgiiInvoice($env)
             ->withToken($token)
-            ->get(config('dgii.endpoints.invoice.status'), [
-                'trackid' => $trackId,
-            ]);
+            ->attachXml($filePath)
+            ->post(config('dgii.endpoints.approval.send'));
 
         return $response->json();
     }

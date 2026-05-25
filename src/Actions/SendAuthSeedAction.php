@@ -1,11 +1,11 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Domains\Seeds\Actions;
+namespace PlatinumPlace\LaravelDgii\Actions;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
-class FetchAuthSeedAction
+class SendAuthSeedAction
 {
     /**
      * Create a new class instance.
@@ -18,11 +18,12 @@ class FetchAuthSeedAction
     /**
      * @throws ConnectionException
      */
-    public function handle(string $env): string
+    public function handle(string $env, string $filePath): array
     {
         $response = Http::dgiiInvoice($env)
-            ->get(config('dgii.endpoints.auth.seed'));
+            ->attachXml($filePath)
+            ->post(config('dgii.endpoints.auth.validate'));
 
-        return $response->body();
+        return $response->json();
     }
 }

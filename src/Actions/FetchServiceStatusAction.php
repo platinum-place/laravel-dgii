@@ -1,11 +1,11 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Domains\Dgii\Actions;
+namespace PlatinumPlace\LaravelDgii\Actions;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
-class FetchMaintenanceWindowsAction
+class FetchServiceStatusAction
 {
     /**
      * Create a new class instance.
@@ -25,7 +25,7 @@ class FetchMaintenanceWindowsAction
                 'accept' => '*/*',
                 'Authorization' => "Apikey {$apiKey}",
             ])
-            ->get(config('dgii.endpoints.status.maintenance'));
+            ->get(config('dgii.endpoints.status.services'));
 
         return $response->json();
     }

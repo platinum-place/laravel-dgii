@@ -1,14 +1,14 @@
-# Arquitectura del Proyecto (v1.0)
+# Arquitectura del Proyecto (v2.2)
 
-Este paquete sigue una arquitectura minimalista y orientada a acciones agrupadas por dominios de negocio. Está diseñado para ser un facilitador (enabler) del ecosistema de Laravel que simplifica los puntos complejos de la integración con la DGII (firma digital, autenticación por semillas, peticiones HTTP y consultas de estatus) sin ocultar o complicar el flujo nativo establecido por la DGII.
+Este paquete sigue una arquitectura minimalista y orientada a acciones. Está diseñado para ser un facilitador (enabler) del ecosistema de Laravel que simplifica los puntos complejos de la integración con la DGII (firma digital, autenticación por semillas, peticiones HTTP y consultas de estatus) sin ocultar o complicar el flujo nativo establecido por la DGII.
 
 ## Capas del Sistema
 
 La interacción con el paquete fluye de manera directa y plana:
 
 1. **Facade (`Dgii`):** Interfaz pública principal del paquete. Simplifica el uso del servicio exponiendo métodos estáticos.
-2. **Gateway Service (`DgiiService`):** Es el único servicio del paquete, encargado de actuar como una puerta de enlace unificada. Inyecta directamente las acciones de cada dominio y las expone en firmas de métodos limpias que reciben y retornan datos primitivos (`array`, `string`, `bool`).
-3. **Domain Actions (`src/Domains/`):** El corazón de la lógica de negocio se divide en dominios atómicos. Cada acción (`Action`) tiene una única responsabilidad (`handle()`):
+2. **Gateway Service (`DgiiService`):** Es el único servicio del paquete, encargado de actuar como una puerta de enlace unificada. Inyecta directamente las acciones y las expone en firmas de métodos limpias que reciben y retornan datos primitivos (`array`, `string`, `bool`).
+3. **Actions (`src/Actions/`):** El corazón de la lógica de negocio reside en acciones atómicas. Cada acción (`Action`) tiene una única responsabilidad (`handle()`):
    * **Seeds:** Obtención y validación de semillas de autenticación de la DGII.
    * **Invoices:** Generación, firma digital, envío y consulta de facturas electrónicas (e-CF).
    * **ConsumerInvoices:** Lógica específica para facturas electrónicas de consumo.
@@ -29,7 +29,7 @@ sequenceDiagram
     participant App as Aplicación del Usuario
     participant Facade as Facade Dgii
     participant Gateway as DgiiService
-    participant Action as Action del Dominio
+    participant Action as Action
     participant DGII as Servidores DGII
     
     App->>Facade: Dgii::sendInvoice($token, $filePath)

@@ -1,6 +1,6 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Domains\Invoices\Actions;
+namespace PlatinumPlace\LaravelDgii\Actions;
 
 use Illuminate\Support\Facades\View;
 use PlatinumPlace\DgiiXmlSigner\SignManager;

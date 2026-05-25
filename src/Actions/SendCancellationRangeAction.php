@@ -1,11 +1,11 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Domains\ConsumerInvoices\Actions;
+namespace PlatinumPlace\LaravelDgii\Actions;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
-class SendConsumerInvoiceAction
+class SendCancellationRangeAction
 {
     /**
      * Create a new class instance.
@@ -23,7 +23,7 @@ class SendConsumerInvoiceAction
         $response = Http::dgiiInvoice($env)
             ->withToken($token)
             ->attachXml($filePath)
-            ->post(config('dgii.endpoints.consumer_invoice.send'));
+            ->post(config('dgii.endpoints.cancellation.send'));
 
         return $response->json();
     }

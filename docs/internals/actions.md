@@ -1,14 +1,14 @@
 # Catálogo de Acciones (Actions)
 
-Las Acciones representan la lógica de negocio atómica del paquete. Cada acción tiene una única responsabilidad y es inyectada automáticamente por el contenedor de Laravel en `DgiiService` (o puede ser inyectada directamente en las clases de tu aplicación si deseas saltarte el Gateway).
+Las Acciones representan la lógica de negocio atómica del paquete. Cada acción tiene una única responsabilidad y es inyectada automáticamente por el contenedor de Laravel en `DgiiService`.
 
 Todas las acciones devuelven estructuras de datos primitivas (`array`, `string`, `bool`) para otorgar la máxima interoperabilidad y simplificar su consumo.
 
 ---
 
-## Dominios y Acciones Disponibles
+## Acciones Disponibles (`src/Actions/`)
 
-### 1. Semillas y Autenticación (`src/Domains/Seeds/Actions/`)
+### 1. Semillas y Autenticación
 * **`FetchAuthSeedAction`**:
   * *Propósito:* Obtiene la semilla XML limpia desde los servidores de la DGII.
   * *Entrada:* `string $env`
@@ -18,7 +18,7 @@ Todas las acciones devuelven estructuras de datos primitivas (`array`, `string`,
   * *Entrada:* `string $env, string $filePath` (ruta al XML de la semilla firmada)
   * *Salida:* `array` (Token e información de expiración)
 
-### 2. Facturación e-CF (`src/Domains/Invoices/Actions/`)
+### 2. Facturación e-CF
 * **`RenderInvoiceXmlAction`**:
   * *Propósito:* Renderiza la plantilla Blade del e-CF e integra la firma digital PKCS#12.
   * *Entrada:* `string $certContent, string $certPassword, array $data`
@@ -36,7 +36,7 @@ Todas las acciones devuelven estructuras de datos primitivas (`array`, `string`,
   * *Entrada:* `string $env, string $token, string $senderIdentification, string $sequenceNumber`
   * *Salida:* `array` (Historial de trackIds y estatus)
 
-### 3. Facturas de Consumo (`src/Domains/ConsumerInvoices/Actions/`)
+### 3. Facturas de Consumo
 * **`RenderConsumerInvoiceXmlAction`**:
   * *Propósito:* Renderiza y firma el e-CF de consumo. Extrae y calcula el código de seguridad e-CF de forma automática.
   * *Entrada:* `string $certContent, string $certPassword, array $data`
@@ -50,7 +50,7 @@ Todas las acciones devuelven estructuras de datos primitivas (`array`, `string`,
   * *Entrada:* `string $env, string $token, string $senderIdentification, string $sequenceNumber, string $securityCode`
   * *Salida:* `array` (Respuesta oficial de consulta)
 
-### 4. Anulación de Rangos (`src/Domains/CancellationRanges/Actions/`)
+### 4. Anulación de Rangos
 * **`RenderCancellationRangeXmlAction`**:
   * *Propósito:* Renderiza y firma la solicitud de anulación de rangos (ANECF).
   * *Entrada:* `string $certContent, string $certPassword, array $data`
@@ -60,19 +60,19 @@ Todas las acciones devuelven estructuras de datos primitivas (`array`, `string`,
   * *Entrada:* `string $env, string $token, string $filePath`
   * *Salida:* `array` (Confirmación del estatus de anulación)
 
-### 5. Aprobaciones Comerciales (`src/Domains/CommercialApprovals/Actions/`)
+### 5. Aprobaciones Comerciales
 * **`SendCommercialApprovalAction`**:
   * *Propósito:* Envía respuestas de aceptación comercial firmadas (ARECF/ACECF).
   * *Entrada:* `string $env, string $token, string $filePath`
   * *Salida:* `array` (Confirmación del estatus de aprobación)
 
-### 6. Acuses de Recibo (`src/Domains/Acknowledgments/Actions/`)
+### 6. Acuses de Recibo
 * **`RenderAcknowledgmentXmlAction`**:
   * *Propósito:* Genera y firma acuses de recibo para e-CF.
   * *Entrada:* `string $certContent, string $certPassword, string $senderIdentification, string $buyerIdentification, string $sequenceNumber, string $status, ?string $notReceivedCode = null`
   * *Salida:* `string` (XML firmado)
 
-### 7. Disponibilidad DGII (`src/Domains/Dgii/Actions/`)
+### 7. Disponibilidad DGII
 * **`FetchServiceStatusAction`**:
   * *Propósito:* Consulta la disponibilidad general de los servicios de la DGII.
   * *Entrada:* `string $apiKey`

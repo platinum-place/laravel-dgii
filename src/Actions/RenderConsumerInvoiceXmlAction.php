@@ -1,10 +1,9 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Domains\ConsumerInvoices\Actions;
+namespace PlatinumPlace\LaravelDgii\Actions;
 
 use Illuminate\Support\Facades\View;
 use PlatinumPlace\DgiiXmlSigner\SignManager;
-use PlatinumPlace\LaravelDgii\Domains\Invoices\Actions\RenderInvoiceXmlAction;
 
 class RenderConsumerInvoiceXmlAction
 {

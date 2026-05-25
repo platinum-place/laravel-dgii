@@ -3,22 +3,22 @@
 namespace PlatinumPlace\LaravelDgii;
 
 use Illuminate\Http\Client\ConnectionException;
-use PlatinumPlace\LaravelDgii\Domains\Acknowledgments\Actions\RenderAcknowledgmentXmlAction;
-use PlatinumPlace\LaravelDgii\Domains\CancellationRanges\Actions\RenderCancellationRangeXmlAction;
-use PlatinumPlace\LaravelDgii\Domains\CancellationRanges\Actions\SendCancellationRangeAction;
-use PlatinumPlace\LaravelDgii\Domains\CommercialApprovals\Actions\SendCommercialApprovalAction;
-use PlatinumPlace\LaravelDgii\Domains\ConsumerInvoices\Actions\FetchConsumerInvoiceAction;
-use PlatinumPlace\LaravelDgii\Domains\ConsumerInvoices\Actions\RenderConsumerInvoiceXmlAction;
-use PlatinumPlace\LaravelDgii\Domains\ConsumerInvoices\Actions\SendConsumerInvoiceAction;
-use PlatinumPlace\LaravelDgii\Domains\Dgii\Actions\FetchEnvironmentStatusAction;
-use PlatinumPlace\LaravelDgii\Domains\Dgii\Actions\FetchMaintenanceWindowsAction;
-use PlatinumPlace\LaravelDgii\Domains\Dgii\Actions\FetchServiceStatusAction;
-use PlatinumPlace\LaravelDgii\Domains\Invoices\Actions\FetchInvoicesAction;
-use PlatinumPlace\LaravelDgii\Domains\Invoices\Actions\FindInvoiceAction;
-use PlatinumPlace\LaravelDgii\Domains\Invoices\Actions\RenderInvoiceXmlAction;
-use PlatinumPlace\LaravelDgii\Domains\Invoices\Actions\SendInvoiceAction;
-use PlatinumPlace\LaravelDgii\Domains\Seeds\Actions\FetchAuthSeedAction;
-use PlatinumPlace\LaravelDgii\Domains\Seeds\Actions\SendAuthSeedAction;
+use PlatinumPlace\LaravelDgii\Actions\FetchAuthSeedAction;
+use PlatinumPlace\LaravelDgii\Actions\FetchConsumerInvoiceAction;
+use PlatinumPlace\LaravelDgii\Actions\FetchEnvironmentStatusAction;
+use PlatinumPlace\LaravelDgii\Actions\FetchInvoicesAction;
+use PlatinumPlace\LaravelDgii\Actions\FetchMaintenanceWindowsAction;
+use PlatinumPlace\LaravelDgii\Actions\FetchServiceStatusAction;
+use PlatinumPlace\LaravelDgii\Actions\FindInvoiceAction;
+use PlatinumPlace\LaravelDgii\Actions\RenderAcknowledgmentXmlAction;
+use PlatinumPlace\LaravelDgii\Actions\RenderCancellationRangeXmlAction;
+use PlatinumPlace\LaravelDgii\Actions\RenderConsumerInvoiceXmlAction;
+use PlatinumPlace\LaravelDgii\Actions\RenderInvoiceXmlAction;
+use PlatinumPlace\LaravelDgii\Actions\SendAuthSeedAction;
+use PlatinumPlace\LaravelDgii\Actions\SendCancellationRangeAction;
+use PlatinumPlace\LaravelDgii\Actions\SendCommercialApprovalAction;
+use PlatinumPlace\LaravelDgii\Actions\SendConsumerInvoiceAction;
+use PlatinumPlace\LaravelDgii\Actions\SendInvoiceAction;
 
 class DgiiService
 {

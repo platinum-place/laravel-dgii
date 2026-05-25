@@ -1,11 +1,11 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii\Domains\CommercialApprovals\Actions;
+namespace PlatinumPlace\LaravelDgii\Actions;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
-class SendCommercialApprovalAction
+class FetchInvoicesAction
 {
     /**
      * Create a new class instance.
@@ -18,12 +18,14 @@ class SendCommercialApprovalAction
     /**
      * @throws ConnectionException
      */
-    public function handle(string $env, string $token, string $filePath): array
+    public function handle(string $env, string $token, string $senderIdentification, string $sequenceNumber): array
     {
         $response = Http::dgiiInvoice($env)
             ->withToken($token)
-            ->attachXml($filePath)
-            ->post(config('dgii.endpoints.approval.send'));
+            ->get(config('dgii.endpoints.invoice.list'), [
+                'RncEmisor' => $senderIdentification,
+                'Encf' => $sequenceNumber,
+            ]);
 
         return $response->json();
     }

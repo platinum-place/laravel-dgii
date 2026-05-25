@@ -13,7 +13,7 @@ El paquete simplifica el ciclo de vida de los documentos fiscales electrónicos,
 - **Firma XML:** `platinum-place/php-dgii-xml-signer`.
 - **HTTP:** Laravel HTTP Client (Guzzle).
 
-## 🏗️ Arquitectura y Estructura (v1.0)
+## 🏗️ Arquitectura y Estructura (v2.2)
 
 El paquete sigue una filosofía minimalista y de facilitador (enabler). Su objetivo principal no es ocultar los flujos de la DGII, sino simplificar los puntos de dolor (firma digital, consultas de estatus, autenticación y comunicación HTTP).
 
@@ -22,15 +22,15 @@ Para más detalles técnicos, consulta:
 - **[Catálogo de Acciones](./docs/internals/actions.md)**
 
 Estructura de directorios principal:
-- **Domains (`src/Domains/`):** Contiene la lógica agrupada por dominios de negocio (ej. `Seeds`, `Invoices`, `ConsumerInvoices`, `CancellationRanges`, `CommercialApprovals`, `Acknowledgments`, `Dgii`). Cada dominio contiene acciones atómicas independientes (`Actions`).
-- **DgiiService (`src/DgiiService.php`):** El único servicio del paquete, expuesto como un Gateway minimalista accesible mediante el Facade `Dgii`. Inyecta directamente las acciones de los dominios.
+- **Actions (`src/Actions/`):** Contiene todas las acciones atómicas e independientes encargadas de la lógica de negocio.
+- **DgiiService (`src/DgiiService.php`):** El único servicio del paquete, expuesto como un Gateway minimalista accesible mediante el Facade `Dgii`. Inyecta directamente las acciones.
 - **Facades (`src/Facades/`):** Facade estático `Dgii` que redirige llamadas a `DgiiService`.
 - **Providers (`src/Providers/`):** Configuración del contenedor de Laravel y macros de HTTP para la integración nativa y limpia.
 - **Templates (`resources/views/`):** Plantillas Blade opcionales para la generación de XML dinámico.
 
 ## 🛠️ Comandos de Desarrollo
 
-### Instalación (v1.0)
+### Instalación (v2.2)
 ```bash
 composer require platinum-place/laravel-dgii
 php artisan vendor:publish --tag=dgii-config
@@ -57,7 +57,7 @@ Resumen:
 3.  **DocBlocks:** Todo el código fuente debe estar documentado en **Inglés**.
 4.  **Documentación:** Los archivos `.md` y guías de usuario se mantienen en **Español**.
 5.  **Actions:** Mantén las acciones atómicas y 100% libres de estado (stateless). Recibe siempre secretos, contraseñas y tokens por argumentos en `handle()`.
-6.  **Extensibilidad:** Si necesitas agregar un nuevo endpoint de la DGII, crea una acción dedicada en su respectivo dominio e inyéctala en `DgiiService.php`.
+6.  **Extensibilidad:** Si necesitas agregar un nuevo endpoint de la DGII, crea una acción dedicada en `src/Actions/` e inyéctala en `DgiiService.php`.
 
 ## ⚙️ Referencia Técnica DGII
 
