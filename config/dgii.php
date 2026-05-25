@@ -68,4 +68,21 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | DGII Business Rules
+    |--------------------------------------------------------------------------
+    |
+    | Specific technical parameters for internal validations, such as
+    | document types and consume billing limits.
+    |
+    */
+
+    'rules' => [
+        // Default Invoice type for consumer Invoice
+        'consumer_invoice_type' => 32,
+
+        // Amount limit for an invoice to be considered simplified consumer
+        'consumer_invoice_limit' => 250000,
+    ],
 ];

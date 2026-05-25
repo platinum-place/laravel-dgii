@@ -5,6 +5,18 @@ All notable changes to `laravel-dgii` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.3] - 2026-05-25
+
+### Added
+- **Intelligent Invoice Routing:** Added `rules` configuration to `config/dgii.php` to define `consumer_invoice_type` and `consumer_invoice_limit`.
+- Implemented automatic redirection in `renderInvoice` to use `renderConsumerInvoiceXml` when the document matches consumer criteria.
+
+### Changed
+- Updated `renderInvoice` return type from `string` to `array` (containing `xml` and `integral` keys) to maintain consistency with consumer invoice outputs.
+
+### Removed
+- Removed `renderConsumerInvoice` method from `DgiiService` as its functionality is now unified within `renderInvoice`.
+
 ## [1.3.2] - 2026-05-24
 
 ### Added

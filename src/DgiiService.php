@@ -42,7 +42,8 @@ class DgiiService
         protected FetchServiceStatusAction         $fetchServiceStatus,
         protected FetchMaintenanceWindowsAction    $fetchMaintenanceWindows,
         protected FetchEnvironmentStatusAction     $fetchEnvironmentStatus,
-    ) {
+    )
+    {
         //
     }
 
@@ -69,9 +70,22 @@ class DgiiService
     /**
      * Render and digitally sign an e-CF Invoice XML string.
      */
-    public function renderInvoice(string $certContent, string $certPassword, array $data): string
+    public function renderInvoice(string $certContent, string $certPassword, array $data): array
     {
-        return $this->renderInvoiceXml->handle($certContent, $certPassword, $data);
+        $type = (int)$data['IdDoc']['TipoeCF'];
+        $total = (float)$data['Totales']['MontoTotal'];
+
+        $consumeType = (int)config('dgii.rules.consumer_invoice_type');
+        $consumeLimit = (float)config('dgii.rules.consumer_invoice_limit');
+
+        if ($type === $consumeType && $total < $consumeLimit) {
+            return $this->renderConsumerInvoiceXml->handle($certContent, $certPassword, $data);
+        }
+
+        return [
+            'xml' => $this->renderInvoiceXml->handle($certContent, $certPassword, $data),
+            'integral' => null,
+        ];
     }
 
     /**
@@ -102,14 +116,6 @@ class DgiiService
     public function fetchInvoices(string $env, string $token, string $senderIdentification, string $sequenceNumber): array
     {
         return $this->fetchInvoices->handle($env, $token, $senderIdentification, $sequenceNumber);
-    }
-
-    /**
-     * Render, extract security code, and digitally sign a Consumer e-CF Invoice XML.
-     */
-    public function renderConsumerInvoice(string $certContent, string $certPassword, array $data): array
-    {
-        return $this->renderConsumerInvoiceXml->handle($certContent, $certPassword, $data);
     }
 
     /**
@@ -171,7 +177,8 @@ class DgiiService
         string  $sequenceNumber,
         string  $status,
         ?string $notReceivedCode = null
-    ): string {
+    ): string
+    {
         return $this->renderAcknowledgmentXml->handle(
             $certContent,
             $certPassword,
