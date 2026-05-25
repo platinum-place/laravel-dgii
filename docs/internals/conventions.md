@@ -1,4 +1,4 @@
-# Convenciones del Proyecto y Guía del Colaborador (v2.2)
+# Convenciones del Proyecto y Guía del Colaborador (v1.3.5)
 
 Este paquete mantiene estándares estrictos de desarrollo para asegurar que la integración con la DGII siga siendo rápida, mantenible, libre de estado (stateless) y fácil de extender por cualquier desarrollador.
 
@@ -17,10 +17,9 @@ Este paquete mantiene estándares estrictos de desarrollo para asegurar que la i
 
 ---
 
-## 🏗️ 2. Patrones Arquitectónicos de la v2.2
-# Convenciones del Proyecto y Guía del Colaborador (v2.3)
+## 🏗️ 2. Patrones Arquitectónicos de la v1.3.5
 
-...
+Para colaborar o agregar nuevas funciones en el paquete, debes seguir estrictamente los siguientes patrones de diseño:
 
 ### 2.1 Acciones 100% Libres de Estado (Stateless Actions)
 Ninguna clase de acción (`Action`) debe depender de archivos de configuración globales para datos dinámicos o sensibles que varían por cliente (ej: certificados, contraseñas de certificados o tokens de acceso).
@@ -41,6 +40,7 @@ public function handle(string $token, string $filePath): array
     // Lógica pura
 }
 ```
+
 ### 2.2 Uso Exclusivo de Datos Primitivos (`array` / `string` / `bool`)
 Nunca crees clases DTO o respuestas customizadas (`InvoiceData`, `ResponseObject`). 
 * **Regla:** Las acciones deben retornar strings limpios (para XMLs) o arrays asociativos nativos (`array`) para las respuestas parsed de los web services.
