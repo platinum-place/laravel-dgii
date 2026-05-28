@@ -5,7 +5,7 @@ All notable changes to `laravel-dgii` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.3.7] - 2026-05-28
+## [1.3.8] - 2026-05-28
 
 ### Added
 - **Unified Services Architecture:** Consolidated the 14 individual Action classes (under `src/Actions/`) into two clean, stateless internal services (`DgiiClient` and `DgiiXmlRender`) located in `src/Services/` to improve initialization speed and codebase cohesion.

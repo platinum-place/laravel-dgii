@@ -1,4 +1,4 @@
-# Laravel DGII - Guía de Desarrollo (v1.3.7)
+# Laravel DGII - Guía de Desarrollo (v1.3.8)
 
 Este proyecto es un paquete de Laravel diseñado para facilitar la integración con los servicios web de la **Dirección General de Impuestos Internos (DGII)** de la República Dominicana, específicamente para el manejo de **Comprobantes Fiscales Electrónicos (e-CF)**.
 
@@ -13,7 +13,7 @@ El paquete simplifica el ciclo de vida de los documentos fiscales electrónicos,
 - **Firma XML:** `platinum-place/php-dgii-xml-signer`.
 - **HTTP:** Guzzle mediante Laravel HTTP Client.
 
-## 🏗️ Arquitectura y Estructura (v1.3.7)
+## 🏗️ Arquitectura y Estructura (v1.3.8)
 
 El paquete sigue una filosofía minimalista y de facilitador (enabler). En esta versión se ha consolidado la lógica de negocio antes fragmentada en múltiples acciones hacia servicios dedicados y cohesivos.
 
@@ -30,7 +30,7 @@ Estructura de directorios principal:
 
 ## 🛠️ Comandos de Desarrollo
 
-### Instalación (v1.3.7)
+### Instalación (v1.3.8)
 ```bash
 composer require platinum-place/laravel-dgii
 php artisan vendor:publish --tag=dgii-config

@@ -1,4 +1,4 @@
-# Convenciones del Proyecto y Guía del Colaborador (v1.3.7)
+# Convenciones del Proyecto y Guía del Colaborador (v1.3.8)
 
 Este paquete mantiene estándares estrictos de desarrollo para asegurar que la integración con la DGII siga siendo rápida, mantenible, libre de estado (stateless) y fácil de extender por cualquier desarrollador.
 
@@ -17,7 +17,7 @@ Este paquete mantiene estándares estrictos de desarrollo para asegurar que la i
 
 ---
 
-## 🏗️ 2. Patrones Arquitectónicos de la v1.3.7
+## 🏗️ 2. Patrones Arquitectónicos de la v1.3.8
 
 Para colaborar o agregar nuevas funciones en el paquete, debes seguir estrictamente los siguientes patrones de diseño:
 

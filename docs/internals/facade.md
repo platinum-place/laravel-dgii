@@ -1,4 +1,4 @@
-# Referencia del Facade `Dgii` y Gateway Service (v1.3.7)
+# Referencia del Facade `Dgii` y Gateway Service (v1.3.8)
 
 Toda la funcionalidad pública de este paquete se expone a través del Facade estático `PlatinumPlace\LaravelDgii\Facades\Dgii`, el cual redirige dinámicamente las llamadas al Gateway `DgiiService` (`src/Services/DgiiService.php`).
 

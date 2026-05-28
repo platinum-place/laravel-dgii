@@ -1,4 +1,4 @@
-# Arquitectura del Proyecto (v1.3.7)
+# Arquitectura del Proyecto (v1.3.8)
 
 Este paquete sigue una arquitectura minimalista, de alto rendimiento y orientada a servicios. Está diseñado para ser un facilitador (enabler) del ecosistema de Laravel que simplifica los puntos complejos de la integración con la DGII (firma digital, autenticación por semillas, peticiones HTTP y consultas de estatus) sin ocultar o complicar el flujo nativo establecido por la DGII.
 
@@ -6,7 +6,7 @@ Este paquete sigue una arquitectura minimalista, de alto rendimiento y orientada
 
 ## 🏗️ Capas del Sistema
 
-A partir de la versión **v1.3.7**, la arquitectura fragmentada de múltiples clases de acción individuales ha sido consolidada en dos subcapas de servicios especializados orquestados por un Gateway único. La interacción con el paquete fluye de manera directa y plana:
+A partir de la versión **v1.3.8**, la arquitectura fragmentada de múltiples clases de acción individuales ha sido consolidada en dos subcapas de servicios especializados orquestados por un Gateway único. La interacción con el paquete fluye de manera directa y plana:
 
 ```
                     ┌──────────────────────────────────┐
@@ -88,7 +88,7 @@ sequenceDiagram
 
 ---
 
-## 💡 Ventajas del Diseño v1.3.7
+## 💡 Ventajas del Diseño v1.3.8
 
 Esta consolidación arquitectónica de múltiples acciones individuales a servicios dedicados aporta:
 1. **Rendimiento e Integridad:** Reduce drásticamente el número de archivos cargados por el framework durante las peticiones, disminuyendo el "overhead" de inicialización.
