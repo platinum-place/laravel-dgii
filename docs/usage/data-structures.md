@@ -5,7 +5,7 @@ Esta guía detalla la estructura de los arrays de datos esperados por los servic
 > [!NOTE]
 > **Tú Tienes el Control Absoluto:**
 > Debido a que el paquete adopta un enfoque minimalista e independiente (stateless), **no estás obligado a utilizar estas estructuras ni las plantillas Blade del paquete**.
-> Si tu aplicación ya genera sus propios strings XML, puedes saltarte por completo las acciones `render` y pasar tu XML generado directamente a los servicios de firma digital o enviarlo de forma directa a la DGII.
+> Si tu aplicación ya genera sus propios strings XML, puedes saltarte por completo los métodos de renderizado del Facade y pasar tu XML generado directamente a los servicios de firma digital o enviarlo de forma directa a la DGII.
 
 ---
 

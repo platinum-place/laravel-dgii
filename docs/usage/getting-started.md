@@ -126,4 +126,4 @@ if ($statusResult['status'] === 'Aceptado') {
 ## 📚 Siguientes Pasos
 
 * **[Estructuras de Datos](./data-structures.md)** - Conoce la estructura de arrays esperada para las plantillas XML dinámicas.
-* **[Catálogo de Acciones](../internals/actions.md)** - Lista detallada de todas las acciones.
+* **[Referencia del Facade](../internals/facade.md)** - Lista detallada de todos los métodos disponibles en el Facade `Dgii`.

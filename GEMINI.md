@@ -1,4 +1,4 @@
-# Laravel DGII - Guía de Desarrollo (v1.0)
+# Laravel DGII - Guía de Desarrollo (v1.3.7)
 
 Este proyecto es un paquete de Laravel diseñado para facilitar la integración con los servicios web de la **Dirección General de Impuestos Internos (DGII)** de la República Dominicana, específicamente para el manejo de **Comprobantes Fiscales Electrónicos (e-CF)**.
 
@@ -11,26 +11,26 @@ El paquete simplifica el ciclo de vida de los documentos fiscales electrónicos,
 ### Tecnologías Principales
 - **PHP 8.2+** y **Laravel 11/12**.
 - **Firma XML:** `platinum-place/php-dgii-xml-signer`.
-- **HTTP:** Laravel HTTP Client (Guzzle).
+- **HTTP:** Guzzle mediante Laravel HTTP Client.
 
-## 🏗️ Arquitectura y Estructura (v1.3.6)
+## 🏗️ Arquitectura y Estructura (v1.3.7)
 
-El paquete sigue una filosofía minimalista y de facilitador (enabler). En esta versión se han refinado los macros HTTP para mayor consistencia y se han corregido los endpoints para facturas de consumo.
+El paquete sigue una filosofía minimalista y de facilitador (enabler). En esta versión se ha consolidado la lógica de negocio antes fragmentada en múltiples acciones hacia servicios dedicados y cohesivos.
 
 Para más detalles técnicos, consulta:
 - **[Arquitectura del Sistema](./docs/internals/architecture.md)**
-- **[Catálogo de Acciones](./docs/internals/actions.md)**
+- **[Referencia del Facade](./docs/internals/facade.md)**
 
 Estructura de directorios principal:
-- **Actions (`src/Actions/`):** Contiene todas las acciones atómicas e independientes encargadas de la lógica de negocio.
-- **DgiiService (`src/DgiiService.php`):** El único servicio del paquete, expuesto como un Gateway minimalista accesible mediante el Facade `Dgii`. Inyecta directamente las acciones.
+- **Services (`src/Services/`):** Contiene los servicios internos que procesan la firma digital y el renderizado XML (`DgiiXmlRender`), así como las peticiones HTTP (`DgiiClient`).
+- **DgiiService (`src/Services/DgiiService.php`):** El único servicio del paquete, expuesto como un Gateway minimalista accesible mediante el Facade `Dgii`. Inyecta y orquesta los servicios internos.
 - **Facades (`src/Facades/`):** Facade estático `Dgii` que redirige llamadas a `DgiiService`.
 - **Providers (`src/Providers/`):** Configuración del contenedor de Laravel y macros de HTTP para la integración nativa y limpia.
 - **Templates (`resources/views/`):** Plantillas Blade opcionales para la generación de XML dinámico.
 
 ## 🛠️ Comandos de Desarrollo
 
-### Instalación (v1.3.6)
+### Instalación (v1.3.7)
 ```bash
 composer require platinum-place/laravel-dgii
 php artisan vendor:publish --tag=dgii-config
@@ -52,12 +52,12 @@ composer test
 Consulta la guía completa en **[Convenciones del Proyecto](./docs/internals/conventions.md)**.
 
 Resumen:
-1.  **Facade Unificado:** Siempre prefiere el uso de `Dgii::metodo()` para interactuar con el paquete.
+1.  **Facade Unificado:** Siempre prefiere el uso de `Dgii::metodo()` para interactuar con el paquete de forma cómoda.
 2.  **Manejo de Datos:** Utiliza exclusivamente datos primitivos (`array` para respuestas JSON, `string` para XMLs firmados o planos). No se utilizan DTOs ni capas de repositorio pesadas.
 3.  **DocBlocks:** Todo el código fuente debe estar documentado en **Inglés**.
 4.  **Documentación:** Los archivos `.md` y guías de usuario se mantienen en **Español**.
-5.  **Actions:** Mantén las acciones atómicas y 100% libres de estado (stateless). Recibe siempre secretos, contraseñas y tokens por argumentos en `handle()`.
-6.  **Extensibilidad:** Si necesitas agregar un nuevo endpoint de la DGII, crea una acción dedicada en `src/Actions/` e inyéctala en `DgiiService.php`.
+5.  **Servicios Stateless:** Mantén los métodos y servicios internos 100% libres de estado (stateless). Recibe siempre secretos, contraseñas y tokens por argumentos en cada firma de método.
+6.  **Extensibilidad:** Si necesitas agregar un nuevo endpoint de la DGII, añádelo en `DgiiClient` o `DgiiXmlRender` y expónlo a través de `DgiiService.php`.
 
 ## ⚙️ Referencia Técnica DGII
 
