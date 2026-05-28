@@ -1,48 +1,18 @@
 <?php
 
-namespace PlatinumPlace\LaravelDgii;
+namespace PlatinumPlace\LaravelDgii\Services;
 
 use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Support\Facades\View;
-use PlatinumPlace\LaravelDgii\Actions\FetchAuthSeedAction;
-use PlatinumPlace\LaravelDgii\Actions\FetchConsumerInvoiceAction;
-use PlatinumPlace\LaravelDgii\Actions\FetchEnvironmentStatusAction;
-use PlatinumPlace\LaravelDgii\Actions\FetchInvoicesAction;
-use PlatinumPlace\LaravelDgii\Actions\FetchMaintenanceWindowsAction;
-use PlatinumPlace\LaravelDgii\Actions\FetchServiceStatusAction;
-use PlatinumPlace\LaravelDgii\Actions\FindInvoiceAction;
-use PlatinumPlace\LaravelDgii\Actions\RenderAcknowledgmentXmlAction;
-use PlatinumPlace\LaravelDgii\Actions\RenderCancellationRangeXmlAction;
-use PlatinumPlace\LaravelDgii\Actions\RenderConsumerInvoiceXmlAction;
-use PlatinumPlace\LaravelDgii\Actions\RenderInvoiceXmlAction;
-use PlatinumPlace\LaravelDgii\Actions\SendAuthSeedAction;
-use PlatinumPlace\LaravelDgii\Actions\SendCancellationRangeAction;
-use PlatinumPlace\LaravelDgii\Actions\SendCommercialApprovalAction;
-use PlatinumPlace\LaravelDgii\Actions\SendConsumerInvoiceAction;
-use PlatinumPlace\LaravelDgii\Actions\SendInvoiceAction;
+use Throwable;
 
 class DgiiService
 {
     /**
-     * Create a new service instance with constructor injection of all atomic actions.
+     * Create a new class instance.
      */
     public function __construct(
-        protected FetchAuthSeedAction              $fetchAuthSeed,
-        protected SendAuthSeedAction               $sendAuthSeed,
-        protected RenderInvoiceXmlAction           $renderInvoiceXml,
-        protected SendInvoiceAction                $sendInvoice,
-        protected FindInvoiceAction                $findInvoice,
-        protected FetchInvoicesAction              $fetchInvoices,
-        protected RenderConsumerInvoiceXmlAction   $renderConsumerInvoiceXml,
-        protected SendConsumerInvoiceAction        $sendConsumerInvoice,
-        protected FetchConsumerInvoiceAction       $fetchConsumerInvoice,
-        protected RenderCancellationRangeXmlAction $renderCancellationRangeXml,
-        protected SendCancellationRangeAction      $sendCancellationRange,
-        protected SendCommercialApprovalAction     $sendCommercialApproval,
-        protected RenderAcknowledgmentXmlAction    $renderAcknowledgmentXml,
-        protected FetchServiceStatusAction         $fetchServiceStatus,
-        protected FetchMaintenanceWindowsAction    $fetchMaintenanceWindows,
-        protected FetchEnvironmentStatusAction     $fetchEnvironmentStatus,
+        protected DgiiClient    $client,
+        protected DgiiXmlRender $xmlRender,
     )
     {
         //
@@ -55,7 +25,7 @@ class DgiiService
      */
     public function getSeed(string $env): string
     {
-        return $this->fetchAuthSeed->handle($env);
+        return $this->client->fetchAuthSeed($env);
     }
 
     /**
@@ -65,11 +35,12 @@ class DgiiService
      */
     public function verifySeed(string $env, string $filePath): array
     {
-        return $this->sendAuthSeed->handle($env, $filePath);
+        return $this->client->sendAuthSeed($env, $filePath);
     }
 
     /**
      * Render and digitally sign an e-CF Invoice XML string.
+     * @throws Throwable
      */
     public function renderInvoice(string $certContent, string $certPassword, array $data): array
     {
@@ -80,11 +51,11 @@ class DgiiService
         $consumeLimit = (float)config('dgii.rules.consumer_invoice_limit');
 
         if ($type === $consumeType && $total < $consumeLimit) {
-            return $this->renderConsumerInvoiceXml->handle($certContent, $certPassword, $data);
+            return $this->xmlRender->renderConsumerInvoice($certContent, $certPassword, $data);
         }
 
         return [
-            'xml' => $this->renderInvoiceXml->handle($certContent, $certPassword, $data),
+            'xml' => $this->xmlRender->renderInvoice($certContent, $certPassword, $data),
             'integral' => null,
         ];
     }
@@ -96,7 +67,7 @@ class DgiiService
      */
     public function sendInvoice(string $env, string $token, string $filePath): array
     {
-        return $this->sendInvoice->handle($env, $token, $filePath);
+        return $this->client->sendInvoice($env, $token, $filePath);
     }
 
     /**
@@ -106,7 +77,7 @@ class DgiiService
      */
     public function findInvoice(string $env, string $token, string $trackId): array
     {
-        return $this->findInvoice->handle($env, $token, $trackId);
+        return $this->client->findInvoiceByTrackId($env, $token, $trackId);
     }
 
     /**
@@ -116,7 +87,7 @@ class DgiiService
      */
     public function fetchInvoices(string $env, string $token, string $senderIdentification, string $sequenceNumber): array
     {
-        return $this->fetchInvoices->handle($env, $token, $senderIdentification, $sequenceNumber);
+        return $this->client->fetchInvoices($env, $token, $senderIdentification, $sequenceNumber);
     }
 
     /**
@@ -126,7 +97,7 @@ class DgiiService
      */
     public function sendConsumerInvoice(string $env, string $token, string $filePath): array
     {
-        return $this->sendConsumerInvoice->handle($env, $token, $filePath);
+        return $this->client->sendConsumerInvoice($env, $token, $filePath);
     }
 
     /**
@@ -136,15 +107,16 @@ class DgiiService
      */
     public function fetchConsumerInvoice(string $env, string $token, string $senderIdentification, string $sequenceNumber, string $securityCode): array
     {
-        return $this->fetchConsumerInvoice->handle($env, $token, $senderIdentification, $sequenceNumber, $securityCode);
+        return $this->client->fetchConsumerInvoice($env, $token, $senderIdentification, $sequenceNumber, $securityCode);
     }
 
     /**
      * Render and digitally sign a Cancellation Range (ANECF) XML.
+     * @throws Throwable
      */
     public function renderCancellationRange(string $certContent, string $certPassword, array $data): string
     {
-        return $this->renderCancellationRangeXml->handle($certContent, $certPassword, $data);
+        return $this->xmlRender->renderCancellationRange($certContent, $certPassword, $data);
     }
 
     /**
@@ -154,7 +126,7 @@ class DgiiService
      */
     public function sendCancellationRange(string $env, string $token, string $filePath): array
     {
-        return $this->sendCancellationRange->handle($env, $token, $filePath);
+        return $this->client->sendCancellationRange($env, $token, $filePath);
     }
 
     /**
@@ -164,11 +136,12 @@ class DgiiService
      */
     public function sendCommercialApproval(string $env, string $token, string $filePath): array
     {
-        return $this->sendCommercialApproval->handle($env, $token, $filePath);
+        return $this->client->sendCommercialApproval($env, $token, $filePath);
     }
 
     /**
      * Render and digitally sign an Acknowledgment of Receipt (ARECF) XML.
+     * @throws Throwable
      */
     public function renderAcknowledgment(
         string  $certContent,
@@ -180,7 +153,7 @@ class DgiiService
         ?string $notReceivedCode = null
     ): string
     {
-        return $this->renderAcknowledgmentXml->handle(
+        return $this->xmlRender->renderAcknowledgment(
             $certContent,
             $certPassword,
             $senderIdentification,
@@ -198,7 +171,7 @@ class DgiiService
      */
     public function getServiceStatus(): array
     {
-        return $this->fetchServiceStatus->handle();
+        return $this->client->fetchServiceStatus();
     }
 
     /**
@@ -208,7 +181,7 @@ class DgiiService
      */
     public function getMaintenanceWindows(): array
     {
-        return $this->fetchMaintenanceWindows->handle();
+        return $this->client->fetchMaintenanceWindows();
     }
 
     /**
@@ -218,11 +191,15 @@ class DgiiService
      */
     public function getEnvironmentStatus(string $env): array
     {
-        return $this->fetchEnvironmentStatus->handle($env);
+        return $this->client->fetchEnvironmentStatus($env);
     }
 
+    /**
+     * Render and digitally sign a seed XML string.
+     * @throws Throwable
+     */
     public function renderSeed(string $value, string $date): string
     {
-        return View::make('dgii::seeds.xml', ['valor' => $value, 'fecha' => $date])->render();
+        return $this->xmlRender->renderSeed($value, $date);
     }
 }

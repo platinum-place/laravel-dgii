@@ -9,6 +9,14 @@ use Illuminate\Support\ServiceProvider;
 class HttpMacroServiceProvider extends ServiceProvider
 {
     /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        //
+    }
+
+    /**
      * Bootstrap any application services.
      */
     public function boot(): void
@@ -16,7 +24,7 @@ class HttpMacroServiceProvider extends ServiceProvider
         Http::macro('dgiiInvoice', static function (string $env) {
             $baseUrl = config('dgii.domains.invoice');
 
-            $finalUrl = rtrim($baseUrl, '/') . '/' . ltrim($env, '/');
+            $finalUrl = rtrim($baseUrl, '/').'/'.ltrim($env, '/');
 
             return Http::baseUrl($finalUrl)
                 ->throw();
@@ -25,7 +33,7 @@ class HttpMacroServiceProvider extends ServiceProvider
         Http::macro('dgiiConsumerInvoice', static function (string $env) {
             $baseUrl = config('dgii.domains.consumer_invoice');
 
-            $finalUrl = rtrim($baseUrl, '/') . '/' . ltrim($env, '/');
+            $finalUrl = rtrim($baseUrl, '/').'/'.ltrim($env, '/');
 
             return Http::baseUrl($finalUrl)
                 ->throw();
@@ -35,7 +43,7 @@ class HttpMacroServiceProvider extends ServiceProvider
             return Http::baseUrl(config('dgii.domains.status'))
                 ->withHeaders([
                     'accept' => '*/*',
-                    'Authorization' => 'Apikey ' . config('dgii.api_key'),
+                    'Authorization' => 'Apikey '.config('dgii.api_key'),
                 ])
                 ->throw();
         });
