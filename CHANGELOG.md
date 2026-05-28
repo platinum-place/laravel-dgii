@@ -5,6 +5,18 @@ All notable changes to `laravel-dgii` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.7] - 2026-05-28
+
+### Added
+- **Unified Services Architecture:** Consolidated the 14 individual Action classes (under `src/Actions/`) into two clean, stateless internal services (`DgiiClient` and `DgiiXmlRender`) located in `src/Services/` to improve initialization speed and codebase cohesion.
+- **Improved Facade Typings and Gateway:** Centered the entire integration around the static `Dgii` Facade and `DgiiService` gateway, improving autocompletion in IDEs.
+- **Reference Manual for Facade:** Renamed `actions.md` to `facade.md` and compiled a comprehensive API reference manual for all available Facade methods.
+
+### Changed
+- Re-architected system layers to route all network actions through `DgiiClient` and all digital signature/Blade compilation through `DgiiXmlRender`.
+- Replaced outdated "Actions" terminology across all internal manuals (`README.md`, `GEMINI.md`, `architecture.md`, `conventions.md`, `getting-started.md`, `data-structures.md`) with stateless services and facade methods terminology.
+- Fixed a code example bug in `README.md` for operational status methods (`getServiceStatus` and `getMaintenanceWindows`), removing the erroneous parameter passing as the API key is configured globally via env macros.
+
 ## [1.3.3] - 2026-05-25
 
 ### Added
