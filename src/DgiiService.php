@@ -3,6 +3,7 @@
 namespace PlatinumPlace\LaravelDgii;
 
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\View;
 use PlatinumPlace\LaravelDgii\Actions\FetchAuthSeedAction;
 use PlatinumPlace\LaravelDgii\Actions\FetchConsumerInvoiceAction;
 use PlatinumPlace\LaravelDgii\Actions\FetchEnvironmentStatusAction;
@@ -218,5 +219,10 @@ class DgiiService
     public function getEnvironmentStatus(string $env): array
     {
         return $this->fetchEnvironmentStatus->handle($env);
+    }
+
+    public function renderSeed(string $value, string $date): string
+    {
+        return View::make('dgii::seeds.xml', ['valor' => $value, 'fecha' => $date])->render();
     }
 }
