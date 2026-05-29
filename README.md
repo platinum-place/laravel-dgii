@@ -127,6 +127,17 @@ $maintenance = Dgii::getMaintenanceWindows();
 
 ---
 
+## 🙋‍♂️ Soporte y Consultoría
+
+Si necesitas asistencia técnica con la implementación de este paquete o tienes dudas generales sobre el ecosistema de **Facturación Electrónica en la República Dominicana**, puedes contactarme directamente.
+
+Ofrezco servicios de consultoría especializada para empresas que buscan certificar sus sistemas ante la DGII.
+
+- **Contacto:** Mis métodos de contacto actualizados están disponibles en mi **[Perfil de GitHub](https://github.com/platinum-place)**.
+- **Issues:** Para errores del paquete, por favor abre un issue en este repositorio.
+
+---
+
 ## ⚖️ Licencia
 
 Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
