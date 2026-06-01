@@ -39,25 +39,30 @@ class DgiiService
     }
 
     /**
-     * Render and digitally sign an e-CF Invoice XML string.
+     * Render an e-CF Invoice XML string.
+     *
+     * @param  array  $data  Invoice XML structured array
+     * @return string
+     *
      * @throws Throwable
      */
-    public function renderInvoice(string $certContent, string $certPassword, array $data): array
+    public function renderInvoice(array $data): string
     {
-        $type = (int)$data['IdDoc']['TipoeCF'];
-        $total = (float)$data['Totales']['MontoTotal'];
+        return $this->xmlRender->renderInvoice($data);
+    }
 
-        $consumeType = (int)config('dgii.rules.consumer_invoice_type');
-        $consumeLimit = (float)config('dgii.rules.consumer_invoice_limit');
-
-        if ($type === $consumeType && $total < $consumeLimit) {
-            return $this->xmlRender->renderConsumerInvoice($certContent, $certPassword, $data);
-        }
-
-        return [
-            'xml' => $this->xmlRender->renderInvoice($certContent, $certPassword, $data),
-            'integral' => null,
-        ];
+    /**
+     * Render a Consumer e-CF Invoice (RFCE) XML string.
+     *
+     * @param  string  $securityCode  Security code from the signed invoice signature
+     * @param  array  $data           Invoice XML structured array
+     * @return string
+     *
+     * @throws Throwable
+     */
+    public function renderConsumerInvoice(string $securityCode, array $data): string
+    {
+        return $this->xmlRender->renderConsumerInvoice($securityCode, $data);
     }
 
     /**
@@ -111,12 +116,16 @@ class DgiiService
     }
 
     /**
-     * Render and digitally sign a Cancellation Range (ANECF) XML.
+     * Render a Cancellation Range (ANECF) XML string.
+     *
+     * @param  array  $data  Cancellation range structured array
+     * @return string
+     *
      * @throws Throwable
      */
-    public function renderCancellationRange(string $certContent, string $certPassword, array $data): string
+    public function renderCancellationRange(array $data): string
     {
-        return $this->xmlRender->renderCancellationRange($certContent, $certPassword, $data);
+        return $this->xmlRender->renderCancellationRange($data);
     }
 
     /**
@@ -140,22 +149,20 @@ class DgiiService
     }
 
     /**
-     * Render and digitally sign an Acknowledgment of Receipt (ARECF) XML.
+     * Render an Acknowledgment of Receipt (ARECF) XML string.
+     *
+     * @param  string  $senderIdentification  RNC of the sender
+     * @param  string  $buyerIdentification   RNC of the buyer
+     * @param  string  $sequenceNumber        e-CF sequence number (eNCF)
+     * @param  string  $status                 Status code of the receipt
+     * @param  string|null  $notReceivedCode   Optional code for not received reasons
+     * @return string
+     *
      * @throws Throwable
      */
-    public function renderAcknowledgment(
-        string  $certContent,
-        string  $certPassword,
-        string  $senderIdentification,
-        string  $buyerIdentification,
-        string  $sequenceNumber,
-        string  $status,
-        ?string $notReceivedCode = null
-    ): string
+    public function renderAcknowledgment(string $senderIdentification, string $buyerIdentification, string $sequenceNumber, string $status, ?string $notReceivedCode = null): string
     {
         return $this->xmlRender->renderAcknowledgment(
-            $certContent,
-            $certPassword,
             $senderIdentification,
             $buyerIdentification,
             $sequenceNumber,
@@ -195,7 +202,12 @@ class DgiiService
     }
 
     /**
-     * Render and digitally sign a seed XML string.
+     * Render a seed XML string.
+     *
+     * @param  string  $value  Seed value
+     * @param  string  $date   Seed timestamp
+     * @return string
+     *
      * @throws Throwable
      */
     public function renderSeed(string $value, string $date): string

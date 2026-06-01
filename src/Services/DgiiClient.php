@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 class DgiiClient
 {
     /**
-//     * Create a new class instance.
+     * Create a new class instance.
      */
     public function __construct()
     {
