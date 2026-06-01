@@ -1,4 +1,4 @@
-# Laravel DGII 🇩🇴
+# Laravel DGII
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/platinum-place/laravel-dgii.svg?style=flat-square)](https://packagist.org/packages/platinum-place/laravel-dgii)
 [![Total Downloads](https://img.shields.io/packagist/dt/platinum-place/laravel-dgii.svg?style=flat-square)](https://packagist.org/packages/platinum-place/laravel-dgii)
@@ -6,28 +6,31 @@
 
 ---
 
-## 🎯 Filosofía del Paquete
+## Filosofía del Paquete
 
 Este paquete sigue una **filosofía de facilitador (enabler)**:
 * **El que sabe usar la DGII sabe usar el paquete.**
 * No intentamos "esconder" ni duplicar las validaciones o flujos de la DGII bajo modelos complejos o DTOs pesados.
-* El paquete es **100% libre de estado (stateless)** y no almacena credenciales ni claves en el archivo de configuración. Todo (entornos, tokens de acceso, certificados, contraseñas) se suministra en tiempo de ejecución por quien consume el método.
+* El paquete es **100% libre de estado (stateless)** y no almacena credenciales ni claves en el archivo de configuración. Todo (entornos, tokens de acceso) se suministra en tiempo de ejecución por quien consume el método.
 * Facilitamos únicamente las partes complejas de la integración:
-  1. La **firma digital PKCS#12** de los XMLs.
-  2. La **autenticación** mediante el ciclo Semilla -> Firma -> Token de acceso.
+  1. El **renderizado de los XMLs** requeridos por la DGII (e-CF estándar, de consumo, anulaciones y acuses) mediante plantillas Blade listas y optimizadas.
+  2. La **autenticación** mediante el flujo de intercambio Semilla -> Token de acceso.
   3. La **comunicación HTTP** nativa optimizada con macros de Laravel para subir y consultar e-CF.
+
+> [!NOTE]
+> La **firma digital PKCS#12** de los XMLs es responsabilidad de la aplicación que consume este paquete. Esto permite mantener la base del paquete ligera y libre de estado.
 
 ---
 
-## 🏗️ Estructura de Directorios
+## Estructura de Directorios
 
-* **Services (`src/Services/`):** Contiene los servicios internos encargados del renderizado y firma digital de los XMLs (`DgiiXmlRender`) y del envío de peticiones HTTP a los servidores web de la DGII (`DgiiClient`).
+* **Services (`src/Services/`):** Contiene los servicios internos encargados del renderizado de los XMLs (`DgiiXmlRender`) y del envío de peticiones HTTP a los servidores web de la DGII (`DgiiClient`).
 * **DgiiService (`src/Services/DgiiService.php`):** Gateway minimalista expuesto mediante el Facade `Dgii` que inyecta y orquesta los servicios internos para exponer firmas de métodos limpias.
 * **Templates (`resources/views/`):** Vistas Blade opcionales para la estructuración de XMLs de e-CF estándar, de consumo, anulaciones y acuses.
 
 ---
 
-## 🛠️ Instalación
+## Instalación
 
 Instala el paquete mediante Composer:
 
@@ -43,7 +46,7 @@ php artisan vendor:publish --tag=dgii-config
 
 ---
 
-## 🚀 Uso Rápido (vía Facades)
+## Uso Rápido (vía Facades)
 
 Toda interacción pública se realiza a través del Facade `Dgii`.
 
@@ -62,9 +65,9 @@ $authInfo = Dgii::verifySeed('testecf', '/ruta/a/semilla_firmada.xml');
 $accessToken = $authInfo['token'];
 ```
 
-### 2. Generar y Firmar Facturas (e-CF)
+### 2. Generar Facturas (e-CF)
 
-Puedes usar las plantillas Blade del paquete o generar tu propio XML y firmarlo manualmente usando el SignManager integrado.
+Puedes usar las plantillas Blade del paquete para renderizar tus e-CF a formato XML crudo.
 
 ```php
 use PlatinumPlace\LaravelDgii\Facades\Dgii;
@@ -76,16 +79,17 @@ $invoiceData = [
     'DetallesItems' => [...]
 ];
 
-$certContent = file_get_contents('/ruta/al/certificado.p12');
-$certPassword = 'tu_contraseña';
+// Genera el XML limpio listo para ser firmado por tu aplicación
+$xml = Dgii::renderInvoice($invoiceData);
 
-// Genera el XML y aplica la firma digital PKCS#12
-$result = Dgii::renderInvoice($certContent, $certPassword, $invoiceData);
+// [Tu aplicación] Aplica la firma digital PKCS#12 al XML generado y guárdalo.
+```
 
-// Contiene 'xml' (el string firmado) y opcionalmente 'integral'
-$signedXml = $result['xml'];
+Para generar facturas de consumo (RFCE):
 
-// [Tu aplicación] Guarda el XML firmado donde prefieras en tu disco local o base de datos.
+```php
+// Genera el XML de consumo limpio (requiere el código de seguridad e-CF de la firma original)
+$consumerXml = Dgii::renderConsumerInvoice($securityCode, $invoiceData);
 ```
 
 ### 3. Enviar e-CF y Consultar Estatus
@@ -118,16 +122,7 @@ $maintenance = Dgii::getMaintenanceWindows();
 
 ---
 
-## 📖 Documentación Completa
-
-- **[Primeros Pasos](./docs/usage/getting-started.md)** - Guía detallada para comenzar la integración.
-- **[Arquitectura de Servicios](./docs/internals/architecture.md)** - Detalle técnico del sistema de servicios.
-- **[Referencia del Facade](./docs/internals/facade.md)** - Listado y especificación detallada de todos los métodos expuestos a través del Facade `Dgii`.
-- **[Estructuras de Datos](./docs/usage/data-structures.md)** - Detalle del formato esperado en los arrays para renderizar XMLs utilizando las plantillas Blade.
-
----
-
-## 🙋‍♂️ Soporte y Consultoría
+## Soporte y Consultoría
 
 Si necesitas asistencia técnica con la implementación de este paquete o tienes dudas generales sobre el ecosistema de **Facturación Electrónica en la República Dominicana**, puedes contactarme directamente.
 
@@ -138,6 +133,7 @@ Ofrezco servicios de consultoría especializada para empresas que buscan certifi
 
 ---
 
-## ⚖️ Licencia
+## Licencia
 
 Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+

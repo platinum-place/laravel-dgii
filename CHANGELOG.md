@@ -5,6 +5,19 @@ All notable changes to `laravel-dgii` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.10] - 2026-06-01
+
+### Removed
+- Removed dependency on `platinum-place/php-dgii-xml-signer` and XML-related PHP extensions (`ext-dom`, `ext-simplexml`, `ext-libxml`) from `composer.json`.
+- Removed automatic digital signature handling from `DgiiXmlRender` and `DgiiService`.
+
+### Changed
+- Re-architected `DgiiXmlRender` and `DgiiService` to generate and return raw XML string representations instead of signed arrays/structures. The application utilizing the package is now solely responsible for applying digital signatures (PKCS#12).
+- Simplified signatures for `renderInvoice`, `renderCancellationRange`, and `renderAcknowledgment` by removing `$certContent` and `$certPassword` parameters.
+- Restructured `renderConsumerInvoice` to accept `$securityCode` and `$data` directly and return a clean raw XML string.
+- Cleaned up obsolete DocBlocks and imports (`SignManager` and `ext-dom` references) across all internal services.
+- Updated project documentation (`README.md`, `CONTRIBUTING.md`) to align with the stateless design guidelines.
+
 ## [1.3.8] - 2026-05-28
 
 ### Added

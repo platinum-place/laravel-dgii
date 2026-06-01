@@ -27,7 +27,7 @@ If you find a bug, please open an issue and include:
 ## Development Standards
 
 - **PSR Standards:** We follow PSR-12 and Laravel's coding style.
-- **Actions:** Logic should be encapsulated in Action classes whenever possible.
+- **Stateless Services:** Core integration logic is encapsulated within stateless services (`DgiiClient` for API communication and `DgiiXmlRender` for Blade-to-XML rendering), unified under the main `DgiiService` gateway.
 - **Type Hinting:** Use strict typing and return type hints in all new methods.
 - **Commit Messages:** Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.
 
